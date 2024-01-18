@@ -448,8 +448,8 @@ public class OpenPrefirePrac : BasePlugin
             // movement_service.DuckAmount = 1;
             // System.Threading.Thread.Sleep(100);
             // player.PlayerPawn.Value.Bot.IsCrouching = true;
-            AddTimer(0.3f, () => movement_service.DuckAmount = 1);
-            AddTimer(0.4f, () => player.PlayerPawn.Value.Bot.IsCrouching = true);
+            AddTimer(0.1f, () => movement_service.DuckAmount = 1);
+            AddTimer(0.2f, () => player.PlayerPawn.Value.Bot.IsCrouching = true);
         }
         
         // System.Threading.Thread.Sleep(100);
