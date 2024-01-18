@@ -1,5 +1,5 @@
 # OpenPrefirePrac (WIP)
-A open-source CounterStrikeSharp powered server-side practicing plugin for CS2. It provides multiple prefire practices on competitive map pool maps and support multiplayer practicing concurrently.
+An open-source CounterStrikeSharp powered server-side practicing plugin for CS2. It provides multiple prefire practices on competitive map pool maps and support multiplayer practicing concurrently.
 
 ## How to use
 
@@ -35,5 +35,6 @@ TODO:
 
 1. Create prefire profiles for all maps.
 2. Optimize how bots are spawned (bug fixes).
-3. Allow bots to shoot.
-4. Give player weapons.
+3. Add localization support.
+4. Allow bots to shoot.
+5. Give player weapons.
