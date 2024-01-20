@@ -231,19 +231,22 @@ public class OpenPrefirePrac : BasePlugin
         int num_spawn = Math.Min(practices[practice_no].targets.Count, 4);
         Console.WriteLine($"[OpenPrefirePrac] Spawn {num_spawn} targets (total {practices[practice_no].targets.Count})");
         AddBot(player, num_spawn);
-        AddTimer(0.5f, () => 
-        {
-            for (int i = 0; i < bots_of_players[player.Slot].Count; i++)
-            {
-                var bot = new CCSPlayerController(NativeAPI.GetEntityFromIndex(bots_of_players[player.Slot][i] + 1));
-                Console.WriteLine($"[OpenPrefirePrac] Moving bot {bot.PlayerName}, slot: {bot.Slot}.");
-                MovePlayer(bot, practices[practice_no].targets[i].is_crouching, practices[practice_no].targets[i].position, practices[practice_no].targets[i].rotation);
-            }
-            progress_of_players[player.Slot] = num_spawn;
-            
-        });
         
-        AddTimer(0.5f * num_spawn, () => MovePlayer(player, false, practices[practice_no].player.position, practices[practice_no].player.rotation));
+
+        // AddTimer(0.5f, () => 
+        // {
+        //     for (int i = 0; i < bots_of_players[player.Slot].Count; i++)
+        //     {
+        //         var bot = new CCSPlayerController(NativeAPI.GetEntityFromIndex(bots_of_players[player.Slot][i] + 1));
+        //         Console.WriteLine($"[OpenPrefirePrac] Moving bot {bot.PlayerName}, slot: {bot.Slot}.");
+        //         MovePlayer(bot, practices[practice_no].targets[i].is_crouching, practices[practice_no].targets[i].position, practices[practice_no].targets[i].rotation);
+        //     }
+        //     progress_of_players[player.Slot] = num_spawn;
+            
+        // });
+        
+        AddTimer(3f, () => MovePlayer(player, false, practices[practice_no].player.position, practices[practice_no].player.rotation));
+        player.PrintToCenter("GL & HF!");
     }
 
     public void ForceExitPrefireMode(CCSPlayerController player, ChatMenuOption option)
@@ -404,6 +407,17 @@ public class OpenPrefirePrac : BasePlugin
             }
         });
 
+        AddTimer(0.5f, () =>
+        {
+            progress_of_players[player.Slot] = 0;
+
+            for (int i = 0; i < bots_of_players[player.Slot].Count; i++)
+            {
+                var bot = new CCSPlayerController(NativeAPI.GetEntityFromIndex(bots_of_players[player.Slot][i] + 1));
+                Server.ExecuteCommand($"bot_kill {bot.PlayerName}");
+            }
+        });
+
 
         // System.Threading.Thread.Sleep(200);
 
@@ -454,6 +468,7 @@ public class OpenPrefirePrac : BasePlugin
         
         // System.Threading.Thread.Sleep(100);
         player.PlayerPawn.Value.Teleport(pos, ang, new Vector(0, 0, 0));
+        // player.PlayerPawn.Value.PlayerLocked = 1;
         // AddTimer(0.1f, () => player.PlayerPawn.Value.Teleport(pos, ang, new Vector(0, 0, 0)));
     }
 }
