@@ -3,7 +3,7 @@ An open-source CounterStrikeSharp powered server-side practicing plugin for CS2.
 
 ## How to use
 
-Currently we only provides the Linux (amd64) version. Download the release file and put it into your counterstrikesharp plugin folder.
+Currently I only provide the Linux (amd64) version. Download the release file and put it into your counterstrikesharp plugin folder.
 
 ## How to create a practice profile?
 

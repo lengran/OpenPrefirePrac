@@ -14,7 +14,7 @@ namespace OpenPrefirePrac;
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.0.1";
+    public override string ModuleVersion => "0.0.3";
     private string plugin_path = "../../csgo/addons/counterstrikesharp/plugins/OpenPrefirePrac/";
 
     private Dictionary<int, List<int>> bots_of_players = new Dictionary<int, List<int>>();
