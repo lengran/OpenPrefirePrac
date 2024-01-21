@@ -15,7 +15,6 @@ public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
     public override string ModuleVersion => "0.0.4";
-    private string plugin_path = "../../csgo/addons/counterstrikesharp/plugins/OpenPrefirePrac/";
 
     private Dictionary<int, List<int>> bots_of_players = new Dictionary<int, List<int>>();
     private Dictionary<int, int> progress_of_players = new Dictionary<int, int>();
@@ -81,7 +80,7 @@ public class OpenPrefirePrac : BasePlugin
         Console.WriteLine("[OpenPrefirePrac] Map loaded: " + map_name);
 
         // load practices available in current map, from corresponding map directory.
-        List<string> map_dirs = new List<string>(Directory.EnumerateDirectories(plugin_path + "maps"));
+        List<string> map_dirs = new List<string>(Directory.EnumerateDirectories(ModuleDirectory + "/maps"));
         bool found = false;
         for (int i = 0; i < map_dirs.Count; i++)
         {
@@ -295,7 +294,7 @@ public class OpenPrefirePrac : BasePlugin
     public void LoadPractice()
     {
         Console.WriteLine($"[OpenPrefirePrac] Loading practices for map {map_name}.");
-        List<string> practice_files = new List<string>(Directory.EnumerateFiles(plugin_path + "maps/" + map_name));
+        List<string> practice_files = new List<string>(Directory.EnumerateFiles(ModuleDirectory + "/maps/" + map_name));
         practices.Clear();
         practice_name_to_id.Clear();
         practice_menu.MenuOptions.Clear();
