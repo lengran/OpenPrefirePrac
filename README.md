@@ -21,7 +21,9 @@ A practice profile consists of 3 parts.
 
 The first line contains the name of incompatible practices, separated by spaces.
 
-The second line instructs the place and facing direction of the player. The first 3 floating numbers are the position and the other 3 are the rotation.
+The second line indicates how many bots are needed in this practice.
+
+The third line instructs the place and facing direction of the player. The first 3 floating numbers are the position and the other 3 are the rotation.
 
 ```
 pos_x pos_y pos_z ang_x ang_y ang_z
