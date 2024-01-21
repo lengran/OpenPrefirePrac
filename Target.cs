@@ -27,6 +27,7 @@ public class PrefirePractice
     public TargetBot player;
     public string practice_name;
     public List<string> incompatible_practices;
+    public int num_bots;
 
     public PrefirePractice(string map, string practice)
     {
@@ -53,7 +54,11 @@ public class PrefirePractice
                 for (int i = 0; i < w.Length; i++)
                     incompatible_practices.Add(w[i].Replace("_", " "));
 
-                // Second line contains player's position and rotation.
+                // The second line indicates how many bots are needed.
+                s = sr.ReadLine();
+                num_bots = Convert.ToInt32(s);
+
+                // The third line contains player's position and rotation.
                 s = sr.ReadLine();
                 w = s.Split(delimiter_chars);
                 player = new TargetBot(Convert.ToSingle(w[0]), Convert.ToSingle(w[1]), Convert.ToSingle(w[2]), Convert.ToSingle(w[3]), Convert.ToSingle(w[4]), Convert.ToSingle(w[5]), false);

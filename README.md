@@ -5,6 +5,14 @@ An open-source CounterStrikeSharp powered server-side practicing plugin for CS2.
 
 Currently I only provide the Linux (amd64) version. Download the release file and put it into your counterstrikesharp plugin folder.
 
+When starting a server, I recommend using these parameters.
+
+```base
+[CS2 Installation Directory]/game/bin/linuxsteamrt64/cs2 -dedicated -insecure +map de_inferno -maxplayers_override 64
+```
+
+Note: "-maxplayers_override 64" is the most important one. It allows the server to add more than 5 bots on one team, which is crucial to achieve the goal of allowing multiplayer training simultaneously.
+
 ## How to create a practice profile?
 
 The folder "map" is organize as follows. Each sub-folder in "map" contains practice profiles for the corresponding map. Each text file in that sub-folder is a practice profile.
@@ -29,12 +37,20 @@ pos_x pos_y pos_z ang_x ang_y ang_z is_crouching
 
 ## Current development progress
 
-Current it's still under active developing. I only did one practice profile (de\_inferno banana\_to\_b) other's are dummy profiles and might not be useful.
+Current it's still under active developing.
+
+Finished practices:
+
+- de_inferno
+    - A short to A site
+    - A apartments to A site
+    - Banana to B site
+- de_dust2
+    - Some dummy practices of little if not no use.
 
 TODO:
 
 1. Create prefire profiles for all maps.
-2. Optimize how bots are spawned (bug fixes).
-3. Add localization support.
-4. Allow bots to shoot.
-5. Give player weapons.
+2. Add localization support.
+3. Allow bots to shoot and set bots difficulty.
+4. Give player weapons.

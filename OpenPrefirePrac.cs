@@ -14,7 +14,7 @@ namespace OpenPrefirePrac;
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.0.3";
+    public override string ModuleVersion => "0.0.4";
     private string plugin_path = "../../csgo/addons/counterstrikesharp/plugins/OpenPrefirePrac/";
 
     private Dictionary<int, List<int>> bots_of_players = new Dictionary<int, List<int>>();
@@ -163,8 +163,8 @@ public class OpenPrefirePrac : BasePlugin
             Server.ExecuteCommand("mp_buytime 9999");
             Server.ExecuteCommand("mp_buy_anywhere 1");
             Server.ExecuteCommand("sv_infinite_ammo 1");
+            Server.ExecuteCommand("mp_limitteams 0");
             Server.ExecuteCommand("mp_autoteambalance 0");
-            Server.ExecuteCommand("mp_limitteams 50");
             Server.ExecuteCommand("mp_warmup_pausetimer 1");
             Server.ExecuteCommand("mp_warmup_start");
             // Server.ExecuteCommand("bot_stop 1");
@@ -228,9 +228,8 @@ public class OpenPrefirePrac : BasePlugin
         }
         
         // Spawn bots
-        int num_spawn = Math.Min(practices[practice_no].targets.Count, 4);
-        Console.WriteLine($"[OpenPrefirePrac] Spawn {num_spawn} targets (total {practices[practice_no].targets.Count})");
-        AddBot(player, num_spawn);
+        Console.WriteLine($"[OpenPrefirePrac] Spawn {practices[practice_no].num_bots} targets (total {practices[practice_no].targets.Count})");
+        AddBot(player, practices[practice_no].num_bots);
         
 
         // AddTimer(0.5f, () => 
@@ -241,7 +240,7 @@ public class OpenPrefirePrac : BasePlugin
         //         Console.WriteLine($"[OpenPrefirePrac] Moving bot {bot.PlayerName}, slot: {bot.Slot}.");
         //         MovePlayer(bot, practices[practice_no].targets[i].is_crouching, practices[practice_no].targets[i].position, practices[practice_no].targets[i].rotation);
         //     }
-        //     progress_of_players[player.Slot] = num_spawn;
+        //     progress_of_players[player.Slot] = practices[practice_no].num_bots;
             
         // });
         
