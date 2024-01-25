@@ -10,5 +10,6 @@
     <Reference Include="CounterStrikeSharp.API">
        <HintPath>../addons/counterstrikesharp/api/CounterStrikeSharp.API.dll</HintPath>
     </Reference>
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="7.0.3" />
   </ItemGroup>
 </Project>

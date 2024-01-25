@@ -1,0 +1,19 @@
+{
+    "mainmenu.title": "Main menu",
+    "mainmenu.practice": "Choose practice.",
+    "mainmenu.map": "Switch map.",
+    "mainmenu.exit": "Exit prefire mode",
+    "mapmenu.title": "Switch map",
+    "mapmenu.busy": "There are other players practicing. Try again later.",
+    "practicemenu.title": "Choose prefire route",
+    "practice.incompatible": "Others are playing incompatible routes that might share some bots with your selected route. Please choose another practice.",
+    "practice.choose" : "[OpenPrefirePrac] Starting prefire route ({0}).",
+    "practice.begin": "GL & HF!",
+    "practice.exit": "[OpenPrefirePrac] Prefire mode exited.",
+    "map.de_inferno.a_apts": "A apartment to A site",
+    "map.de_inferno.banana_to_b": "Banana to B site",
+    "map.de_inferno.mid_to_a_long": "Mid to A site through A Long",
+    "map.de_inferno.mid_to_a_short": "Mid to A site through A Short",
+    "map.de_dust2.a_long": "A long to A site",
+    "map.de_dust2.a_short": "A Short to A site"
+} 

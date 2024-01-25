@@ -5,6 +5,7 @@ using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Menu;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Modules.Utils;
+using CounterStrikeSharp.API.Core.Translations;
 using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Immutable;
@@ -14,7 +15,7 @@ namespace OpenPrefirePrac;
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.0.4";
+    public override string ModuleVersion => "0.0.5";
 
     private Dictionary<int, List<int>> bots_of_players = new Dictionary<int, List<int>>();
     private Dictionary<int, int> progress_of_players = new Dictionary<int, int>();
@@ -28,10 +29,7 @@ public class OpenPrefirePrac : BasePlugin
     private int player_count = 0;
 
     private Dictionary<int, PrefirePractice> practices = new Dictionary<int, PrefirePractice>();
-
-    private ChatMenu main_menu = new ChatMenu("Open Prefire Prac");
-    private ChatMenu map_menu = new ChatMenu("Switch map");
-    private ChatMenu practice_menu = new ChatMenu("Choose prefire route");
+    private List<string> availble_maps = new List<string>();
 
     public override void Load(bool hotReload)
     {
@@ -53,7 +51,7 @@ public class OpenPrefirePrac : BasePlugin
         progress_of_players.Add(slot, 0);
         practice_of_players.Add(slot, -1);
 
-        Console.WriteLine("[OpenPrefirePrac] Player just connected: " + player.Handle);
+        // Console.WriteLine("[OpenPrefirePrac] Player just connected: " + player.Handle);
     }
 
     public void OnClientDisconnectHandler(int slot)
@@ -68,7 +66,7 @@ public class OpenPrefirePrac : BasePlugin
             player_count--;
         }
 
-        // TODO: Release resources(practices, targets, bots...)
+        // Release resources(practices, targets, bots...)
         bots_of_players.Remove(slot);
         progress_of_players.Remove(slot);
         practice_of_players.Remove(slot);
@@ -77,7 +75,7 @@ public class OpenPrefirePrac : BasePlugin
     public void OnMapStartHandler(string map)
     {
         map_name = map;
-        Console.WriteLine("[OpenPrefirePrac] Map loaded: " + map_name);
+        // Console.WriteLine("[OpenPrefirePrac] Map loaded: " + map_name);
 
         // load practices available in current map, from corresponding map directory.
         List<string> map_dirs = new List<string>(Directory.EnumerateDirectories(ModuleDirectory + "/maps"));
@@ -86,7 +84,7 @@ public class OpenPrefirePrac : BasePlugin
         {
             string map_path = map_dirs[i].Substring(map_dirs[i].LastIndexOf(Path.DirectorySeparatorChar) + 1);
             Console.WriteLine($"[OpenPrefirePrac] Map folder for map {map_path} founded.");
-            map_menu.AddMenuOption(map_path, ChangeMap);
+            availble_maps.Add(map_path);
 
             if (map_path.Equals(map_name))
             {
@@ -105,11 +103,12 @@ public class OpenPrefirePrac : BasePlugin
             Console.WriteLine("[OpenPrefirePrac] Failed to load practices on map " + map_name);
         }
 
+        // Move menu creation to command !prefire to support localization.
         // Create menu.
-        main_menu.MenuOptions.Clear();
-        main_menu.AddMenuOption("Choose practice.", OpenPracticeMenu);
-        main_menu.AddMenuOption("Switch map.", OpenMapMenu);
-        main_menu.AddMenuOption("Exit prefire mode", ForceExitPrefireMode);
+        // main_menu.MenuOptions.Clear();
+        // main_menu.AddMenuOption(Localizer["mainmenu.practice"], OpenPracticeMenu);
+        // main_menu.AddMenuOption(Localizer["mainmenu.map"], OpenMapMenu);
+        // main_menu.AddMenuOption(Localizer["mainmenu.exit"], ForceExitPrefireMode);
 
     }
 
@@ -152,6 +151,21 @@ public class OpenPrefirePrac : BasePlugin
     [ConsoleCommand("css_prefire", "Print available prefire routes and receive user's choice")]
     [CommandHelper(whoCanExecute: CommandUsage.CLIENT_ONLY)]
     public void OnPrefireCommand(CCSPlayerController player, CommandInfo commandInfo)
+    {       
+        // var language = player.GetLanguage();
+        // Console.WriteLine($"[OpenPrefirePrac] Player {player.PlayerName}'s language is {language.Name}.");
+        ChatMenu main_menu = new ChatMenu(Localizer["mainmenu.title"]);
+        // main_menu.MenuOptions.Clear();
+        main_menu.AddMenuOption(Localizer["mainmenu.practice"], OpenPracticeMenu);
+        main_menu.AddMenuOption(Localizer["mainmenu.map"], OpenMapMenu);
+        main_menu.AddMenuOption(Localizer["mainmenu.exit"], ForceExitPrefireMode);
+        
+        player.PrintToChat("============ [OpenPrefirePrac] ============");
+        ChatMenus.OpenMenu(player, main_menu);
+        player.PrintToChat("===========================================");
+    }
+
+    public void OnRouteSelect(CCSPlayerController player, ChatMenuOption option)
     {
         if (player_count == 0)
         {
@@ -171,20 +185,14 @@ public class OpenPrefirePrac : BasePlugin
             Server.ExecuteCommand("bot_zombie 1");
         }
 
-        player.PrintToChat("============ [OpenPrefirePrac] ============");
-        ChatMenus.OpenMenu(player, main_menu);
-        player.PrintToChat("===========================================");
-    }
-
-    public void OnRouteSelect(CCSPlayerController player, ChatMenuOption option)
-    {
         string choosen_practice = option.Text;
+        // player.PrintToChat(choosen_practice);
         int practice_no = practice_name_to_id[choosen_practice];
 
         // Check if selected practice route is compatible with other on-playing routes.
         if (!practice_enabled[practice_no])
         {
-            player.PrintToChat("Others are playing incompatible routes that might share some bots with your selected route. Please choose another practice.");
+            player.PrintToChat(Localizer["practice.incompatible"]);
             return;
         }
 
@@ -213,7 +221,7 @@ public class OpenPrefirePrac : BasePlugin
             
         }
         
-        player.PrintToChat($"[OpenPrefirePrac] Starting prefire route ({choosen_practice}).");
+        player.PrintToChat(Localizer["practice.choose", Localizer["map." + map_name + "." + choosen_practice.Replace(" ", "_")]]);
         practice_of_players[player.Slot] = practice_no;
 
         // Disable incompatible practices.
@@ -244,18 +252,22 @@ public class OpenPrefirePrac : BasePlugin
         // });
         
         AddTimer(3f, () => MovePlayer(player, false, practices[practice_no].player.position, practices[practice_no].player.rotation));
-        player.PrintToCenter("GL & HF!");
+        player.PrintToCenter(Localizer["practice.begin"]);
     }
 
     public void ForceExitPrefireMode(CCSPlayerController player, ChatMenuOption option)
     {
         ExitPrefireMode(player);
         
-        player.PrintToChat("[OpenPrefirePrac] Prefire mode exited.");
+        player.PrintToChat(Localizer["practice.exit"]);
     }
 
     public void OpenMapMenu(CCSPlayerController player, ChatMenuOption option)
     {
+        ChatMenu map_menu = new ChatMenu(Localizer["mapmenu.title"]);
+        for (int i = 0; i < availble_maps.Count; i++)
+            map_menu.AddMenuOption(availble_maps[i], ChangeMap);
+
         player.PrintToChat("============ [OpenPrefirePrac] ============");
         ChatMenus.OpenMenu(player, map_menu);
         player.PrintToChat("===========================================");
@@ -264,11 +276,12 @@ public class OpenPrefirePrac : BasePlugin
     public void OpenPracticeMenu(CCSPlayerController player, ChatMenuOption option)
     {
         // Dynamically draw menu
-        practice_menu.MenuOptions.Clear();
+        ChatMenu practice_menu = new ChatMenu(Localizer["practicemenu.title"]);
+        // practice_menu.MenuOptions.Clear();
         for (int i = 0; i < practices.Count; i++)
         {
             if (practice_enabled[i])
-                practice_menu.AddMenuOption(practices[i].practice_name, OnRouteSelect);     // practice name here is splited by space instead of underline
+                practice_menu.AddMenuOption(practices[i].practice_name, OnRouteSelect);     // practice name here is splited by space instead of underline. TODO: Use localized text.
         }
 
         player.PrintToChat("============ [OpenPrefirePrac] ============");
@@ -287,7 +300,7 @@ public class OpenPrefirePrac : BasePlugin
         }
         else
         {
-            player.PrintToChat("There are other players practicing. Try again later.");
+            player.PrintToChat(Localizer["mapmenu.busy"]);
         }
     }
 
@@ -297,7 +310,6 @@ public class OpenPrefirePrac : BasePlugin
         List<string> practice_files = new List<string>(Directory.EnumerateFiles(ModuleDirectory + "/maps/" + map_name));
         practices.Clear();
         practice_name_to_id.Clear();
-        practice_menu.MenuOptions.Clear();
         for (int i = 0; i < practice_files.Count; i++)
         {
             string practice_name = practice_files[i].Substring(practice_files[i].LastIndexOf(Path.DirectorySeparatorChar) + 1).Split(".")[0];
@@ -310,9 +322,23 @@ public class OpenPrefirePrac : BasePlugin
     
     public void ExitPrefireMode(CCSPlayerController player)
     {
-        player_count--;
-        RemoveBots(player);
-        practice_of_players[player.Slot] = -1;
+        // Enable disabled practice routes
+        int previous_practice_no = practice_of_players[player.Slot];
+        if (previous_practice_no > -1)
+        {
+            player_count--;
+            RemoveBots(player);
+
+            for (int i = 0; i < practices[previous_practice_no].incompatible_practices.Count; i++)
+            {
+                if (practice_name_to_id.ContainsKey(practices[previous_practice_no].incompatible_practices[i]))
+                {
+                    int disabled_practice_no = practice_name_to_id[practices[previous_practice_no].incompatible_practices[i]];
+                    practice_enabled[disabled_practice_no] = true;
+                }
+            }
+            practice_of_players[player.Slot] = -1;
+        }
         
         if (player_count == 0)
         {
@@ -415,39 +441,6 @@ public class OpenPrefirePrac : BasePlugin
                 Server.ExecuteCommand($"bot_kill {bot.PlayerName}");
             }
         });
-
-
-        // System.Threading.Thread.Sleep(200);
-
-        // var playerEntities = Utilities.FindAllEntitiesByDesignerName<CCSPlayerController>("cs_player_controller");
-        // foreach (var tempPlayer in playerEntities)
-        // {
-        //     if (!tempPlayer.IsBot || tempPlayer.IsHLTV) continue;
-        //     if (tempPlayer.UserId.HasValue)
-        //     {
-        //         // Chech if it belongs to someone, if so, do nothing
-        //         if (masters_of_bots.ContainsKey(tempPlayer.Slot))
-        //             continue;
-                
-        //         // If it's a newly added bot
-        //         if (have_added_one_bot)
-        //         {
-        //             // a redundent bot, kick it
-        //             Server.ExecuteCommand($"bot_kick {tempPlayer.PlayerName}");
-        //             Console.WriteLine($"[OpenPrefirePrac] Exec command: bot_kick {tempPlayer.PlayerName}");
-        //             continue;
-        //         }
-
-        //         bots_of_players[player.Slot].Add(tempPlayer.Slot);
-        //         masters_of_bots.Add(tempPlayer.Slot, player.Slot);
-        //         Console.WriteLine($"[OpenPrefirePrac] Moving bot {tempPlayer.PlayerName}, slot: {tempPlayer.Slot}.");
-
-        //         MovePlayer(tempPlayer, crouch, pos, ang);
-        //         have_added_one_bot = true;
-        //         Console.WriteLine($"[OpenPrefirePrac] Bot {tempPlayer.UserId}, slot: {tempPlayer.Slot} has been spawned.");
-        //     }
-        // }
-
     }
 
     public void MovePlayer(CCSPlayerController player, bool crouch, Vector pos, QAngle ang)
@@ -456,17 +449,10 @@ public class OpenPrefirePrac : BasePlugin
         if (crouch)
         {
             CCSPlayer_MovementServices movement_service = new CCSPlayer_MovementServices(player.PlayerPawn.Value.MovementServices.Handle);
-            // System.Threading.Thread.Sleep(100);
-            // movement_service.DuckAmount = 1;
-            // System.Threading.Thread.Sleep(100);
-            // player.PlayerPawn.Value.Bot.IsCrouching = true;
             AddTimer(0.1f, () => movement_service.DuckAmount = 1);
             AddTimer(0.2f, () => player.PlayerPawn.Value.Bot.IsCrouching = true);
         }
         
-        // System.Threading.Thread.Sleep(100);
         player.PlayerPawn.Value.Teleport(pos, ang, new Vector(0, 0, 0));
-        // player.PlayerPawn.Value.PlayerLocked = 1;
-        // AddTimer(0.1f, () => player.PlayerPawn.Value.Teleport(pos, ang, new Vector(0, 0, 0)));
     }
 }

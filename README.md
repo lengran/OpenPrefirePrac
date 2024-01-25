@@ -56,3 +56,4 @@ TODO:
 2. Add localization support.
 3. Allow bots to shoot and set bots difficulty.
 4. Give player weapons.
+5. Reroute saperate logs into one gathered place for better debug experience.
