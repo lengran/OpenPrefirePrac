@@ -1,14 +1,11 @@
 ﻿using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Menu;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Modules.Utils;
-using CounterStrikeSharp.API.Core.Translations;
 using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
-using System.ComponentModel.DataAnnotations;
-using System.Collections.Immutable;
+using System.Globalization;
 
 namespace OpenPrefirePrac;
 
@@ -18,10 +15,15 @@ public class OpenPrefirePrac : BasePlugin
     public override string ModuleVersion => "0.0.5";
 
     private Dictionary<int, List<int>> bots_of_players = new Dictionary<int, List<int>>();
+
     private Dictionary<int, int> progress_of_players = new Dictionary<int, int>();
+
     private Dictionary<int, int> masters_of_bots = new Dictionary<int, int>();
+
     private Dictionary<int, int> practice_of_players = new Dictionary<int, int>();
+
     private Dictionary<string, int> practice_name_to_id = new Dictionary<string, int>();
+
     private Dictionary<int, bool> practice_enabled = new Dictionary<int, bool>();
 
     private string map_name = "";
@@ -29,7 +31,10 @@ public class OpenPrefirePrac : BasePlugin
     private int player_count = 0;
 
     private Dictionary<int, PrefirePractice> practices = new Dictionary<int, PrefirePractice>();
+
     private List<string> availble_maps = new List<string>();
+
+    private Translator translator;
 
     public override void Load(bool hotReload)
     {
@@ -39,6 +44,8 @@ public class OpenPrefirePrac : BasePlugin
         RegisterListener<Listeners.OnClientPutInServer>(OnClientPutInServerHandler);
         RegisterListener<Listeners.OnMapStart>(OnMapStartHandler);
         RegisterListener<Listeners.OnClientDisconnect>(OnClientDisconnectHandler);
+
+        translator = new Translator(Localizer, ModuleDirectory, CultureInfo.CurrentCulture.Name);
     }
 
     public void OnClientPutInServerHandler(int slot)
@@ -51,7 +58,9 @@ public class OpenPrefirePrac : BasePlugin
         progress_of_players.Add(slot, 0);
         practice_of_players.Add(slot, -1);
 
-        // Console.WriteLine("[OpenPrefirePrac] Player just connected: " + player.Handle);
+        // Record player language
+        translator.RecordPlayerCulture(player);
+        // Console.WriteLine("[OpenPrefirePrac] Player " + player.PlayerName + "(" + translator.language_manager[player.SteamID] + ") just connected.");
     }
 
     public void OnClientDisconnectHandler(int slot)
@@ -154,11 +163,11 @@ public class OpenPrefirePrac : BasePlugin
     {       
         // var language = player.GetLanguage();
         // Console.WriteLine($"[OpenPrefirePrac] Player {player.PlayerName}'s language is {language.Name}.");
-        ChatMenu main_menu = new ChatMenu(Localizer["mainmenu.title"]);
+        ChatMenu main_menu = new ChatMenu(translator.Translate(player, "mainmenu.title"));
         // main_menu.MenuOptions.Clear();
-        main_menu.AddMenuOption(Localizer["mainmenu.practice"], OpenPracticeMenu);
-        main_menu.AddMenuOption(Localizer["mainmenu.map"], OpenMapMenu);
-        main_menu.AddMenuOption(Localizer["mainmenu.exit"], ForceExitPrefireMode);
+        main_menu.AddMenuOption(translator.Translate(player, "mainmenu.practice"), OpenPracticeMenu);
+        main_menu.AddMenuOption(translator.Translate(player, "mainmenu.map"), OpenMapMenu);
+        main_menu.AddMenuOption(translator.Translate(player, "mainmenu.exit"), ForceExitPrefireMode);
         
         player.PrintToChat("============ [OpenPrefirePrac] ============");
         ChatMenus.OpenMenu(player, main_menu);
@@ -192,7 +201,7 @@ public class OpenPrefirePrac : BasePlugin
         // Check if selected practice route is compatible with other on-playing routes.
         if (!practice_enabled[practice_no])
         {
-            player.PrintToChat(Localizer["practice.incompatible"]);
+            player.PrintToChat(translator.Translate(player, "practice.incompatible"));
             return;
         }
 
@@ -221,7 +230,8 @@ public class OpenPrefirePrac : BasePlugin
             
         }
         
-        player.PrintToChat(Localizer["practice.choose", Localizer["map." + map_name + "." + choosen_practice.Replace(" ", "_")]]);
+        string tmp_str = translator.Translate(player, "map." + map_name + "." + choosen_practice.Replace(" ", "_"));
+        player.PrintToChat(translator.Translate(player, "practice.choose", tmp_str));
         practice_of_players[player.Slot] = practice_no;
 
         // Disable incompatible practices.
@@ -252,19 +262,19 @@ public class OpenPrefirePrac : BasePlugin
         // });
         
         AddTimer(3f, () => MovePlayer(player, false, practices[practice_no].player.position, practices[practice_no].player.rotation));
-        player.PrintToCenter(Localizer["practice.begin"]);
+        player.PrintToCenter(translator.Translate(player, "practice.begin"));
     }
 
     public void ForceExitPrefireMode(CCSPlayerController player, ChatMenuOption option)
     {
         ExitPrefireMode(player);
         
-        player.PrintToChat(Localizer["practice.exit"]);
+        player.PrintToChat(translator.Translate(player, "practice.exit"));
     }
 
     public void OpenMapMenu(CCSPlayerController player, ChatMenuOption option)
     {
-        ChatMenu map_menu = new ChatMenu(Localizer["mapmenu.title"]);
+        ChatMenu map_menu = new ChatMenu(translator.Translate(player, "mapmenu.title"));
         for (int i = 0; i < availble_maps.Count; i++)
             map_menu.AddMenuOption(availble_maps[i], ChangeMap);
 
@@ -276,7 +286,7 @@ public class OpenPrefirePrac : BasePlugin
     public void OpenPracticeMenu(CCSPlayerController player, ChatMenuOption option)
     {
         // Dynamically draw menu
-        ChatMenu practice_menu = new ChatMenu(Localizer["practicemenu.title"]);
+        ChatMenu practice_menu = new ChatMenu(translator.Translate(player, "practicemenu.title"));
         // practice_menu.MenuOptions.Clear();
         for (int i = 0; i < practices.Count; i++)
         {
@@ -300,7 +310,7 @@ public class OpenPrefirePrac : BasePlugin
         }
         else
         {
-            player.PrintToChat(Localizer["mapmenu.busy"]);
+            player.PrintToChat(translator.Translate(player, "mapmenu.busy"));
         }
     }
 
