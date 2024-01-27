@@ -12,7 +12,7 @@ namespace OpenPrefirePrac;
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.0.5";
+    public override string ModuleVersion => "0.0.6";
 
     private Dictionary<int, List<int>> bots_of_players = new Dictionary<int, List<int>>();
 
@@ -147,7 +147,7 @@ public class OpenPrefirePrac : BasePlugin
                     {
                         // Practice finished.
                         var player = new CCSPlayerController(NativeAPI.GetEntityFromIndex(master_slot + 1));
-                        player.PrintToChat("[OpenPrefirePrac] Congratulations! You have finished your prefire practice!");
+                        player.PrintToChat(translator.Translate(player, "practice.finish"));
                         ExitPrefireMode(player);
                     }
                 }

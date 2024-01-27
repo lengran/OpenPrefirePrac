@@ -10,10 +10,12 @@
     "practice.choose" : "[OpenPrefirePrac] 正在开始训练 ({0})。",
     "practice.begin": "训练愉快！",
     "practice.exit": "[OpenPrefirePrac] 预瞄练习模式已退出。",
+    "practice.finish": "[OpenPrefirePrac] 恭喜！您完成了训练！",
     "map.de_inferno.a_apts": "A 二楼到 A 包点",
     "map.de_inferno.banana_to_b": "香蕉道到 B 包点",
     "map.de_inferno.mid_to_a_long": "A 连接到 A 包点",
     "map.de_inferno.mid_to_a_short": "A1 到 A 包点",
+    "map.de_inferno.b_retake": "从警家回防 B 包点",
     "map.de_dust2.a_long": "A 大到 A 包点",
     "map.de_dust2.a_short": "A 小到 A 包点"
 } 
