@@ -25,6 +25,7 @@ public class Translator
         _plugin_path = module_directory;
         _default_culture = default_culture;
 
+        // Whenever add a translation profile, add a mapper.
         country_to_culture_mapper.Add("CN", "ZH");
     }
 
@@ -52,10 +53,11 @@ public class Translator
             return;
         }
 
+        // Languages are mapped from country codes. So if there is no mapper for a player's country, use default language(English).
         if (country_to_culture_mapper.ContainsKey(iso_code))
             language_manager.Add(steam_id, country_to_culture_mapper[iso_code]);
         else
-            language_manager.Add(steam_id, iso_code);
+            language_manager.Add(steam_id, _default_culture);
     }
 
     public string Translate(CCSPlayerController player, string token_to_localize)

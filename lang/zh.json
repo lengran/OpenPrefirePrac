@@ -16,6 +16,8 @@
     "map.de_inferno.mid_to_a_long": "A 连接到 A 包点",
     "map.de_inferno.mid_to_a_short": "A1 到 A 包点",
     "map.de_inferno.b_retake": "从警家回防 B 包点",
+    "map.de_ancient.b_ramp_to_b": "从 B 斜坡进攻 B 包点",
+    "map.de_ancient.b_house_to_b": "从 B 黑屋进攻 B 包点",
     "map.de_dust2.a_long": "A 大到 A 包点",
     "map.de_dust2.a_short": "A 小到 A 包点"
 } 

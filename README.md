@@ -46,15 +46,20 @@ Finished practices:
 
 - de_inferno
     - A short to A site
+    - A long to A site
     - A apartments to A site
     - Banana to B site
+    - Retake B from CT spawn
+- de_ancient
+    - B ramp to B site
+    - B house to B site
 - de_dust2
     - Some dummy practices of little if not no use.
 
 TODO:
 
 1. Create prefire profiles for all maps.
-2. Add localization support.
+2. Add localization support (The supporting framework is almost done. Submitting translation profiles are warmly welcomed.).
 3. Allow bots to shoot and set bots difficulty.
 4. Give player weapons.
 5. Reroute saperate logs into one gathered place for better debug experience.

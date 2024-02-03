@@ -12,7 +12,7 @@ namespace OpenPrefirePrac;
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.0.6";
+    public override string ModuleVersion => "0.0.7";
 
     private Dictionary<int, List<int>> bots_of_players = new Dictionary<int, List<int>>();
 
@@ -99,7 +99,6 @@ public class OpenPrefirePrac : BasePlugin
             {
                 found = true;
                 Console.WriteLine("[OpenPrefirePrac] Map folder for current map founded.");
-                break;
             }
         }
 
@@ -320,6 +319,7 @@ public class OpenPrefirePrac : BasePlugin
         List<string> practice_files = new List<string>(Directory.EnumerateFiles(ModuleDirectory + "/maps/" + map_name));
         practices.Clear();
         practice_name_to_id.Clear();
+        practice_enabled.Clear();
         for (int i = 0; i < practice_files.Count; i++)
         {
             string practice_name = practice_files[i].Substring(practice_files[i].LastIndexOf(Path.DirectorySeparatorChar) + 1).Split(".")[0];
