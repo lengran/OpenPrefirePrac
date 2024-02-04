@@ -53,6 +53,8 @@ Finished practices:
 - de_ancient
     - B ramp to B site
     - B house to B site
+    - Mid to A site
+    - A main to A site
 - de_dust2
     - Some dummy practices of little if not no use.
 

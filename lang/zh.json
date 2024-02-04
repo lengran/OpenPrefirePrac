@@ -19,6 +19,7 @@
     "map.de_ancient.b_ramp_to_b": "从 B 斜坡进攻 B 包点",
     "map.de_ancient.b_house_to_b": "从 B 黑屋进攻 B 包点",
     "map.de_ancient.mid_to_a": "从甜甜圈进攻 A 包点",
+    "map.de_ancient.a_main": "从 A 厅进攻 A 包点",
     "map.de_dust2.a_long": "A 大到 A 包点",
     "map.de_dust2.a_short": "A 小到 A 包点"
 } 
