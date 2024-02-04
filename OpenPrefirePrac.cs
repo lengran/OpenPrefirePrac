@@ -12,7 +12,7 @@ namespace OpenPrefirePrac;
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.0.7";
+    public override string ModuleVersion => "0.0.8";
 
     private Dictionary<int, List<int>> bots_of_players = new Dictionary<int, List<int>>();
 
@@ -209,6 +209,9 @@ public class OpenPrefirePrac : BasePlugin
         {
             // If the player isn't practicing now
             player_count++;
+
+            // Give player AK, deagle, armor and flashes.
+            AddTimer(1.5f, () => EquipPlayer(player));
         }
         else
         {
@@ -246,7 +249,6 @@ public class OpenPrefirePrac : BasePlugin
         // Spawn bots
         Console.WriteLine($"[OpenPrefirePrac] Spawn {practices[practice_no].num_bots} targets (total {practices[practice_no].targets.Count})");
         AddBot(player, practices[practice_no].num_bots);
-        
 
         // AddTimer(0.5f, () => 
         // {
@@ -464,5 +466,13 @@ public class OpenPrefirePrac : BasePlugin
         }
         
         player.PlayerPawn.Value.Teleport(pos, ang, new Vector(0, 0, 0));
+    }
+
+    public void EquipPlayer(CCSPlayerController player)
+    {
+        // Give weapons and items
+        player.GiveNamedItem("weapon_ak47");
+        player.GiveNamedItem("item_assaultsuit");
+        player.GiveNamedItem("weapon_flashbang");
     }
 }

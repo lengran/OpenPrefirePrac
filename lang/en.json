@@ -18,6 +18,7 @@
     "map.de_inferno.b_retake": "Retake B from CT spawn",
     "map.de_ancient.b_ramp_to_b": "Attack B site from outside B",
     "map.de_ancient.b_house_to_b": "Attack B site from B house",
+    "map.de_ancient.mid_to_a": "Attack A site from donut",
     "map.de_dust2.a_long": "A long to A site",
     "map.de_dust2.a_short": "A Short to A site"
 } 

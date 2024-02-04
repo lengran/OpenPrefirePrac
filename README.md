@@ -61,8 +61,7 @@ TODO:
 1. Create prefire profiles for all maps.
 2. Add localization support (The supporting framework is almost done. Submitting translation profiles are warmly welcomed.).
 3. Allow bots to shoot and set bots difficulty.
-4. Give player weapons.
-5. Reroute saperate logs into one gathered place for better debug experience.
+4. Reroute saperate logs into one gathered place for better debug experience.
 
 ## Reference
 
