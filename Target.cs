@@ -34,7 +34,7 @@ public class PrefirePractice
         targets = new List<TargetBot>();
         incompatible_practices = new List<string>();
 
-        practice_name = practice.Replace("_", " ");
+        practice_name = practice;
         // TODO: Read positions from file
         string path = $"../../csgo/addons/counterstrikesharp/plugins/OpenPrefirePrac/maps/{map}/{practice}.txt";
         // Set player position and angles
@@ -52,7 +52,7 @@ public class PrefirePractice
                 s = sr.ReadLine();
                 w = s.Split(delimiter_chars);
                 for (int i = 0; i < w.Length; i++)
-                    incompatible_practices.Add(w[i].Replace("_", " "));
+                    incompatible_practices.Add(w[i]);
 
                 // The second line indicates how many bots are needed.
                 s = sr.ReadLine();

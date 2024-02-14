@@ -9,7 +9,7 @@
     "practice.incompatible": "其他玩家（或您）正在进行与您所选训练冲突的训练，请退出当前训练再试，或等待其他玩家完成训练。",
     "practice.choose" : "[OpenPrefirePrac] 正在开始训练 ({0})。",
     "practice.begin": "训练愉快！",
-    "practice.exit": "[OpenPrefirePrac] 预瞄练习模式已退出。",
+    "practice.exit": "[OpenPrefirePrac] 预瞄训练模式已退出。",
     "practice.finish": "[OpenPrefirePrac] 恭喜！您完成了训练！",
     "map.de_inferno.a_apts": "A 二楼到 A 包点",
     "map.de_inferno.banana_to_b": "香蕉道到 B 包点",
@@ -20,6 +20,7 @@
     "map.de_ancient.b_house_to_b": "从 B 黑屋进攻 B 包点",
     "map.de_ancient.mid_to_a": "从甜甜圈进攻 A 包点",
     "map.de_ancient.a_main": "从 A 厅进攻 A 包点",
+    "map.de_ancient.a_retake": "从警家回防 A 包点",
     "map.de_dust2.a_long": "A 大到 A 包点",
     "map.de_dust2.a_short": "A 小到 A 包点"
 } 

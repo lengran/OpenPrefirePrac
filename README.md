@@ -4,7 +4,17 @@ An open-source CounterStrikeSharp powered server-side practicing plugin for CS2.
 
 ## How to use
 
-Currently I only provide the Linux (amd64) version. Download the release file and put it into your counterstrikesharp plugin folder.
+### Requirement
+
+- CounterStrikeSharp v166
+
+### Installation
+
+Currently I only provide the Linux (amd64) version. Download [the latest release files](https://github.com/lengran/OpenPrefirePrac/releases) and extract all files into your counterstrikesharp plugin folder.
+
+To install the latest version of CounterStrikeSharp, please refer to this [guide](https://docs.cssharp.dev/docs/guides/getting-started.html).
+
+### Tips on operating a practice server
 
 When starting a server, I recommend using these parameters.
 

@@ -12,7 +12,7 @@ namespace OpenPrefirePrac;
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.0.9";
+    public override string ModuleVersion => "0.0.10";
 
     private Dictionary<int, List<int>> bots_of_players = new Dictionary<int, List<int>>();
 
@@ -25,6 +25,8 @@ public class OpenPrefirePrac : BasePlugin
     private Dictionary<string, int> practice_name_to_id = new Dictionary<string, int>();
 
     private Dictionary<int, bool> practice_enabled = new Dictionary<int, bool>();
+
+    private Dictionary<int, Dictionary<string, int>> localized_practice_names = new Dictionary<int, Dictionary<string, int>>();
 
     private string map_name = "";
 
@@ -57,6 +59,7 @@ public class OpenPrefirePrac : BasePlugin
         bots_of_players.Add(slot, new List<int>());
         progress_of_players.Add(slot, 0);
         practice_of_players.Add(slot, -1);
+        localized_practice_names.Add(slot, new Dictionary<string, int>());
 
         // Record player language
         translator.RecordPlayerCulture(player);
@@ -79,6 +82,7 @@ public class OpenPrefirePrac : BasePlugin
         bots_of_players.Remove(slot);
         progress_of_players.Remove(slot);
         practice_of_players.Remove(slot);
+        localized_practice_names.Remove(slot);
     }
 
     public void OnMapStartHandler(string map)
@@ -87,6 +91,7 @@ public class OpenPrefirePrac : BasePlugin
         // Console.WriteLine("[OpenPrefirePrac] Map loaded: " + map_name);
 
         // load practices available in current map, from corresponding map directory.
+        availble_maps.Clear();
         List<string> map_dirs = new List<string>(Directory.EnumerateDirectories(ModuleDirectory + "/maps"));
         bool found = false;
         for (int i = 0; i < map_dirs.Count; i++)
@@ -193,9 +198,10 @@ public class OpenPrefirePrac : BasePlugin
             Server.ExecuteCommand("bot_zombie 1");
         }
 
-        string choosen_practice = option.Text;
+        // string choosen_practice = option.Text;
         // player.PrintToChat(choosen_practice);
-        int practice_no = practice_name_to_id[choosen_practice];
+        // int practice_no = practice_name_to_id[choosen_practice];
+        int practice_no = localized_practice_names[player.Slot][option.Text];
 
         // Check if selected practice route is compatible with other on-playing routes.
         if (!practice_enabled[practice_no])
@@ -232,7 +238,7 @@ public class OpenPrefirePrac : BasePlugin
             
         }
         
-        string tmp_str = translator.Translate(player, "map." + map_name + "." + choosen_practice.Replace(" ", "_"));
+        string tmp_str = translator.Translate(player, "map." + map_name + "." + practices[practice_no].practice_name);
         player.PrintToChat(translator.Translate(player, "practice.choose", tmp_str));
         practice_of_players[player.Slot] = practice_no;
 
@@ -288,11 +294,16 @@ public class OpenPrefirePrac : BasePlugin
     {
         // Dynamically draw menu
         ChatMenu practice_menu = new ChatMenu(translator.Translate(player, "practicemenu.title"));
-        // practice_menu.MenuOptions.Clear();
+        localized_practice_names[player.Slot].Clear();
+
         for (int i = 0; i < practices.Count; i++)
         {
             if (practice_enabled[i])
-                practice_menu.AddMenuOption(practices[i].practice_name, OnRouteSelect);     // practice name here is splited by space instead of underline. TODO: Use localized text.
+            {
+                string tmp_localized_practice_name = translator.Translate(player, "map." + map_name + "." + practices[i].practice_name);
+                localized_practice_names[player.Slot].Add(tmp_localized_practice_name, i);
+                practice_menu.AddMenuOption(tmp_localized_practice_name, OnRouteSelect);     // practice name here is splited by space instead of underline. TODO: Use localized text.
+            }
         }
 
         player.PrintToChat("============ [OpenPrefirePrac] ============");
@@ -326,7 +337,7 @@ public class OpenPrefirePrac : BasePlugin
         {
             string practice_name = practice_files[i].Substring(practice_files[i].LastIndexOf(Path.DirectorySeparatorChar) + 1).Split(".")[0];
             practices.Add(i, new PrefirePractice(map_name, practice_name));
-            practice_name_to_id.Add(practice_name.Replace("_", " "), i);
+            practice_name_to_id.Add(practice_name, i);
             practice_enabled.Add(i, true);
             Console.WriteLine($"[OpenPrefirePrac] {map_name} {practice_name} Loaded.");
         }
@@ -470,9 +481,48 @@ public class OpenPrefirePrac : BasePlugin
 
     public void EquipPlayer(CCSPlayerController player)
     {
+        // Remove main, secondary weapons and grenades
+        // try
+        // {
+        //     if (player.PlayerPawn.IsValid && player.PawnIsAlive && player.PlayerPawn.Value!.WeaponServices != null)
+        //     {
+        //         foreach (CHandle<CBasePlayerWeapon> weapon in player.PlayerPawn.Value.WeaponServices.MyWeapons)
+        //         {
+        //             if (weapon.IsValid && weapon.Value != null)
+        //             {
+        //                 CCSWeaponBase weapon_base = weapon.Value.As<CCSWeaponBase>();
+                        
+        //                 if (weapon_base != null && weapon_base.IsValid)
+        //                 {
+        //                     CCSWeaponBaseVData weapon_data = weapon_base.VData;
+
+        //                     if (weapon_data != null && (weapon_data.GearSlot == gear_slot_t.GEAR_SLOT_RIFLE || weapon_data.GearSlot == gear_slot_t.GEAR_SLOT_PISTOL || weapon_data.GearSlot == gear_slot_t.GEAR_SLOT_GRENADES))
+        //                     {
+        //                         bool tmp = Utilities.RemoveItemByDesignerName(player, weapon_base.DesignerName);
+        //                         if (!tmp)
+        //                             Console.WriteLine("[OpenPrefirePrac] Failed to remove weapon " + weapon_base.DesignerName);
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+        // catch (System.Exception e)
+        // {
+        //     Console.WriteLine("[OpenPrefirePrac] Exception happens when removing weapons from player:\n" + e.ToString());
+        //     // throw;
+        // }
+        player.RemoveWeapons();
+        
+
         // Give weapons and items
         player.GiveNamedItem("weapon_ak47");
+        player.GiveNamedItem("weapon_deagle");
         player.GiveNamedItem("item_assaultsuit");
         player.GiveNamedItem("weapon_flashbang");
+        player.GiveNamedItem("weapon_knife");
+
+        // Switch to main weapon
+        player.ExecuteClientCommand("slot1");
     }
 }
