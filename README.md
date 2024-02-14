@@ -65,6 +65,9 @@ Finished practices:
     - B house to B site
     - Mid to A site
     - A main to A site
+    - Retake A from CT spawn
+- de_mirage
+    - TODO
 - de_dust2
     - Some dummy practices of little if not no use.
 
