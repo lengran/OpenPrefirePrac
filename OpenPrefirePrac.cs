@@ -12,7 +12,7 @@ namespace OpenPrefirePrac;
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.0.10";
+    public override string ModuleVersion => "0.0.11";
 
     private Dictionary<int, List<int>> bots_of_players = new Dictionary<int, List<int>>();
 
