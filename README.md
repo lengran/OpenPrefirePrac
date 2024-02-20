@@ -67,16 +67,18 @@ Finished practices:
     - A main to A site
     - Retake A from CT spawn
 - de_mirage
-    - TODO
+    - Attach A site from A ramp (to CT spawn)
 - de_dust2
     - Some dummy practices of little if not no use.
 
 TODO:
 
 1. Create prefire profiles for all maps.
-2. Add localization support (The supporting framework is almost done. Submitting translation profiles are warmly welcomed.).
-3. Allow bots to shoot and set bots difficulty.
-4. Reroute saperate logs into one gathered place for better debug experience.
+2. Allow bots to shoot and set bots difficulty.
+3. Add prompt for each position to tell player which bot is missed.
+4. Draw recommended route on the floor.
+5. Add localization support (The supporting framework is almost done. Submitting translation profiles are warmly welcomed.).
+6. Reroute saperate logs into one gathered place for better debug experience.
 
 ## Reference
 
