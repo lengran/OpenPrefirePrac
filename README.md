@@ -6,11 +6,11 @@ An open-source CounterStrikeSharp powered server-side practicing plugin for CS2.
 
 ### Requirement
 
-- CounterStrikeSharp v166
+- CounterStrikeSharp v168
 
 ### Installation
 
-Currently I only provide the Linux (amd64) version. Download [the latest release files](https://github.com/lengran/OpenPrefirePrac/releases) and extract all files into your counterstrikesharp plugin folder.
+Currently I only provide the Linux (amd64) version. Download [the latest release files](https://github.com/lengran/OpenPrefirePrac/releases) and extract all files into **game/csgo/addons/counterstrikesharp/plugins/OpenPrefirePrac/**.
 
 To install the latest version of CounterStrikeSharp, please refer to this [guide](https://docs.cssharp.dev/docs/guides/getting-started.html).
 
@@ -19,7 +19,7 @@ To install the latest version of CounterStrikeSharp, please refer to this [guide
 When starting a server, I recommend using these parameters.
 
 ```base
-[CS2 Installation Directory]/game/bin/linuxsteamrt64/cs2 -dedicated -insecure +map de_inferno -maxplayers_override 64
+[CS2 Installation Directory]/game/bin/linuxsteamrt64/cs2 -dedicated -insecure +map de_inferno -maxplayers_override 64 +game_alias competitive
 ```
 
 Note: "-maxplayers_override 64" is the most important one. It allows the server to add more than 5 bots on one team, which is crucial to achieve the goal of allowing multiplayer training simultaneously.
@@ -69,15 +69,15 @@ Finished practices:
 - de_mirage
     - Attach A site from A ramp (to CT spawn)
 - de_dust2
-    - Some dummy practices of little if not no use.
+    - Some dummy practices of little if any use.
 
 TODO:
 
 1. Create prefire profiles for all maps.
-2. Allow bots to shoot and set bots difficulty.
-3. Add prompt for each position to tell player which bot is missed.
-4. Draw recommended route on the floor.
-5. Add localization support (The supporting framework is almost done. Submitting translation profiles are warmly welcomed.).
+2. Draw guiding lines on the floor.
+3. Add prompt for each position to tell player which bot they have missed.
+4. Improve the bot shooting logic.
+5. Improve localization support (The supporting framework is almost done. Submitting translation profiles are warmly welcomed.).
 6. Reroute saperate logs into one gathered place for better debug experience.
 
 ## Reference
@@ -87,6 +87,7 @@ I have referred these open-source projects during the development.
 - https://github.com/shobhit-pathak/MatchZy/
 - https://github.com/B3none/cs2-retakes
 - https://github.com/aprox2/GeoLocationLanguageManagerPlugin
+- https://github.com/daffyyyy/CS2-SimpleAdmin
 
 This project is inspired by a close-source prefire plugin developed by https://space.bilibili.com/283758782.
 
