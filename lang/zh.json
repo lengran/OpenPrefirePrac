@@ -17,6 +17,7 @@
     "difficulty.1": "传奇 - 初始 500HP",
     "difficulty.2": "困难 - 每个击杀恢复 25HP",
     "difficulty.3": "正常 - 每个击杀恢复 100HP",
+    "difficulty.4": "简单 - 每个击杀恢复 500HP",
     "difficulty.set": "[OpenPrefirePrac] 难度已设置为：{0}。",
     "map.de_inferno.a_apts": "A 二楼到 A 包点",
     "map.de_inferno.banana_to_b": "香蕉道到 B 包点",

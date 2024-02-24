@@ -19,7 +19,7 @@ public class OpenPrefirePrac : BasePlugin
 
     private Dictionary<int, int> progress_of_players = new Dictionary<int, int>();
     
-    private Dictionary<int, int> healing_method_of_players = new Dictionary<int, int>(); // 0: No healing; 1: Init hp 500 with no healing; 2: +25hp for each kill; 3: +100hp for each kill
+    private Dictionary<int, int> healing_method_of_players = new Dictionary<int, int>(); // 0: No healing; 1: Init hp 500 with no healing; 2: +25hp for each kill; 3: +100hp for each kill; 4: +500hp for each kill
 
     private Dictionary<int, int> masters_of_bots = new Dictionary<int, int>();
 
@@ -210,14 +210,27 @@ public class OpenPrefirePrac : BasePlugin
                         master.GiveNamedItem("item_assaultsuit");
                         
                         int current_hp = master.Pawn.Value.Health;
-                        if (healing_method_of_players[master_slot] == 2)
-                            current_hp = current_hp + 25;
-                        else
-                            current_hp = current_hp + 100;
+                        // if (healing_method_of_players[master_slot] == 2)
+                        //     current_hp = current_hp + 25;
+                        // else
+                        //     current_hp = current_hp + 100;
+                        switch (healing_method_of_players[master_slot])
+                        {
+                            case 2:
+                                current_hp = current_hp + 25;
+                                break;
+                            case 4:
+                                current_hp = current_hp + 500;
+                                break;
+                            default:
+                                current_hp = current_hp + 100;
+                                break;
+                        }
                         SetPlayerHealth(master, current_hp);
                     }
                 }
 
+                // Kick unnecessary bots
                 if (target_no >= practices[practice_no].targets.Count)
                 {
                     masters_of_bots.Remove(@event.Userid.Slot);
@@ -235,6 +248,15 @@ public class OpenPrefirePrac : BasePlugin
             }
         }
 
+        // Check if player has enough for selected practice
+        if (@event.Userid.IsValid && !@event.Userid.IsBot && !@event.Userid.IsHLTV)
+        {
+            int practice_no = practice_of_players[@event.Userid.Slot];
+            
+            if (practice_no > 0 && bots_of_players[@event.Userid.Slot].Count < practices[practice_no].num_bots)
+                AddBot(@event.Userid, practices[practice_no].num_bots - bots_of_players[@event.Userid.Slot].Count);
+        }
+        
         return HookResult.Continue;
     }
 
@@ -248,9 +270,9 @@ public class OpenPrefirePrac : BasePlugin
         // main_menu.MenuOptions.Clear();
         main_menu.AddMenuOption(translator.Translate(player, "mainmenu.practice"), OpenPracticeMenu);
         main_menu.AddMenuOption(translator.Translate(player, "mainmenu.map"), OpenMapMenu);
-        main_menu.AddMenuOption(translator.Translate(player, "mainmenu.exit"), ForceExitPrefireMode);
         string current_difficulty = translator.Translate(player, $"difficulty.{healing_method_of_players[player.Slot]}");
         main_menu.AddMenuOption(translator.Translate(player, "mainmenu.difficulty", current_difficulty), OpenDifficultyMenu);
+        main_menu.AddMenuOption(translator.Translate(player, "mainmenu.exit"), ForceExitPrefireMode);
         
         player.PrintToChat("============ [OpenPrefirePrac] ============");
         ChatMenus.OpenMenu(player, main_menu);
@@ -397,7 +419,7 @@ public class OpenPrefirePrac : BasePlugin
         ChatMenu difficulty_menu = new ChatMenu(translator.Translate(player, "difficulty.title"));
         localized_difficulty_names[player.Slot].Clear();
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 5; i++)
         {
 
             string tmp_localized_difficulty_name = translator.Translate(player, $"difficulty.{i}");
@@ -481,7 +503,7 @@ public class OpenPrefirePrac : BasePlugin
         {
             int bot_slot = bots_of_players[player.Slot][i];
             var bot = new CCSPlayerController(NativeAPI.GetEntityFromIndex(bot_slot + 1));
-            if (bot.IsValid)
+            if (bot.IsValid || bot.PawnIsAlive)
             {
                 Server.ExecuteCommand($"bot_kill {bot.PlayerName}");
             }
@@ -495,11 +517,11 @@ public class OpenPrefirePrac : BasePlugin
     private void SetupPrefireMode(CCSPlayerController player)
     {
         int practice_no = practice_of_players[player.Slot];
-
-        ResetBots(player);
+        
+        AddTimer(0.5f, () => ResetBots(player));
         
         // Setup player's HP
-        if (healing_method_of_players[player.Slot] == 1)
+        if (healing_method_of_players[player.Slot] == 1 || healing_method_of_players[player.Slot] == 4)
             AddTimer(0.5f, () => SetPlayerHealth(player, 500));
 
         AddTimer(0.8f, () => EquipPlayer(player));
@@ -587,17 +609,6 @@ public class OpenPrefirePrac : BasePlugin
                 }
             }
         });
-
-        AddTimer(0.5f, () =>
-        {
-            progress_of_players[player.Slot] = 0;
-
-            for (int i = 0; i < bots_of_players[player.Slot].Count; i++)
-            {
-                var bot = new CCSPlayerController(NativeAPI.GetEntityFromIndex(bots_of_players[player.Slot][i] + 1));
-                Server.ExecuteCommand($"bot_kill {bot.PlayerName}");
-            }
-        });
     }
 
     private void MovePlayer(CCSPlayerController player, bool crouch, Vector pos, QAngle ang)
@@ -638,6 +649,7 @@ public class OpenPrefirePrac : BasePlugin
         player.GiveNamedItem("weapon_deagle");
         player.GiveNamedItem("weapon_knife");
         player.GiveNamedItem("weapon_flashbang");
+        player.GiveNamedItem("weapon_smokegrenade");
         player.GiveNamedItem("item_assaultsuit");
 
         // Switch to main weapon

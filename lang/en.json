@@ -17,6 +17,7 @@
     "difficulty.1": "Harder - 500HP",
     "difficulty.2": "Hard - +25HP per kill",
     "difficulty.3": "Normal - +100HP per kill",
+    "difficulty.4": "Easy - +500HP per kill",
     "difficulty.set": "[OpenPrefirePrac] Difficulty has been set to: {0}.",
     "map.de_inferno.a_apts": "A apartment to A site",
     "map.de_inferno.banana_to_b": "Banana to B site",
