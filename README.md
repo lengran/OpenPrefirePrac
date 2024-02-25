@@ -67,7 +67,8 @@ Finished practices:
     - A main to A site
     - Retake A from CT spawn
 - de_mirage
-    - Attach A site from A ramp (to CT spawn)
+    - Attack A site from A ramp (to CT spawn)
+    - Attack B site from B apartments
 - de_dust2
     - Some dummy practices of little if any use.
 
@@ -76,7 +77,7 @@ TODO:
 1. Create prefire profiles for all maps.
 2. Draw guiding lines on the floor.
 3. Add prompt for each position to tell player which bot they have missed.
-4. Improve the bot shooting logic.
+4. Improve the bot logic.
 5. Improve localization support (The supporting framework is almost done. Submitting translation profiles are warmly welcomed.).
 6. Reroute saperate logs into one gathered place for better debug experience.
 
