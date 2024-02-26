@@ -53,6 +53,35 @@ public class OpenPrefirePrac : BasePlugin
         RegisterListener<Listeners.OnClientDisconnectPost>(OnClientDisconnectHandler);
 
         translator = new Translator(Localizer, ModuleDirectory, CultureInfo.CurrentCulture.Name);
+
+        if (hotReload)
+        {
+            // Clear status registers
+            bots_of_players.Clear();
+            progress_of_players.Clear();
+            healing_method_of_players.Clear();
+            masters_of_bots.Clear();
+            practice_of_players.Clear();
+            practice_name_to_id.Clear();
+            practice_enabled.Clear();
+            localized_practice_names.Clear();
+            localized_difficulty_names.Clear();
+            practices.Clear();
+            availble_maps.Clear();
+            map_name = "";
+            player_count = 0;
+
+            // Setup map
+            OnMapStartHandler(Server.MapName);
+            
+            // Setup players
+            IEnumerable<CCSPlayerController> playerEntities = Utilities.FindAllEntitiesByDesignerName<CCSPlayerController>("cs_player_controller");
+            foreach (CCSPlayerController tempPlayer in playerEntities)
+            {
+                if (!tempPlayer.IsValid || tempPlayer.IsBot || tempPlayer.IsHLTV) continue;
+                OnClientPutInServerHandler(tempPlayer.Slot);    
+            }
+        }
     }
 
     public void OnClientPutInServerHandler(int slot)

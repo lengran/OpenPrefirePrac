@@ -18,7 +18,7 @@ To install the latest version of CounterStrikeSharp, please refer to this [guide
 
 When starting a server, I recommend using these parameters.
 
-```base
+```bash
 [CS2 Installation Directory]/game/bin/linuxsteamrt64/cs2 -dedicated -insecure +map de_inferno -maxplayers_override 64 +game_alias competitive
 ```
 
@@ -40,12 +40,16 @@ The third line instructs the place and facing direction of the player. The first
 pos_x pos_y pos_z ang_x ang_y ang_z
 ```
 
-The rest lines describe how to place bots. The first 3 numbers is position, following 3 numbers of the rotation. The 7thvalue is either True of False indicating whether the bot is crouching.
-
-The positions and facing rotations can be retrived from in-game get\_pos command.
+The rest lines describe how to place bots. The first 3 numbers is position, following 3 numbers of the rotation. The 7th value is either True of False indicating whether the bot is crouching.
 
 ```
 pos_x pos_y pos_z ang_x ang_y ang_z is_crouching
+```
+
+The positions and facing rotations can be retrived from in-game get\_pos command. But please notice that, the height values used in profiles should be the values returned by get\_pos minus 65. I made a python script that does this calculation for you. You can stack the strings retured by get\_pos and put them in a txt file, and pass the file to the python script as described below and the script will automatically print out the formatted bot positions.
+
+```bash
+python3 calculate_height.py [PATH TO YOUR FILE]
 ```
 
 ## Current development progress
