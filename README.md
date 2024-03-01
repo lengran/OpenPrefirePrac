@@ -6,7 +6,7 @@ An open-source CounterStrikeSharp powered server-side practicing plugin for CS2.
 
 ### Requirement
 
-- CounterStrikeSharp v168
+- CounterStrikeSharp v178
 
 ### Installation
 
@@ -80,10 +80,9 @@ TODO:
 
 1. Create prefire profiles for all maps.
 2. Draw guiding lines on the floor.
-3. Add prompt for each position to tell player which bot they have missed.
-4. Improve the bot logic.
-5. Improve localization support (The supporting framework is almost done. Submitting translation profiles are warmly welcomed.).
-6. Reroute saperate logs into one gathered place for better debug experience.
+3. Improve bot logic.
+4. Improve localization support (The supporting framework is done. Submitting translations is warmly welcomed.).
+5. Reroute saperate logs into one gathered place for better debug experience.
 
 ## Reference
 

@@ -14,6 +14,12 @@ public class PlayerStatus
 
     public Dictionary<string, int> localized_difficulty_names;
 
+    public int training_mode;   // 0: Random mode, 70% targets; 1: Full mode, all targets.
+
+    public Dictionary<string, int> localized_training_mode_names;
+    
+    public List<int> enabled_targets;
+
     public PlayerStatus()
     {
         practice_no = -1;
@@ -21,9 +27,12 @@ public class PlayerStatus
         progress = 0;
         healing_method = 3;
         bots = new List<int>();
+        training_mode = 0;
+        enabled_targets = new List<int>();
 
         // Do not populate these now so as to support changing languages dynamically(TODO)
         localized_practice_names = new Dictionary<string, int>();
         localized_difficulty_names = new Dictionary<string, int>();
+        localized_training_mode_names = new Dictionary<string, int>();
     }
 }
