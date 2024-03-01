@@ -190,6 +190,7 @@ public class OpenPrefirePrac : BasePlugin
                     player_manager[master_slot].progress++;
 
                     MovePlayer(@event.Userid, practices[practice_no].targets[target_no].is_crouching, practices[practice_no].targets[target_no].position, practices[practice_no].targets[target_no].rotation);
+                    // Console.WriteLine($"[OpenPrefirePrac] {@event.Userid.PlayerName}, {practices[practice_no].targets[target_no].is_crouching}, {practices[practice_no].targets[target_no].position.ToString()}");
                     Server.ExecuteCommand($"css_freeze_helper {@event.Userid.Slot}");
                 }
                 else
@@ -205,7 +206,7 @@ public class OpenPrefirePrac : BasePlugin
                     {
                         // Practice finished.
                         var player = new CCSPlayerController(NativeAPI.GetEntityFromIndex(master_slot + 1));
-                        player.PrintToChat($"{ChatColors.Green}[OpenPrefirePrac]{ChatColors.Default} {translator.Translate(player, "practice.finish")}");
+                        player.PrintToChat($"[OpenPrefirePrac] {translator.Translate(player, "practice.finish")}");
                         ExitPrefireMode(player.Slot);
                     }
                 }
@@ -353,7 +354,7 @@ public class OpenPrefirePrac : BasePlugin
             Server.ExecuteCommand("bot_quota_mode normal");
             Server.ExecuteCommand("weapon_auto_cleanup_time 1");
             Server.ExecuteCommand("mp_free_armor 2");
-            Server.ExecuteCommand("mp_respawn_immunitytime 0");
+            Server.ExecuteCommand("mp_respawn_immunitytime -1");
             Server.ExecuteCommand("mp_warmup_start");
             
             // Server.ExecuteCommand("bot_stop 1");
@@ -369,7 +370,7 @@ public class OpenPrefirePrac : BasePlugin
         // Check if selected practice route is compatible with other on-playing routes.
         if (!practice_enabled[practice_no])
         {
-            player.PrintToChat($"{ChatColors.Green}[OpenPrefirePrac]{ChatColors.Default} {translator.Translate(player, "practice.incompatible")}");
+            player.PrintToChat($"[OpenPrefirePrac] {translator.Translate(player, "practice.incompatible")}");
             return;
         }
 
@@ -411,7 +412,7 @@ public class OpenPrefirePrac : BasePlugin
         SetupPrefireMode(player);
         
         string localized_practice_name = translator.Translate(player, "map." + map_name + "." + practices[practice_no].practice_name);
-        player.PrintToChat($"{ChatColors.Green}[OpenPrefirePrac]{ChatColors.Default} {translator.Translate(player, "practice.choose", localized_practice_name)}");
+        player.PrintToChat($"[OpenPrefirePrac] {translator.Translate(player, "practice.choose", localized_practice_name)}");
         player.PrintToCenter(translator.Translate(player, "practice.begin"));
     }
 
@@ -419,7 +420,7 @@ public class OpenPrefirePrac : BasePlugin
     {
         ExitPrefireMode(player.Slot);
         
-        player.PrintToChat($"{ChatColors.Green}[OpenPrefirePrac]{ChatColors.Default} {translator.Translate(player, "practice.exit")}");
+        player.PrintToChat($"[OpenPrefirePrac] {translator.Translate(player, "practice.exit")}");
     }
 
     public void OpenMapMenu(CCSPlayerController player, ChatMenuOption option)
@@ -444,7 +445,7 @@ public class OpenPrefirePrac : BasePlugin
         }
         else
         {
-            player.PrintToChat($"{ChatColors.Green}[OpenPrefirePrac]{ChatColors.Default} {translator.Translate(player, "mapmenu.busy")}");
+            player.PrintToChat($"[OpenPrefirePrac] {translator.Translate(player, "mapmenu.busy")}");
         }
     }
 
@@ -499,7 +500,7 @@ public class OpenPrefirePrac : BasePlugin
         // healing_method_of_players[player.Slot] = difficulty_no;
         player_manager[player.Slot].healing_method = difficulty_no;
         string current_difficulty = translator.Translate(player, $"difficulty.{difficulty_no}");
-        player.PrintToChat($"{ChatColors.Green}[OpenPrefirePrac]{ChatColors.Default} {translator.Translate(player, "difficulty.set", current_difficulty)}");
+        player.PrintToChat($"[OpenPrefirePrac] {translator.Translate(player, "difficulty.set", current_difficulty)}");
     }
     
     private void LoadPractice()
@@ -684,9 +685,6 @@ public class OpenPrefirePrac : BasePlugin
 
     private void MovePlayer(CCSPlayerController player, bool crouch, Vector pos, QAngle ang)
     {
-        if (!player.PawnIsAlive || player.Pawn.Value == null)
-            return;
-        
         // Only bot can crouch
         if (crouch)
         {
