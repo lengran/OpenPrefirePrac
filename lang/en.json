@@ -37,6 +37,6 @@
     "map.de_ancient.a_retake": "Retake A from CT",
     "map.de_mirage.a_ramp": "Attach A site from A ramp (to CT spawn)",
     "map.de_mirage.b_apts": "Attack B site from B apartments",
-    "map.de_dust2.a_long": "A long to A site",
-    "map.de_dust2.a_short": "A Short to A site"
+    "map.de_dust2.a_long": "Attach A site from A long",
+    "map.de_dust2.a_short": "Attach A site from A short"
 } 

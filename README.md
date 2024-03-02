@@ -74,7 +74,8 @@ Finished practices:
     - Attack A site from A ramp (to CT spawn)
     - Attack B site from B apartments
 - de_dust2
-    - Some dummy practices of little if any use.
+    - Attach A site from A long
+    - Attach A site from A short
 
 TODO:
 
