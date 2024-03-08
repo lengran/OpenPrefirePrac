@@ -21,7 +21,7 @@
     "difficulty.3": "正常 - 每个击杀恢复 100HP",
     "difficulty.4": "简单 - 每个击杀恢复 500HP",
     "difficulty.set": "难度已设置为：{0}。",
-    "modemenu.title": "请选择模式\u2029随机模式中，仅生成 70% 的目标。",
+    "modemenu.title": "请选择模式\u2029随机模式中，仅生成一定比例的目标。",
     "modemenu.0": "随机模式",
     "modemenu.1": "完整模式",
     "modemenu.set": "训练模式已被设置为：{0}",
@@ -37,6 +37,7 @@
     "map.de_ancient.a_retake": "从警家回防 A 包点",
     "map.de_mirage.a_ramp": "从 A1 进攻 A 包点（到警家）",
     "map.de_mirage.b_apts": "从 B 二楼进攻 B 包点",
+    "map.de_mirage.a_palace": "从 A 二楼进攻 A 包点（到 VIP）",
     "map.de_dust2.a_long": "A 大到 A 包点",
     "map.de_dust2.a_short": "A 小到 A 包点"
 } 

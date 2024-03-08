@@ -719,8 +719,8 @@ public class OpenPrefirePrac : BasePlugin
 
         if (player_manager[player_slot].training_mode == 0)
         {
-            // 0: Use 70% of the targets.
-            int num_targets = (int)(0.7 * practices[practice_no].targets.Count);
+            // 0: Use part of the targets.
+            int num_targets = (int)(practices[practice_no].spawn_ratio * practices[practice_no].targets.Count);
             Random rnd = new Random(DateTime.Now.Millisecond);
 
             int num_to_remove = practices[practice_no].targets.Count - num_targets;

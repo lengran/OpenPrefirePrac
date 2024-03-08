@@ -28,6 +28,7 @@ public class PrefirePractice
     public string practice_name;
     public List<string> incompatible_practices;
     public int num_bots;
+    public float spawn_ratio;
 
     public List<Vector> guiding_line;
 
@@ -54,9 +55,11 @@ public class PrefirePractice
                 for (int i = 0; i < w.Length; i++)
                     incompatible_practices.Add(w[i]);
 
-                // The second line indicates how many bots are needed.
+                // The second line indicates how many bots are needed, and the spawn ratio.
                 s = sr.ReadLine();
-                num_bots = Convert.ToInt32(s);
+                w = s.Split(delimiter_chars);
+                num_bots = Convert.ToInt32(w[0]);
+                spawn_ratio = Convert.ToSingle(w[1]);
 
                 // The third line contains player's position and rotation.
                 s = sr.ReadLine();

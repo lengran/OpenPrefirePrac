@@ -58,6 +58,12 @@ The fifth part with an arbitrary number of lines describes joint points of a gui
 pos_x pos_y pos_z
 ```
 
+This can also be extracted from get\_pos using the python script. It will read in lines composed of 4 parts (e.g. "setpos 1348.844727 -989.403198 -103.968750") and calculate the height values for you.
+
+```bash
+python3 calculate_height.py [PATH TO YOUR FILE]
+```
+
 ## Current development progress
 
 Current it's still under active developing.
@@ -79,6 +85,7 @@ Finished practices:
 - de_mirage
     - Attack A site from A ramp (to CT spawn)
     - Attack B site from B apartments
+    - Attack A site from A palace (to jungle)
 - de_dust2
     - Attach A site from A long
     - Attach A site from A short
