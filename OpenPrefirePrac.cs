@@ -14,7 +14,7 @@ public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
     
-    public override string ModuleVersion => "0.0.13";
+    public override string ModuleVersion => "0.0.14";
 
     private Dictionary<int, PlayerStatus> player_manager = new Dictionary<int, PlayerStatus>();
     
