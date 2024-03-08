@@ -29,17 +29,17 @@ public class PrefirePractice
     public List<string> incompatible_practices;
     public int num_bots;
 
+    public List<Vector> guiding_line;
+
     public PrefirePractice(string map, string practice)
     {
         targets = new List<TargetBot>();
         incompatible_practices = new List<string>();
+        guiding_line = new List<CounterStrikeSharp.API.Modules.Utils.Vector>();
 
+        // Construct a practice from the description file.
         practice_name = practice;
-        // TODO: Read positions from file
         string path = $"../../csgo/addons/counterstrikesharp/plugins/OpenPrefirePrac/maps/{map}/{practice}.txt";
-        // Set player position and angles
-        // player.SetBot(xyz,xyz,crouching)
-        // for each line in file
         try
         {
             using (StreamReader sr = File.OpenText(path))
@@ -62,14 +62,18 @@ public class PrefirePractice
                 s = sr.ReadLine();
                 w = s.Split(delimiter_chars);
                 player = new TargetBot(Convert.ToSingle(w[0]), Convert.ToSingle(w[1]), Convert.ToSingle(w[2]), Convert.ToSingle(w[3]), Convert.ToSingle(w[4]), Convert.ToSingle(w[5]), false);
-                // Console.WriteLine("[OpenPrefirePrac] Player position loaded.");
 
-                // The rest lines contain bots' info.
                 while ((s = sr.ReadLine()) != null)
                 {
                     w = s.Split(delimiter_chars);
-                    // Console.WriteLine($"[OpenPrefirePrac] Bot position debug. words: {w}; sentence: {s}");
-                    targets.Add(new TargetBot(Convert.ToSingle(w[0]), Convert.ToSingle(w[1]), Convert.ToSingle(w[2]), Convert.ToSingle(w[3]), Convert.ToSingle(w[4]), Convert.ToSingle(w[5]), Convert.ToBoolean(w[6])));
+                    
+                    // A line with 7 segments defines a target bot.
+                    if (w.Length == 7)
+                        targets.Add(new TargetBot(Convert.ToSingle(w[0]), Convert.ToSingle(w[1]), Convert.ToSingle(w[2]), Convert.ToSingle(w[3]), Convert.ToSingle(w[4]), Convert.ToSingle(w[5]), Convert.ToBoolean(w[6])));
+                    
+                    // A line with 3 real numbers defines a joint point of the guiding line.
+                    if (w.Length == 3)
+                        guiding_line.Add(new Vector(Convert.ToSingle(w[0]), Convert.ToSingle(w[1]), Convert.ToSingle(w[2])));
                 }
             }
         }

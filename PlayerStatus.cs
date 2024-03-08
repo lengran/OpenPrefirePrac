@@ -19,6 +19,8 @@ public class PlayerStatus
     public Dictionary<string, int> localized_training_mode_names;
     
     public List<int> enabled_targets;
+    
+    public List<int> beams;
 
     public PlayerStatus()
     {
@@ -29,6 +31,7 @@ public class PlayerStatus
         bots = new List<int>();
         training_mode = 0;
         enabled_targets = new List<int>();
+        beams = new List<int>();
 
         // Do not populate these now so as to support changing languages dynamically(TODO)
         localized_practice_names = new Dictionary<string, int>();

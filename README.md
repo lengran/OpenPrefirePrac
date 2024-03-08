@@ -40,7 +40,7 @@ The third line instructs the place and facing direction of the player. The first
 pos_x pos_y pos_z ang_x ang_y ang_z
 ```
 
-The rest lines describe how to place bots. The first 3 numbers is position, following 3 numbers of the rotation. The 7th value is either True of False indicating whether the bot is crouching.
+The fourth part with an arbitrary number of lines describes how to place bots. The first 3 numbers is position, following 3 numbers of the rotation. The 7th value is either True of False indicating whether the bot is crouching.
 
 ```
 pos_x pos_y pos_z ang_x ang_y ang_z is_crouching
@@ -50,6 +50,12 @@ The positions and facing rotations can be retrived from in-game get\_pos command
 
 ```bash
 python3 calculate_height.py [PATH TO YOUR FILE]
+```
+
+The fifth part with an arbitrary number of lines describes joint points of a guiding line. The guiding line is used to provide a better narration of how the practice is designed to be played.
+
+```
+pos_x pos_y pos_z
 ```
 
 ## Current development progress
