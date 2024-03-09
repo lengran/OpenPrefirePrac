@@ -194,12 +194,10 @@ public class OpenPrefirePrac : BasePlugin
             if (masters_of_bots.ContainsKey(@event.Userid.Slot))
             {
                 int master_slot = masters_of_bots[@event.Userid.Slot];
-                // int target_no = progress_of_players[master_slot];
-                // int practice_no = practice_of_players[master_slot];
                 int target_no = player_manager[master_slot].progress;
                 int practice_no = player_manager[master_slot].practice_no;
 
-                if (target_no >= practices[practice_no].num_bots)         // Bots will be killed once automatically when they are added so as to move them to target spots.
+                if (target_no >= practices[practice_no].num_bots)         // Bots will be killed after their first time getting spawned, so as to move them to target spots.
                 {
                     CCSPlayerController master = new CCSPlayerController(NativeAPI.GetEntityFromIndex(master_slot + 1));
                     
@@ -233,15 +231,12 @@ public class OpenPrefirePrac : BasePlugin
                 }
 
                 // Kick unnecessary bots
-                // if (target_no >= practices[practice_no].targets.Count)
                 if (target_no >= player_manager[master_slot].enabled_targets.Count)
                 {
                     masters_of_bots.Remove(@event.Userid.Slot);
-                    // bots_of_players[master_slot].Remove(@event.Userid.Slot);
                     player_manager[master_slot].bots.Remove(@event.Userid.Slot);
                     Server.ExecuteCommand($"bot_kick {@event.Userid.PlayerName}");
 
-                    // if (bots_of_players[master_slot].Count == 0)
                     if (player_manager[master_slot].bots.Count == 0)
                     {
                         // Practice finished.
@@ -256,13 +251,11 @@ public class OpenPrefirePrac : BasePlugin
         // Check if player has enough bots for selected practice
         if (@event.Userid.IsValid && !@event.Userid.IsBot && !@event.Userid.IsHLTV)
         {
-            // int practice_no = practice_of_players[@event.Userid.Slot];
             int practice_no = player_manager[@event.Userid.Slot].practice_no;
             int num_bots = player_manager[@event.Userid.Slot].bots.Count;
             
-            // if (practice_no > 0 && bots_of_players[@event.Userid.Slot].Count < practices[practice_no].num_bots)
-            //     AddBot(@event.Userid, practices[practice_no].num_bots - bots_of_players[@event.Userid.Slot].Count);
             if (practice_no > 0 && num_bots < practices[practice_no].num_bots)
+                player_manager[@event.Userid.Slot].progress = 0;
                 AddBot(@event.Userid, practices[practice_no].num_bots - num_bots);
         }
         
