@@ -25,6 +25,7 @@
     "modemenu.0": "Random mode",
     "modemenu.1": "Full mode",
     "modemenu.set": "Training mode has been set to: {0}",
+    "languagemenu.set": "Your language preference has been saved.",
     "map.de_inferno.a_apts": "A apartment to A site",
     "map.de_inferno.banana_to_b": "Banana to B site",
     "map.de_inferno.mid_to_a_long": "Mid to A site through A Long",

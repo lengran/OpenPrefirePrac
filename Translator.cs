@@ -27,6 +27,7 @@ public class Translator
 
         // Whenever add a translation profile, add a mapper.
         country_to_culture_mapper.Add("CN", "ZH");
+        country_to_culture_mapper.Add("BR", "pt-BR");
     }
 
     public void RecordPlayerCulture(CCSPlayerController player)
@@ -82,6 +83,11 @@ public class Translator
         {
             return _localizer[token_to_localize, arguments];
         }
+    }
+
+    public void UpdatePlayerCulture(ulong steam_id, string culture_code)
+    {
+        language_manager[steam_id] = culture_code;
     }
 
     // These two functions are borrowed from https://github.com/aprox2/GeoLocationLanguageManagerPlugin/. Huge thanks!

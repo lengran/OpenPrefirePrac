@@ -25,6 +25,7 @@
     "modemenu.0": "随机模式",
     "modemenu.1": "完整模式",
     "modemenu.set": "训练模式已被设置为：{0}",
+    "languagemenu.set": "您的语言设置已更新。",
     "map.de_inferno.a_apts": "A 二楼到 A 包点",
     "map.de_inferno.banana_to_b": "香蕉道到 B 包点",
     "map.de_inferno.mid_to_a_long": "A 连接到 A 包点",

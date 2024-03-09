@@ -14,7 +14,7 @@ public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
     
-    public override string ModuleVersion => "0.0.14";
+    public override string ModuleVersion => "0.0.15";
 
     private Dictionary<int, PlayerStatus> player_manager = new Dictionary<int, PlayerStatus>();
     
@@ -281,6 +281,7 @@ public class OpenPrefirePrac : BasePlugin
         main_menu.AddMenuOption(translator.Translate(player, "mainmenu.difficulty", current_difficulty), OpenDifficultyMenu);
         string current_training_mode = translator.Translate(player, $"modemenu.{player_manager[player.Slot].training_mode}");
         main_menu.AddMenuOption(translator.Translate(player, "mainmenu.mode", current_training_mode), OpenModeMenu);
+        main_menu.AddMenuOption("Language preference", OpenLanguageMenu);
         main_menu.AddMenuOption(translator.Translate(player, "mainmenu.exit"), ForceExitPrefireMode);
         
         player.PrintToChat("============ [OpenPrefirePrac] ============");
@@ -477,6 +478,41 @@ public class OpenPrefirePrac : BasePlugin
         player_manager[player.Slot].training_mode = training_mode_no;
         string current_training_mode = translator.Translate(player, $"modemenu.{training_mode_no}");
         player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {translator.Translate(player, "modemenu.set", current_training_mode)}");
+    }
+
+    public void OpenLanguageMenu(CCSPlayerController player, ChatMenuOption option)
+    {
+        // No need for localization here.
+        ChatMenu language_menu = new ChatMenu("Change language settings");
+
+        language_menu.AddMenuOption("English", OnLanguageChosen);
+        language_menu.AddMenuOption("Português", OnLanguageChosen);
+        language_menu.AddMenuOption("中文", OnLanguageChosen);
+
+        player.PrintToChat("============ [OpenPrefirePrac] ============");
+        MenuManager.OpenChatMenu(player, language_menu);
+        player.PrintToChat("===========================================");
+    }
+
+    public void OnLanguageChosen(CCSPlayerController player, ChatMenuOption option)
+    {
+        switch (option.Text)
+        {
+            case "English":
+                translator.UpdatePlayerCulture(player.SteamID, "EN");
+                break;
+            case "Português":
+                translator.UpdatePlayerCulture(player.SteamID, "pt-BR");
+                break;
+            case "中文":
+                translator.UpdatePlayerCulture(player.SteamID, "ZH");
+                break;
+            default:
+                translator.UpdatePlayerCulture(player.SteamID, "EN");
+                break;
+        }
+
+        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {translator.Translate(player, "languagemenu.set")}");
     }
 
     private void LoadPractice()
