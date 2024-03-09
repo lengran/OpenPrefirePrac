@@ -41,7 +41,7 @@ public class OpenPrefirePrac : BasePlugin
 	    Console.WriteLine("[OpenPrefirePrac] Registering listeners.");
         RegisterListener<Listeners.OnClientPutInServer>(OnClientPutInServerHandler);
         RegisterListener<Listeners.OnMapStart>(OnMapStartHandler);
-        RegisterListener<Listeners.OnClientDisconnectPost>(OnClientDisconnectHandler);
+        // RegisterListener<Listeners.OnClientDisconnectPost>(OnClientDisconnectHandler);
 
         translator = new Translator(Localizer, ModuleDirectory, CultureInfo.CurrentCulture.Name);
 
@@ -83,18 +83,38 @@ public class OpenPrefirePrac : BasePlugin
         translator.RecordPlayerCulture(player);
     }
 
-    public void OnClientDisconnectHandler(int slot)
+    // Don't know if this works. Can't test it myself. Need two people.
+    // public void OnClientDisconnectHandler(int slot)
+    // {
+    //     var player = new CCSPlayerController(NativeAPI.GetEntityFromIndex(slot + 1));
+
+    //     if (!player_manager.ContainsKey(slot))
+    //         return;
+
+    //     if (player_manager[slot].practice_no != -1)
+    //         ExitPrefireMode(slot);
+
+    //     // Release resources(practices, targets, bots...)
+    //     player_manager.Remove(slot);
+    // }
+
+    [GameEventHandler]
+    public HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
     {
-        var player = new CCSPlayerController(NativeAPI.GetEntityFromIndex(slot + 1));
+        // Console.WriteLine($"[OpenPrefirePrac] Player {@event.Userid.PlayerName} disconnected.");
+        // Still don't know if this works. I can't test this myself. Need two people.
+        int player_slot = @event.Userid.Slot;
 
-        if (!player_manager.ContainsKey(slot))
-            return;
+        if (!player_manager.ContainsKey(player_slot))
+            return HookResult.Continue;
 
-        if (player_manager[slot].practice_no != -1)
-            ExitPrefireMode(slot);
+        if (player_manager[player_slot].practice_no != -1)
+            ExitPrefireMode(player_slot);
 
         // Release resources(practices, targets, bots...)
-        player_manager.Remove(slot);
+        player_manager.Remove(player_slot);
+
+        return HookResult.Continue;
     }
 
     public void OnMapStartHandler(string map)
@@ -251,12 +271,17 @@ public class OpenPrefirePrac : BasePlugin
         // Check if player has enough bots for selected practice
         if (@event.Userid.IsValid && !@event.Userid.IsBot && !@event.Userid.IsHLTV)
         {
+            if (!player_manager.ContainsKey(@event.Userid.Slot))
+                return HookResult.Continue;
+            
             int practice_no = player_manager[@event.Userid.Slot].practice_no;
             int num_bots = player_manager[@event.Userid.Slot].bots.Count;
             
-            if (practice_no > 0 && num_bots < practices[practice_no].num_bots)
+            if (practice_no > -1 && num_bots < practices[practice_no].num_bots)
+            {
                 player_manager[@event.Userid.Slot].progress = 0;
                 AddBot(@event.Userid, practices[practice_no].num_bots - num_bots);
+            }
         }
         
         return HookResult.Continue;
