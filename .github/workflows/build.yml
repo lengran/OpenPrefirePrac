@@ -1,0 +1,77 @@
+name: Build plugin
+
+on:
+  push:
+    branches: [ "main" ]
+#    paths:
+#      - '**.cs'
+#      - '**.csproj'
+  pull_request:
+    branches: [ "main" ]
+#    paths:
+#      - '**.cs'
+#      - '**.csproj'
+  release:
+    types:
+      - created
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.0.x
+      - name: Run build
+        run: dotnet build
+      - name: Debug (remove me pls)
+        run: |
+          cd ./bin/Debug/net7.0
+          ls -la
+      - name: Create output directory
+        run: |
+          mkdir -p output/OpenPrefirePrac
+          mv ./bin/Debug/net7.0/OpenPrefirePrac.dll output/OpenPrefirePrac/
+          mv ./bin/Debug/net7.0/OpenPrefirePrac.pdb output/OpenPrefirePrac/
+          mv ./bin/Debug/net7.0/OpenPrefirePrac.deps.json output/OpenPrefirePrac/
+          mv ./bin/Debug/net7.0/MaxMind.Db.dll output/OpenPrefirePrac/
+          mv ./bin/Debug/net7.0/MaxMind.GeoIP2.dll output/OpenPrefirePrac/
+          mv ./maps output/OpenPrefirePrac/
+          mv ./lang output/OpenPrefirePrac/
+      - name: Publish artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenPrefirePrac-${{ github.sha }}
+          path: output
+  
+  release:
+    needs: build
+    permissions: write-all
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: OpenPrefirePrac-${{ github.sha }}
+      - name: Create release assets
+        run: |
+          zip -r OpenPrefirePrac-${{ github.sha }}.zip ./OpenPrefirePrac
+      - name: Get release info
+        run: |
+          RELEASE_INFO=$(curl -sH 'Accept: application/vnd.github.v3+json' https://api.github.com/repos/${{ github.repository }}/releases)
+          export UPLOAD_URL=$(echo $RELEASE_INFO | jq -r ".[] | select(.tag_name == \"${{ github.event.release.tag_name }}\").upload_url")
+          echo "UPLOAD_URL=$UPLOAD_URL" >> $GITHUB_ENV
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ env.UPLOAD_URL }}
+          asset_path: ./OpenPrefirePrac-${{ github.sha }}.zip
+          asset_name: "openprefireprac-${{ github.event.release.tag_name }}.zip"
+          asset_content_type: application/zip
