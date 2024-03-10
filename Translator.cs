@@ -110,14 +110,18 @@ public class Translator
 
     public string? GetPlayerIsoCode(string ipAddress)
     {
+        var geoDbPath = Path.Combine(_pluginPath, "GeoLite2-Country.mmdb");
+        
+        Console.WriteLine($"[OpenPrefirePrac] geoDbPath: {geoDbPath}");
+        
         // check if the database file exists
-        if (!File.Exists(Path.Combine(_pluginPath, "GeoLite2-Country.mmdb")))
+        if (!File.Exists(geoDbPath))
         {
             Console.WriteLine("[OpenPrefirePrac] GeoLite2-Country.mmdb not found.");
             return null;
         }
         
-        using var reader = new DatabaseReader(Path.Combine(_pluginPath, "GeoLite2-Country.mmdb"));
+        using var reader = new DatabaseReader(geoDbPath);
         try
         {
             var response = reader.Country(ipAddress);
