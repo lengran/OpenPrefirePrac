@@ -3,31 +3,29 @@ using CounterStrikeSharp.API.Core.Translations;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
 using MaxMind.GeoIP2;
-using CounterStrikeSharp.API.Modules.Entities;
 
 namespace OpenPrefirePrac;
 
 public class Translator
 {
     private IStringLocalizer _localizer;
-    private string _plugin_path;
-    
-    private string _default_culture;
+    private string _pluginPath;
+    private string _defaultCulture;
 
-    private Dictionary<string, string> country_to_culture_mapper = new Dictionary<string, string>();
+    private Dictionary<string, string> _countryToCultureMapper = new();
 
     // Replace Dictionary with PlayerLanguageManager if that is better.
-    private Dictionary<ulong, string> language_manager = new Dictionary<ulong, string>();
+    private readonly Dictionary<ulong, string> _languageManager = new();
 
-    public Translator(IStringLocalizer localizer, string module_directory, string default_culture)
+    public Translator(IStringLocalizer localizer, string moduleDirectory, string defaultCulture)
     {
         _localizer = localizer;
-        _plugin_path = module_directory;
-        _default_culture = default_culture;
+        _pluginPath = moduleDirectory;
+        _defaultCulture = defaultCulture;
 
         // Whenever add a translation profile, add a mapper.
-        country_to_culture_mapper.Add("CN", "ZH");
-        country_to_culture_mapper.Add("BR", "pt-BR");
+        _countryToCultureMapper.Add("CN", "ZH");
+        _countryToCultureMapper.Add("BR", "pt-BR");
     }
 
     public void RecordPlayerCulture(CCSPlayerController player)
@@ -35,67 +33,71 @@ public class Translator
         // TODO: Find a way to make this compatible with the !lang command.
         // System.Globalization.CultureInfo language = player.GetLanguage();
 
-        ulong steam_id = player.SteamID;
+        var steamId = player.SteamID;
 
         // If the player has already been registered, do nothing.
-        if (language_manager.ContainsKey(steam_id))
+        if (_languageManager.ContainsKey(steamId))
             return;
-        var player_ip = GetPlayerIp(player);
-        if (player_ip == null)
+        var playerIp = GetPlayerIp(player);
+        if (playerIp == null)
         {
-            language_manager.Add(steam_id, _default_culture);
+            _languageManager.Add(steamId, _defaultCulture);
             return;
         }
 
-        var iso_code = GetPlayerISOCode(player_ip);
-        if (iso_code == null)
+        var isoCode = GetPlayerIsoCode(playerIp);
+        if (isoCode == null)
         {
-            language_manager.Add(steam_id, _default_culture);
+            _languageManager.Add(steamId, _defaultCulture);
             return;
         }
 
         // Languages are mapped from country codes. So if there is no mapper for a player's country, use default language(English).
-        if (country_to_culture_mapper.ContainsKey(iso_code))
-            language_manager.Add(steam_id, country_to_culture_mapper[iso_code]);
+        if (_countryToCultureMapper.ContainsKey(isoCode))
+            _languageManager.Add(steamId, _countryToCultureMapper[isoCode]);
         else
-            language_manager.Add(steam_id, _default_culture);
+            _languageManager.Add(steamId, _defaultCulture);
     }
 
-    public string Translate(CCSPlayerController player, string token_to_localize)
+    public string Translate(CCSPlayerController player, string tokenToLocalize)
     {
-        ulong steam_id = player.SteamID;
+        var steamId = player.SteamID;
 
-        string player_culture = language_manager[steam_id];
+        var playerCulture = _languageManager[steamId];
 
-        using (new WithTemporaryCulture(CultureInfo.GetCultureInfo(player_culture)))
+        using (new WithTemporaryCulture(CultureInfo.GetCultureInfo(playerCulture)))
         {
-            return _localizer[token_to_localize];
+            return _localizer[tokenToLocalize];
         }
     }
 
-    public string Translate(CCSPlayerController player, string token_to_localize, params object[] arguments)
+    public string Translate(CCSPlayerController player, string tokenToLocalize, params object[] arguments)
     {
-        ulong steam_id = player.SteamID;
+        var steamId = player.SteamID;
 
-        string player_culture = language_manager[steam_id];
+        var playerCulture = _languageManager[steamId];
 
-        using (new WithTemporaryCulture(CultureInfo.GetCultureInfo(player_culture)))
+        using (new WithTemporaryCulture(CultureInfo.GetCultureInfo(playerCulture)))
         {
-            return _localizer[token_to_localize, arguments];
+            return _localizer[tokenToLocalize, arguments];
         }
     }
 
-    public void UpdatePlayerCulture(ulong steam_id, string culture_code)
+    public void UpdatePlayerCulture(ulong steamId, string cultureCode)
     {
-        language_manager[steam_id] = culture_code;
+        _languageManager[steamId] = cultureCode;
     }
 
     // These two functions are borrowed from https://github.com/aprox2/GeoLocationLanguageManagerPlugin/. Huge thanks!
     public static string? GetPlayerIp(CCSPlayerController player)
     {
         var playerIp = player.IpAddress;
-        if (playerIp == null) { return null; }
-        string[] parts = playerIp.Split(':');
+        if (playerIp == null)
+        {
+            return null;
+        }
+        
+        var parts = playerIp.Split(':');
         if (parts.Length == 2)
         {
             return parts[0];
@@ -106,9 +108,18 @@ public class Translator
         }
     }
 
-    public string? GetPlayerISOCode(string ipAddress)
+    public string? GetPlayerIsoCode(string ipAddress)
     {
-        using var reader = new DatabaseReader(Path.Combine(_plugin_path, "GeoLite2-Country.mmdb"));
+        var geoDbPath = Path.Combine(_pluginPath, "GeoLite2-Country.mmdb");
+        
+        // check if the database file exists
+        if (!File.Exists(geoDbPath))
+        {
+            Console.WriteLine("[OpenPrefirePrac] GeoLite2-Country.mmdb not found.");
+            return null;
+        }
+        
+        using var reader = new DatabaseReader(geoDbPath);
         try
         {
             var response = reader.Country(ipAddress);
