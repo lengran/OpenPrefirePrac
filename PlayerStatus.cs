@@ -1,3 +1,5 @@
+using CounterStrikeSharp.API.Core;
+
 namespace OpenPrefirePrac;
 
 public class PlayerStatus
@@ -8,7 +10,7 @@ public class PlayerStatus
 
     public int healing_method;  // 0: No healing; 1: Init hp 500 with no healing; 2: +25hp for each kill; 3: +100hp for each kill; 4: +500hp for each kill
 
-    public List<int> bots;
+    public List<CCSPlayerController> bots;
 
     public Dictionary<string, int> localized_practice_names;
 
