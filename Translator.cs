@@ -112,8 +112,6 @@ public class Translator
     {
         var geoDbPath = Path.Combine(_pluginPath, "GeoLite2-Country.mmdb");
         
-        Console.WriteLine($"[OpenPrefirePrac] geoDbPath: {geoDbPath}");
-        
         // check if the database file exists
         if (!File.Exists(geoDbPath))
         {

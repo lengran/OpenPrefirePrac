@@ -33,7 +33,7 @@ public class OpenPrefirePrac : BasePlugin
     
     private readonly List<string> _availableMaps = new();
     
-    private readonly Translator _translator;
+    private Translator _translator;
 
     public OpenPrefirePrac()
     {
@@ -43,8 +43,8 @@ public class OpenPrefirePrac : BasePlugin
     
     public override void Load(bool hotReload)
     {
-        base.Load(hotReload);
-
+        _translator = new Translator(Localizer, ModuleDirectory, CultureInfo.CurrentCulture.Name);
+        
 	    Console.WriteLine("[OpenPrefirePrac] Registering listeners.");
         RegisterListener<Listeners.OnClientPutInServer>(OnClientPutInServerHandler);
         RegisterListener<Listeners.OnMapStart>(OnMapStartHandler);
@@ -141,13 +141,13 @@ public class OpenPrefirePrac : BasePlugin
         for (var i = 0; i < mapDirectories.Count; i++)
         {
             var mapPath = mapDirectories[i].Substring(mapDirectories[i].LastIndexOf(Path.DirectorySeparatorChar) + 1);
-            Console.WriteLine($"[OpenPrefirePrac] Map folder for map {mapPath} founded.");
+            Console.WriteLine($"[OpenPrefirePrac] Map folder for map {mapPath} found.");
             _availableMaps.Add(mapPath);
 
             if (mapPath.Equals(_mapName))
             {
                 found = true;
-                Console.WriteLine("[OpenPrefirePrac] Map folder for current map founded.");
+                Console.WriteLine("[OpenPrefirePrac] Map folder for current map found.");
             }
         }
 
