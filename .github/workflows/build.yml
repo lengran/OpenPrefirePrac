@@ -3,14 +3,14 @@ name: Build plugin
 on:
   push:
     branches: [ "main" ]
-#    paths:
-#      - '**.cs'
-#      - '**.csproj'
+   paths:
+     - '**.cs'
+     - '**.csproj'
   pull_request:
     branches: [ "main" ]
-#    paths:
-#      - '**.cs'
-#      - '**.csproj'
+   paths:
+     - '**.cs'
+     - '**.csproj'
   release:
     types:
       - created
@@ -27,10 +27,6 @@ jobs:
           dotnet-version: 7.0.x
       - name: Run build
         run: dotnet build
-      - name: Debug (remove me pls)
-        run: |
-          cd ./bin/Debug/net7.0
-          ls -la
       - name: Create output directory
         run: |
           mkdir -p output/OpenPrefirePrac
