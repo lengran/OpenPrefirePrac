@@ -86,6 +86,7 @@ Finished practices:
     - Attack A site from A ramp (to CT spawn)
     - Attack B site from B apartments
     - Attack A site from A palace (to jungle)
+    - Attack B site from mid
 - de_dust2
     - Attach A site from A long
     - Attach A site from A short
