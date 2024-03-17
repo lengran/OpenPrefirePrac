@@ -13,7 +13,7 @@ namespace OpenPrefirePrac;
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.0.15";
+    public override string ModuleVersion => "0.0.16";
     public override string ModuleAuthor => "Lengran";
     public override string ModuleDescription => "A plugin for practicing prefire routes in CS2. https://github.com/lengran/OpenPrefirePrac";
 
@@ -364,16 +364,16 @@ public class OpenPrefirePrac : BasePlugin
         }
 
         int practiceNo = _playerStatuses[player].LocalizedPracticeNames[option.Text];
+        var previousPracticeNo = _playerStatuses[player].PracticeIndex;
 
         // Check if selected practice route is compatible with other on-playing routes.
-        if (!_practiceEnabled[practiceNo])
+        if (previousPracticeNo != practiceNo && !_practiceEnabled[practiceNo])
         {
             player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator.Translate(player, "practice.incompatible")}");
             return;
         }
 
         // Update practice status
-        var previousPracticeNo = _playerStatuses[player].PracticeIndex;
         if (previousPracticeNo > -1)
         {
             // Enable disabled practice routes
@@ -385,6 +385,7 @@ public class OpenPrefirePrac : BasePlugin
                     _practiceEnabled[disabledPracticeNo] = true;
                 }
             }
+            _practiceEnabled[previousPracticeNo] = true;
         
             RemoveBots(player);
             DeleteGuidingLine(player);
@@ -405,6 +406,7 @@ public class OpenPrefirePrac : BasePlugin
                 _practiceEnabled[disabledPracticeNo] = false;
             }
         }
+        _practiceEnabled[practiceNo] = false;
 
         // Setup practice
         AddBot(player, _practices[practiceNo].NumBots);
@@ -464,6 +466,14 @@ public class OpenPrefirePrac : BasePlugin
                 practiceMenu.AddMenuOption(tmpLocalizedPracticeName, OnRouteSelect); // practice name here is split by space instead of underline. TODO: Use localized text.
             }
         }
+        int practiceNo = _playerStatuses[player].PracticeIndex;
+        if (practiceNo > -1)
+        {
+            var tmpLocalizedPracticeName = _translator.Translate(player, $"map.{_mapName}.{_practices[practiceNo].PracticeName}");
+            _playerStatuses[player].LocalizedPracticeNames.Add(tmpLocalizedPracticeName, practiceNo);
+            practiceMenu.AddMenuOption(tmpLocalizedPracticeName, OnRouteSelect);
+        }
+
 
         player.PrintToChat("============ [OpenPrefirePrac] ============");
         MenuManager.OpenChatMenu(player, practiceMenu);
@@ -589,6 +599,7 @@ public class OpenPrefirePrac : BasePlugin
                     _practiceEnabled[value] = true;
                 }
             }
+            _practiceEnabled[previousPracticeNo] = true;
 
             _playerStatuses[player].PracticeIndex = -1;
             _playerCount--;

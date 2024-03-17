@@ -40,6 +40,7 @@
     "map.de_mirage.b_apts": "Attack B site from B apartments",
     "map.de_mirage.a_palace": "Attack A site from A palace (to jungle)",
     "map.de_mirage.mid_to_b": "Attack B site from mid",
+    "map.de_mirage.under_to_jungle": "Attack A site from underpass",
     "map.de_dust2.a_long": "Attach A site from A long",
     "map.de_dust2.a_short": "Attach A site from A short"
 } 

@@ -40,6 +40,7 @@
     "map.de_mirage.b_apts": "Ataque ao site B dos apartamentos B",
     "map.de_mirage.a_palace": "Ataque ao site A do palácio A (para a selva)",
     "map.de_mirage.mid_to_b": "Ataque ao site B a partir do meio",
+    "map.de_mirage.under_to_jungle": "Ataque ao site A a partir da passagem subterrânea",
     "map.de_dust2.a_long": "Ataque ao site A do A longo",
     "map.de_dust2.a_short": "Ataque ao site A do A curto"
 }

@@ -71,3 +71,15 @@ jobs:
           asset_path: ./OpenPrefirePrac-${{ github.sha }}.zip
           asset_name: "openprefireprac-${{ github.event.release.tag_name }}.zip"
           asset_content_type: application/zip
+
+      # - name: Upload release asset
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     tag_name: openprefireprac-${{ github.event.release.tag_name }}.zip
+      #     files: 
+      #       ./OpenPrefirePrac-${{ github.sha }}.zip
+
+      # - name: Upload release asset
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name:
