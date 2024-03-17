@@ -338,8 +338,11 @@ public class OpenPrefirePrac : BasePlugin
             Server.ExecuteCommand("bot_allow_grenades 0");
             Server.ExecuteCommand("bot_allow_snipers 0");
             Server.ExecuteCommand("bot_allow_shotguns 0");
+            // Server.ExecuteCommand("bot_autodifficulty_threshold_high 5");
+            // Server.ExecuteCommand("bot_autodifficulty_threshold_low 5");
             Server.ExecuteCommand("bot_difficulty 5");
             Server.ExecuteCommand("custom_bot_difficulty 5");
+            // Server.ExecuteCommand("sv_auto_adjust_bot_difficulty 0");
             Server.ExecuteCommand("sv_infinite_ammo 1");
             Server.ExecuteCommand("mp_limitteams 0");
             Server.ExecuteCommand("mp_autoteambalance 0");

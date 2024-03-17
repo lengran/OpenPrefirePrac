@@ -89,6 +89,7 @@ public class Translator
     }
 
     // These two functions are borrowed from https://github.com/aprox2/GeoLocationLanguageManagerPlugin/. Huge thanks!
+    // Author: aprox2
     public static string? GetPlayerIp(CCSPlayerController player)
     {
         var playerIp = player.IpAddress;

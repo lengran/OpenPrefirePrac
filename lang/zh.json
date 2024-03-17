@@ -39,6 +39,7 @@
     "map.de_mirage.a_ramp": "从 A1 进攻 A 包点（到警家）",
     "map.de_mirage.b_apts": "从 B 二楼进攻 B 包点",
     "map.de_mirage.a_palace": "从 A 二楼进攻 A 包点（到 VIP）",
+    "map.de_mirage.mid_to_b": "从中路进攻 B 包点",
     "map.de_dust2.a_long": "A 大到 A 包点",
     "map.de_dust2.a_short": "A 小到 A 包点"
 } 
