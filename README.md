@@ -6,7 +6,7 @@ An open-source CounterStrikeSharp powered server-side practicing plugin for CS2.
 
 ### Requirement
 
-- CounterStrikeSharp v178
+- CounterStrikeSharp
 
 ### Installation
 
