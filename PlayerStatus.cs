@@ -15,7 +15,7 @@ public class PlayerStatus
      * 0: No healing
      * 1: Init hp 500 with no healing
      * 2: +25hp for each kill
-     * 3: +100hp for each kill
+     * 3: +100hp for each kill (default)
      * 4: +500hp for each kill
      */
     public int HealingMethod = 3;
@@ -25,7 +25,7 @@ public class PlayerStatus
     public readonly Dictionary<string, int> LocalizedDifficultyNames = new();
     
     /**
-     * 0: Random mode, 70% targets
+     * 0: Random mode, randomly spawn some targets(the spawn ratio is specified in the practice profile)
      * 1: Full mode, all targets
      */
     public int TrainingMode = 0;

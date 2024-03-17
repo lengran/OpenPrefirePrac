@@ -93,10 +93,9 @@ Finished practices:
 TODO:
 
 1. Create prefire profiles for all maps.
-2. Draw guiding lines on the floor.
-3. Improve bot logic.
-4. Improve localization support (The supporting framework is done. Submitting translations is warmly welcomed.).
-5. Reroute saperate logs into one gathered place for better debug experience.
+2. Improve bot logic.
+3. Improve localization support (The supporting framework is done. Submitting translations is warmly welcomed.).
+4. Reroute saperate logs into one gathered place for better debug experience.
 
 ## Reference
 
