@@ -69,7 +69,7 @@ jobs:
         with:
           upload_url: ${{ env.UPLOAD_URL }}
           asset_path: ./OpenPrefirePrac-${{ github.sha }}.zip
-          asset_name: "openprefireprac-${{ github.event.release.tag_name }}.zip"
+          asset_name: "OpenPrefirePrac-${{ github.event.release.tag_name }}.zip"
           asset_content_type: application/zip
 
       # - name: Upload release asset
