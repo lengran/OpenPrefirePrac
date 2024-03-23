@@ -13,7 +13,7 @@ namespace OpenPrefirePrac;
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.0.16";
+    public override string ModuleVersion => "0.0.17";
     public override string ModuleAuthor => "Lengran";
     public override string ModuleDescription => "A plugin for practicing prefire routes in CS2. https://github.com/lengran/OpenPrefirePrac";
 
@@ -373,43 +373,48 @@ public class OpenPrefirePrac : BasePlugin
             return;
         }
 
-        // Update practice status
-        if (previousPracticeNo > -1)
+        
+        if (previousPracticeNo != practiceNo)
         {
-            // Enable disabled practice routes
-            for (var i = 0; i < _practices[previousPracticeNo].IncompatiblePractices.Count; i++)
+            // Update practice status
+            if (previousPracticeNo > -1)
             {
-                if (_practiceNameToId.ContainsKey(_practices[previousPracticeNo].IncompatiblePractices[i]))
+                // Enable disabled practice routes
+                for (var i = 0; i < _practices[previousPracticeNo].IncompatiblePractices.Count; i++)
                 {
-                    var disabledPracticeNo = _practiceNameToId[_practices[previousPracticeNo].IncompatiblePractices[i]];
-                    _practiceEnabled[disabledPracticeNo] = true;
+                    if (_practiceNameToId.ContainsKey(_practices[previousPracticeNo].IncompatiblePractices[i]))
+                    {
+                        var disabledPracticeNo = _practiceNameToId[_practices[previousPracticeNo].IncompatiblePractices[i]];
+                        _practiceEnabled[disabledPracticeNo] = true;
+                    }
+                }
+                _practiceEnabled[previousPracticeNo] = true;
+
+                RemoveBots(player);
+                DeleteGuidingLine(player);
+            }
+            else
+            {
+                _playerCount++;
+            }
+
+            _playerStatuses[player].PracticeIndex = practiceNo;
+
+            // Disable incompatible practices.
+            for (var i = 0; i < _practices[practiceNo].IncompatiblePractices.Count; i++)
+            {
+                if (_practiceNameToId.ContainsKey(_practices[practiceNo].IncompatiblePractices[i]))
+                {
+                    var disabledPracticeNo = _practiceNameToId[_practices[practiceNo].IncompatiblePractices[i]];
+                    _practiceEnabled[disabledPracticeNo] = false;
                 }
             }
-            _practiceEnabled[previousPracticeNo] = true;
-        
-            RemoveBots(player);
-            DeleteGuidingLine(player);
-        }
-        else
-        {
-            _playerCount++;
-        }
-
-        _playerStatuses[player].PracticeIndex = practiceNo;
-
-        // Disable incompatible practices.
-        for (var i = 0; i < _practices[practiceNo].IncompatiblePractices.Count; i++)
-        {
-            if (_practiceNameToId.ContainsKey(_practices[practiceNo].IncompatiblePractices[i]))
-            {
-                var disabledPracticeNo = _practiceNameToId[_practices[practiceNo].IncompatiblePractices[i]];
-                _practiceEnabled[disabledPracticeNo] = false;
-            }
-        }
-        _practiceEnabled[practiceNo] = false;
+            _practiceEnabled[practiceNo] = false;
 
         // Setup practice
         AddBot(player, _practices[practiceNo].NumBots);
+        }
+        
 
         // Practice begin
         SetupPrefireMode(player);
