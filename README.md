@@ -10,7 +10,7 @@ An open-source CounterStrikeSharp powered server-side practicing plugin for CS2.
 
 ### Installation
 
-Currently I only provide the Linux (amd64) version. Download [the latest release files](https://github.com/lengran/OpenPrefirePrac/releases) and extract all files into **game/csgo/addons/counterstrikesharp/plugins/OpenPrefirePrac/**.
+Download [the latest release files](https://github.com/lengran/OpenPrefirePrac/releases) and extract all files into **game/csgo/addons/counterstrikesharp/plugins/OpenPrefirePrac/**.
 
 To install the latest version of CounterStrikeSharp, please refer to this [guide](https://docs.cssharp.dev/docs/guides/getting-started.html).
 
