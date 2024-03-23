@@ -88,6 +88,7 @@ Finished practices:
     - Attack A site from A palace (to jungle)
     - Attack B site from mid
     - Attack A site from underpass
+    - Retake B site from CT spawn
 - de_dust2
     - Attach A site from A long
     - Attach A site from A short
