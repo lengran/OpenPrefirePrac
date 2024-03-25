@@ -13,7 +13,7 @@ namespace OpenPrefirePrac;
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.0.17";
+    public override string ModuleVersion => "0.0.18";
     public override string ModuleAuthor => "Lengran";
     public override string ModuleDescription => "A plugin for practicing prefire routes in CS2. https://github.com/lengran/OpenPrefirePrac";
 
@@ -413,6 +413,17 @@ public class OpenPrefirePrac : BasePlugin
 
         // Setup practice
         AddBot(player, _practices[practiceNo].NumBots);
+        }
+        else
+        {
+            // If some bots have already been kicked, add them back.
+            var numRemainingBots = _playerStatuses[player].Bots.Count;
+            
+            if (numRemainingBots < _practices[practiceNo].NumBots)
+            {
+                _playerStatuses[player].Progress = 0;
+                AddBot(player, _practices[practiceNo].NumBots - numRemainingBots);
+            }
         }
         
 
