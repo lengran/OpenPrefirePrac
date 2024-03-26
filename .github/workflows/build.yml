@@ -24,17 +24,17 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 7.0.x
+          dotnet-version: 8.0.x
       - name: Run build
         run: dotnet build
       - name: Create output directory
         run: |
           mkdir -p output/OpenPrefirePrac
-          mv ./bin/Debug/net7.0/OpenPrefirePrac.dll output/OpenPrefirePrac/
-          mv ./bin/Debug/net7.0/OpenPrefirePrac.pdb output/OpenPrefirePrac/
-          mv ./bin/Debug/net7.0/OpenPrefirePrac.deps.json output/OpenPrefirePrac/
-          mv ./bin/Debug/net7.0/MaxMind.Db.dll output/OpenPrefirePrac/
-          mv ./bin/Debug/net7.0/MaxMind.GeoIP2.dll output/OpenPrefirePrac/
+          mv ./bin/Debug/net8.0/OpenPrefirePrac.dll output/OpenPrefirePrac/
+          mv ./bin/Debug/net8.0/OpenPrefirePrac.pdb output/OpenPrefirePrac/
+          mv ./bin/Debug/net8.0/OpenPrefirePrac.deps.json output/OpenPrefirePrac/
+          mv ./bin/Debug/net8.0/MaxMind.Db.dll output/OpenPrefirePrac/
+          mv ./bin/Debug/net8.0/MaxMind.GeoIP2.dll output/OpenPrefirePrac/
           mv ./maps output/OpenPrefirePrac/
           mv ./lang output/OpenPrefirePrac/
           wget https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-Country.mmdb -P output/OpenPrefirePrac/ -q
