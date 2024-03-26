@@ -66,7 +66,7 @@ python3 calculate_height.py [PATH TO YOUR FILE]
 
 ## Current development progress
 
-Current it's still under active developing.
+Currently it's still under active developing.
 
 Finished practices:
 
@@ -89,9 +89,11 @@ Finished practices:
     - Attack B site from mid
     - Attack A site from underpass
     - Retake B site from CT spawn
+- de_overpass
+    - Attack B site from B long
 - de_dust2
-    - Attach A site from A long
-    - Attach A site from A short
+    - Attack A site from A long
+    - Attack A site from A short
 
 TODO:
 

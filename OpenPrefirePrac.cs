@@ -716,7 +716,7 @@ public class OpenPrefirePrac : BasePlugin
             }
         }
 
-        AddTimer(0.4f, () =>
+        AddTimer(0.2f, () =>
         {
             var numberBotToFind = numberOfBots;
             var playerEntities = Utilities.GetPlayers();
@@ -760,25 +760,6 @@ public class OpenPrefirePrac : BasePlugin
         
         player.PlayerPawn.Value!.Teleport(pos, ang, new Vector(0, 0, 0));
     }
-
-    // // FreezeBot doesn't work in Event environment, so make it a command.
-    // [ConsoleCommand("css_freeze_helper", "Freeze a player")]
-    // [CommandHelper(whoCanExecute: CommandUsage.SERVER_ONLY)]
-    // public void OnFreezeHelperCommand(CCSPlayerController? player, CommandInfo commandInfo)
-    // {
-    //     var botSlot = int.Parse(commandInfo.ArgString);
-    //     var bot = new CCSPlayerController(NativeAPI.GetEntityFromIndex(botSlot + 1));
-
-    //     if (
-    //         bot is { IsValid: true, IsBot: true, IsHLTV: false, PawnIsAlive: true } 
-    //         && bot.Pawn.Value != null
-    //     ) // && bot.Pawn.Value.LifeState == (byte)LifeState_t.LIFE_ALIVE)
-    //     {
-    //         bot.Pawn.Value.MoveType = MoveType_t.MOVETYPE_OBSOLETE;
-    //         Schema.SetSchemaValue(bot.Pawn.Value.Handle, "CBaseEntity", "m_nActualMoveType", 1);
-    //         Utilities.SetStateChanged(bot.Pawn.Value, "CBaseEntity", "m_MoveType");
-    //     }
-    // }
 
     private void FreezeBot(CCSPlayerController? bot)
     {
