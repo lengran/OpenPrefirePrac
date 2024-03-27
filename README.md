@@ -2,7 +2,7 @@
 
 An open-source CounterStrikeSharp powered server-side practicing plugin for CS2. It provides multiple prefire practices on competitive map pool maps and support multiplayer practicing concurrently.
 
-## How to use
+## Get started
 
 ### Requirement
 
@@ -10,9 +10,11 @@ An open-source CounterStrikeSharp powered server-side practicing plugin for CS2.
 
 ### Installation
 
-Download [the latest release files](https://github.com/lengran/OpenPrefirePrac/releases) and extract all files into **game/csgo/addons/counterstrikesharp/plugins/OpenPrefirePrac/**.
+Download [the latest release files](https://github.com/lengran/OpenPrefirePrac/releases) and extract all files into "**game/csgo/addons/counterstrikesharp/plugins/OpenPrefirePrac/**".
 
 To install the latest version of CounterStrikeSharp, please refer to this [guide](https://docs.cssharp.dev/docs/guides/getting-started.html).
+
+## How to use
 
 ### Tips on operating a practice server
 
@@ -22,11 +24,23 @@ When starting a server, I recommend using these parameters.
 [CS2 Installation Directory]/game/bin/linuxsteamrt64/cs2 -dedicated -insecure +map de_inferno -maxplayers_override 64 +game_alias competitive
 ```
 
-Note: "-maxplayers_override 64" is the most important one. It allows the server to add more than 5 bots on one team, which is crucial to achieve the goal of allowing multiplayer training simultaneously.
+Note: "**-maxplayers_override 64**" is the most important one. It allows the server to add more than 5 bots on one team, which is crucial to achieve the goal of allowing multiplayer training simultaneously.
 
-## How to create a practice profile?
+### Start prefire practice in game
 
-The folder "map" is organize as follows. Each sub-folder in "map" contains practice profiles for the corresponding map. Each text file in that sub-folder is a practice profile.
+Send "**!prefire**" in chatbox or use command "**css_prefire**" in console.
+
+## Development
+
+### Provide translation
+
+First you can make a copy of an existing translation profile from the *lang* folder and start translate the sentences into your language.
+
+Then you might want to create a pull request. Because the plugin uses player's IP to decide the language shown to each player, a mapping from country to language needs to be hard coded into the translator module.
+
+### How to customize a practice profile?
+
+The folder "*map*" is organize as follows. Each sub-folder in "*map*" contains practice profiles for the corresponding map. Each text file in that sub-folder is a practice profile.
 
 A practice profile consists of 3 parts.
 
@@ -64,7 +78,7 @@ This can also be extracted from get\_pos using the python script. It will read i
 python3 calculate_height.py [PATH TO YOUR FILE]
 ```
 
-## Current development progress
+### Current development progress
 
 Currently it's still under active developing.
 
