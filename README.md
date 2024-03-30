@@ -105,6 +105,7 @@ Finished practices:
     - Retake B site from CT spawn
 - de_overpass
     - Attack B site from B long
+    - Attack B site from B short
 - de_dust2
     - Attack A site from A long
     - Attack A site from A short

@@ -43,6 +43,7 @@
     "map.de_mirage.under_to_jungle": "Attack A site from underpass",
     "map.de_mirage.b_retake": "Retake B site from CT spawn",
     "map.de_overpass.b_long": "Attack B site from B long",
+    "map.de_overpass.b_short": "Attack B site from B short",
     "map.de_dust2.a_long": "Attack A site from A long",
     "map.de_dust2.a_short": "Attack A site from A short"
 } 
