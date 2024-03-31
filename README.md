@@ -21,7 +21,7 @@ To install the latest version of CounterStrikeSharp, please refer to this [guide
 When starting a server, I recommend using these parameters.
 
 ```bash
-[CS2 Installation Directory]/game/bin/linuxsteamrt64/cs2 -dedicated -insecure +map de_inferno -maxplayers_override 64 +game_alias competitive
+[CS2 Installation Directory]/game/bin/linuxsteamrt64/cs2 -dedicated -insecure +map de_inferno -maxplayers_override 64 +game_alias competitive +sv_hibernate_when_empty 0
 ```
 
 Note: "**-maxplayers_override 64**" is the most important one. It allows the server to add more than 5 bots on one team, which is crucial to achieve the goal of allowing multiplayer training simultaneously.
