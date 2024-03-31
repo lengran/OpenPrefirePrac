@@ -44,6 +44,8 @@
     "map.de_mirage.b_retake": "Retake B site from CT spawn",
     "map.de_overpass.b_long": "Attack B site from B long",
     "map.de_overpass.b_short": "Attack B site from B short",
+    "map.de_overpass.under_to_mid": "Clear underpass and go upwards to mid",
+    "map.de_overpass.under_to_b": "Clear underpass and go towards B short",
     "map.de_dust2.a_long": "Attack A site from A long",
     "map.de_dust2.a_short": "Attack A site from A short"
 } 
