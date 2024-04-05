@@ -47,6 +47,7 @@
     "map.de_overpass.under_to_mid": "Clear underpass and go upwards to mid",
     "map.de_overpass.under_to_b": "Clear underpass and go towards B short",
     "map.de_overpass.a_long": "Attack A site from A long",
+    "map.de_overpass.a_short": "Attack A site from A short (mid)",
     "map.de_dust2.a_long": "Attack A site from A long",
     "map.de_dust2.a_short": "Attack A site from A short"
 } 

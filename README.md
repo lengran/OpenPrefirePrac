@@ -109,6 +109,7 @@ Finished practices:
     - Clear underpass and go upwards to mid
     - Clear underpass and go towards B short
     - Attack A site from A long
+    - Attack A site from A short (mid)
 - de_dust2
     - Attack A site from A long
     - Attack A site from A short
