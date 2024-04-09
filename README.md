@@ -110,6 +110,8 @@ Finished practices:
     - Clear underpass and go towards B short
     - Attack A site from A long
     - Attack A site from A short (mid)
+- de_anubis
+    - Attack B site from B main
 - de_dust2
     - Attack A site from A long
     - Attack A site from A short
@@ -117,9 +119,10 @@ Finished practices:
 TODO:
 
 1. Create prefire profiles for all maps.
-2. Improve bot logic.
-3. Improve localization support (The supporting framework is done. Submitting translations is warmly welcomed.).
-4. Reroute saperate logs into one gathered place for better debug experience.
+2. Save and restore convars to keep the server behavior consistent throughout training.
+3. Improve bot logic.
+4. Improve localization support (The supporting framework is done. Submitting translations is warmly welcomed.).
+5. Reroute saperate logs into one gathered place for better debug experience.
 
 ## Reference
 

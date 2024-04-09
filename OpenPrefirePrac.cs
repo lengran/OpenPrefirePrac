@@ -7,13 +7,14 @@ using CounterStrikeSharp.API.Modules.Utils;
 using CounterStrikeSharp.API.Modules.Memory;
 using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 using System.Globalization;
+using CounterStrikeSharp.API.Modules.Cvars;
 
 namespace OpenPrefirePrac;
 
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.1.22";
+    public override string ModuleVersion => "0.1.23";
     public override string ModuleAuthor => "Lengran";
     public override string ModuleDescription => "A plugin for practicing prefire in CS2. https://github.com/lengran/OpenPrefirePrac";
 
@@ -32,6 +33,8 @@ public class OpenPrefirePrac : BasePlugin
     private readonly List<PrefirePractice> _practices = new();
     
     private readonly List<string> _availableMaps = new();
+
+    // private readonly Dictionary<string, int> _savedConvars = new Dictionary<string, int>();
     
     private Translator _translator;
 
@@ -888,4 +891,48 @@ public class OpenPrefirePrac : BasePlugin
         // Console.WriteLine($"[OpenPrefirePrac] Created a beam. Start position: {startPos}, end position: {endPos}, entity index: {beam.Index}");
         return (int)beam.Index;
     }
+
+    // private void SaveConvars()
+    // {
+    //     string[] convarNames = [
+    //         "tv_enable",
+    //         "sv_cheats",
+    //         "mp_buy_anywhere",
+    //         "bot_allow_grenades",
+    //         "bot_allow_snipers",
+    //         "bot_allow_shotguns",
+    //         "mp_autoteambalance",
+    //         "mp_warmup_pausetimer",
+    //         "mp_free_armor",
+    //         "mp_respawn_immunitytime",
+    //         "sv_alltalk",
+    //         "sv_full_alltalk",
+    //         "mp_warmup_start",
+    //         "mp_maxmoney 60000",
+    //         "mp_startmoney 60000",
+    //         "mp_buytime 9999",
+    //         "bot_difficulty 5",
+    //         "custom_bot_difficulty 5",
+    //         "mp_limitteams 0",
+    //         "sv_infinite_ammo 1",
+    //     ];
+
+    //     string[] stringConvarNames = [
+    //         "bot_quota_mode"
+    //     ];
+
+    //     foreach (var convarName in convarNames)
+    //     {
+    //         var tmpConvar = ConVar.Find(convarName);
+    //         if (tmpConvar != null)
+    //         {
+    //             var value = tmpConvar.GetPrimitiveValue<int>();
+    //             _savedConvars.Add(convarName, value);
+    //         }
+    //         else
+    //         {
+    //             Console.WriteLine($"[OpenPrefirePrac] Can't find convar {convarName}.");
+    //         }
+    //     }
+    // }
 }
