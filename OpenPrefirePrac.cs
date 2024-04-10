@@ -14,7 +14,7 @@ namespace OpenPrefirePrac;
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.1.23";
+    public override string ModuleVersion => "0.1.24";
     public override string ModuleAuthor => "Lengran";
     public override string ModuleDescription => "A plugin for practicing prefire in CS2. https://github.com/lengran/OpenPrefirePrac";
 
@@ -34,18 +34,22 @@ public class OpenPrefirePrac : BasePlugin
     
     private readonly List<string> _availableMaps = new();
 
-    // private readonly Dictionary<string, int> _savedConvars = new Dictionary<string, int>();
-    
-    private Translator _translator;
+    private readonly ServerStatus _serverStatus = new();
 
-    public OpenPrefirePrac()
-    {
-        _playerCount = 0;
-        _translator = new Translator(Localizer, ModuleDirectory, CultureInfo.CurrentCulture.Name);      // This doesn't work. The ModuleDirectory is not assigned now. Put it here to get rid of the warning of not initialized objects.
-    }
+    private CCSGameRules ?_serverGameRules;
+    
+    private Translator ?_translator;
+
+    // public OpenPrefirePrac()
+    // {
+        // _playerCount = 0;
+        // _translator = new Translator(Localizer, ModuleDirectory, CultureInfo.CurrentCulture.Name);      // This doesn't work. The ModuleDirectory is not assigned now. Put it here to get rid of the warning of not initialized objects.
+    // }
     
     public override void Load(bool hotReload)
     {
+        _playerCount = 0;
+
         _translator = new Translator(Localizer, ModuleDirectory, CultureInfo.CurrentCulture.Name);
         
 	    Console.WriteLine("[OpenPrefirePrac] Registering listeners.");
@@ -64,6 +68,13 @@ public class OpenPrefirePrac : BasePlugin
             _mapName = "";
             _playerCount = 0;
             _playerStatuses.Clear();
+            
+            // Clear saved convars
+            _serverStatus.WarmupStatus = false;
+            _serverStatus.BoolConvars.Clear();
+            _serverStatus.IntConvars.Clear();
+            _serverStatus.FloatConvars.Clear();
+            _serverStatus.StringConvars.Clear();
 
             // Setup map
             OnMapStartHandler(Server.MapName);
@@ -96,7 +107,7 @@ public class OpenPrefirePrac : BasePlugin
         _playerStatuses.Add(player, new PlayerStatus());
 
         // Record player language
-        _translator.RecordPlayerCulture(player);
+        _translator!.RecordPlayerCulture(player);
     }
 
     // Don't know if this works. Can't test it myself. Need two people.
@@ -210,7 +221,7 @@ public class OpenPrefirePrac : BasePlugin
                 {
                     // Practice finished.
                     owner.PrintToChat(
-                        $" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator.Translate(owner, "practice.finish")}");
+                        $" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator!.Translate(owner, "practice.finish")}");
                     ExitPrefireMode(owner);
                 }
             }
@@ -271,7 +282,7 @@ public class OpenPrefirePrac : BasePlugin
                 }
 
                 // Print progress
-                owner.PrintToCenter(_translator.Translate(owner, "practice.progress", _playerStatuses[owner].EnabledTargets.Count, _playerStatuses[owner].EnabledTargets.Count - targetNo + _playerStatuses[owner].Bots.Count - 1));
+                owner.PrintToCenter(_translator!.Translate(owner, "practice.progress", _playerStatuses[owner].EnabledTargets.Count, _playerStatuses[owner].EnabledTargets.Count - targetNo + _playerStatuses[owner].Bots.Count - 1));
                 }
 
             // Kick unnecessary bots
@@ -284,7 +295,7 @@ public class OpenPrefirePrac : BasePlugin
                 if (_playerStatuses[owner].Bots.Count == 0)
                 {
                     // Practice finished.
-                    owner.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator.Translate(owner, "practice.finish")}");
+                    owner.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator!.Translate(owner, "practice.finish")}");
                     ExitPrefireMode(owner);
                 }
             }
@@ -312,7 +323,7 @@ public class OpenPrefirePrac : BasePlugin
     [CommandHelper(whoCanExecute: CommandUsage.CLIENT_ONLY)]
     public void OnPrefireCommand(CCSPlayerController player, CommandInfo commandInfo)
     {       
-        var mainMenu = new ChatMenu(_translator.Translate(player, "mainmenu.title"));
+        var mainMenu = new ChatMenu(_translator!.Translate(player, "mainmenu.title"));
 
         mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.practice"), OpenPracticeMenu);
         mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.map"), OpenMapMenu);
@@ -332,38 +343,8 @@ public class OpenPrefirePrac : BasePlugin
     {
         if (_playerCount == 0)
         {
-            Server.ExecuteCommand("tv_enable 0");
-            Server.ExecuteCommand("sv_cheats 1");
-            Server.ExecuteCommand("mp_maxmoney 60000");
-            Server.ExecuteCommand("mp_startmoney 60000");
-            Server.ExecuteCommand("mp_buytime 9999");
-            Server.ExecuteCommand("mp_buy_anywhere 1");
-            Server.ExecuteCommand("bot_allow_grenades 0");
-            Server.ExecuteCommand("bot_allow_snipers 0");
-            Server.ExecuteCommand("bot_allow_shotguns 0");
-            // Server.ExecuteCommand("bot_autodifficulty_threshold_high 5");
-            // Server.ExecuteCommand("bot_autodifficulty_threshold_low 5");
-            Server.ExecuteCommand("bot_difficulty 5");
-            Server.ExecuteCommand("custom_bot_difficulty 5");
-            // Server.ExecuteCommand("sv_auto_adjust_bot_difficulty 0");
-            Server.ExecuteCommand("sv_infinite_ammo 1");
-            Server.ExecuteCommand("mp_limitteams 0");
-            Server.ExecuteCommand("mp_autoteambalance 0");
-            Server.ExecuteCommand("mp_warmup_pausetimer 1");
-            Server.ExecuteCommand("bot_quota_mode normal");
-            Server.ExecuteCommand("weapon_auto_cleanup_time 1");
-            Server.ExecuteCommand("mp_free_armor 2");
-            Server.ExecuteCommand("mp_respawn_immunitytime -1");
-            // Server.ExecuteCommand("mp_roundtime 60");
-            // Server.ExecuteCommand("mp_roundtime_defuse 60");
-            // Server.ExecuteCommand("mp_freezetime 0");
-            // Server.ExecuteCommand("mp_team_intro_time 0");
-            // Server.ExecuteCommand("mp_ignore_round_win_conditions 1");
-            // Server.ExecuteCommand("mp_respawn_on_death_ct 1");
-            // Server.ExecuteCommand("mp_respawn_on_death_t 1");
-            Server.ExecuteCommand("sv_alltalk 1");
-            Server.ExecuteCommand("sv_full_alltalk 1");
-            Server.ExecuteCommand("mp_warmup_start");
+            SaveConvars();
+            SetupConvars();
         }
 
         int practiceNo = _playerStatuses[player].LocalizedPracticeNames[option.Text];
@@ -372,7 +353,7 @@ public class OpenPrefirePrac : BasePlugin
         // Check if selected practice route is compatible with other on-playing routes.
         if (previousPracticeNo != practiceNo && !_practiceEnabled[practiceNo])
         {
-            player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator.Translate(player, "practice.incompatible")}");
+            player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator!.Translate(player, "practice.incompatible")}");
             return;
         }
 
@@ -432,7 +413,7 @@ public class OpenPrefirePrac : BasePlugin
 
         // Practice begin
         SetupPrefireMode(player);
-        var localizedPracticeName = _translator.Translate(player, "map." + _mapName + "." + _practices[practiceNo].PracticeName);
+        var localizedPracticeName = _translator!.Translate(player, "map." + _mapName + "." + _practices[practiceNo].PracticeName);
         player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator.Translate(player, "practice.choose", localizedPracticeName)}");
         player.PrintToCenter(_translator.Translate(player, "practice.begin"));
     }
@@ -441,12 +422,12 @@ public class OpenPrefirePrac : BasePlugin
     {
         ExitPrefireMode(player);
         
-        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator.Translate(player, "practice.exit")}");
+        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator!.Translate(player, "practice.exit")}");
     }
 
     public void OpenMapMenu(CCSPlayerController player, ChatMenuOption option)
     {
-        var mapMenu = new ChatMenu(_translator.Translate(player, "mapmenu.title"));
+        var mapMenu = new ChatMenu(_translator!.Translate(player, "mapmenu.title"));
         foreach (var map in _availableMaps)
         {
             mapMenu.AddMenuOption(map, ChangeMap);
@@ -466,14 +447,14 @@ public class OpenPrefirePrac : BasePlugin
         }
         else
         {
-            player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator.Translate(player, "mapmenu.busy")}");
+            player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator!.Translate(player, "mapmenu.busy")}");
         }
     }
 
     public void OpenPracticeMenu(CCSPlayerController player, ChatMenuOption option)
     {
         // Dynamically draw menu
-        var practiceMenu = new ChatMenu(_translator.Translate(player, "practicemenu.title"));
+        var practiceMenu = new ChatMenu(_translator!.Translate(player, "practicemenu.title"));
         _playerStatuses[player].LocalizedPracticeNames.Clear();
 
         for (var i = 0; i < _practices.Count; i++)
@@ -502,7 +483,7 @@ public class OpenPrefirePrac : BasePlugin
     public void OpenDifficultyMenu(CCSPlayerController player, ChatMenuOption option)
     {
         // Dynamically draw menu
-        var difficultyMenu = new ChatMenu(_translator.Translate(player, "difficulty.title"));
+        var difficultyMenu = new ChatMenu(_translator!.Translate(player, "difficulty.title"));
         _playerStatuses[player].LocalizedDifficultyNames.Clear();
 
         for (var i = 0; i < 5; i++)
@@ -521,13 +502,13 @@ public class OpenPrefirePrac : BasePlugin
     {
         var difficultyNo = _playerStatuses[player].LocalizedDifficultyNames[option.Text];
         _playerStatuses[player].HealingMethod = difficultyNo;
-        var currentDifficulty = _translator.Translate(player, $"difficulty.{difficultyNo}");
+        var currentDifficulty = _translator!.Translate(player, $"difficulty.{difficultyNo}");
         player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator.Translate(player, "difficulty.set", currentDifficulty)}");
     }
 
     public void OpenModeMenu(CCSPlayerController player, ChatMenuOption option)
     {
-        var trainingModeMenu = new ChatMenu(_translator.Translate(player, "modemenu.title"));
+        var trainingModeMenu = new ChatMenu(_translator!.Translate(player, "modemenu.title"));
         _playerStatuses[player].LocalizedTrainingModeNames.Clear();
 
         for (var i = 0; i < 2; i++)
@@ -546,8 +527,8 @@ public class OpenPrefirePrac : BasePlugin
     {
         var trainingModeNo = _playerStatuses[player].LocalizedTrainingModeNames[option.Text];
         _playerStatuses[player].TrainingMode = trainingModeNo;
-        var currentTrainingMode = _translator.Translate(player, $"modemenu.{trainingModeNo}");
-        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator.Translate(player, "modemenu.set", currentTrainingMode)}");
+        var currentTrainingMode = _translator!.Translate(player, $"modemenu.{trainingModeNo}");
+        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "modemenu.set", currentTrainingMode)}");
     }
 
     public void OpenLanguageMenu(CCSPlayerController player, ChatMenuOption option)
@@ -569,20 +550,20 @@ public class OpenPrefirePrac : BasePlugin
         switch (option.Text)
         {
             case "English":
-                _translator.UpdatePlayerCulture(player.SteamID, "EN");
+                _translator!.UpdatePlayerCulture(player.SteamID, "EN");
                 break;
             case "Português":
-                _translator.UpdatePlayerCulture(player.SteamID, "pt-BR");
+                _translator!.UpdatePlayerCulture(player.SteamID, "pt-BR");
                 break;
             case "中文":
-                _translator.UpdatePlayerCulture(player.SteamID, "ZH");
+                _translator!.UpdatePlayerCulture(player.SteamID, "ZH");
                 break;
             default:
-                _translator.UpdatePlayerCulture(player.SteamID, "EN");
+                _translator!.UpdatePlayerCulture(player.SteamID, "EN");
                 break;
         }
 
-        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator.Translate(player, "languagemenu.set")}");
+        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "languagemenu.set")}");
     }
 
     private void LoadPractice()
@@ -626,26 +607,28 @@ public class OpenPrefirePrac : BasePlugin
         
         if (_playerCount == 0)
         {
-            Server.ExecuteCommand("sv_cheats 0");
-            Server.ExecuteCommand("mp_warmup_pausetimer 0");
-            Server.ExecuteCommand("bot_quota_mode competitive");
-            Server.ExecuteCommand("tv_enable 1");
-            Server.ExecuteCommand("weapon_auto_cleanup_time 0");
-            Server.ExecuteCommand("mp_buytime 20");
-            Server.ExecuteCommand("mp_maxmoney 16000");
-            Server.ExecuteCommand("mp_startmoney 16000");
-            Server.ExecuteCommand("mp_buy_anywhere 0");
-            Server.ExecuteCommand("mp_free_armor 0");
-            // Server.ExecuteCommand("mp_roundtime 1.92");
-            // Server.ExecuteCommand("mp_roundtime_defuse 1.92");
-            // Server.ExecuteCommand("mp_team_intro_time 6.5");
-            // Server.ExecuteCommand("mp_freezetime 15");
-            // Server.ExecuteCommand("mp_ignore_round_win_conditions 0");
-            // Server.ExecuteCommand("mp_respawn_on_death_ct 0");
-            // Server.ExecuteCommand("mp_respawn_on_death_t 0");
-            Server.ExecuteCommand("sv_alltalk 1");
-            Server.ExecuteCommand("sv_full_alltalk 1");
-            Server.ExecuteCommand("mp_warmup_start");
+            // Server.ExecuteCommand("sv_cheats 0");
+            // Server.ExecuteCommand("mp_warmup_pausetimer 0");
+            // Server.ExecuteCommand("bot_quota_mode competitive");
+            // Server.ExecuteCommand("tv_enable 1");
+            // Server.ExecuteCommand("weapon_auto_cleanup_time 0");
+            // Server.ExecuteCommand("mp_buytime 20");
+            // Server.ExecuteCommand("mp_maxmoney 16000");
+            // Server.ExecuteCommand("mp_startmoney 16000");
+            // Server.ExecuteCommand("mp_buy_anywhere 0");
+            // Server.ExecuteCommand("mp_free_armor 0");
+            // // Server.ExecuteCommand("mp_roundtime 1.92");
+            // // Server.ExecuteCommand("mp_roundtime_defuse 1.92");
+            // // Server.ExecuteCommand("mp_team_intro_time 6.5");
+            // // Server.ExecuteCommand("mp_freezetime 15");
+            // // Server.ExecuteCommand("mp_ignore_round_win_conditions 0");
+            // // Server.ExecuteCommand("mp_respawn_on_death_ct 0");
+            // // Server.ExecuteCommand("mp_respawn_on_death_t 0");
+            // Server.ExecuteCommand("sv_alltalk 1");
+            // Server.ExecuteCommand("sv_full_alltalk 1");
+            // Server.ExecuteCommand("mp_warmup_start");
+
+            RestoreConvars();
         }
     }
 
@@ -892,47 +875,206 @@ public class OpenPrefirePrac : BasePlugin
         return (int)beam.Index;
     }
 
-    // private void SaveConvars()
+    // [ConsoleCommand("css_test", "For debug purpose.")]
+    // [CommandHelper(whoCanExecute: CommandUsage.SERVER_ONLY)]
+    // public void OnTestCommand(CCSPlayerController player, CommandInfo commandInfo)
     // {
-    //     string[] convarNames = [
-    //         "tv_enable",
-    //         "sv_cheats",
-    //         "mp_buy_anywhere",
-    //         "bot_allow_grenades",
-    //         "bot_allow_snipers",
-    //         "bot_allow_shotguns",
-    //         "mp_autoteambalance",
-    //         "mp_warmup_pausetimer",
-    //         "mp_free_armor",
-    //         "mp_respawn_immunitytime",
-    //         "sv_alltalk",
-    //         "sv_full_alltalk",
-    //         "mp_warmup_start",
-    //         "mp_maxmoney 60000",
-    //         "mp_startmoney 60000",
-    //         "mp_buytime 9999",
-    //         "bot_difficulty 5",
-    //         "custom_bot_difficulty 5",
-    //         "mp_limitteams 0",
-    //         "sv_infinite_ammo 1",
-    //     ];
-
-    //     string[] stringConvarNames = [
-    //         "bot_quota_mode"
-    //     ];
-
-    //     foreach (var convarName in convarNames)
-    //     {
-    //         var tmpConvar = ConVar.Find(convarName);
-    //         if (tmpConvar != null)
-    //         {
-    //             var value = tmpConvar.GetPrimitiveValue<int>();
-    //             _savedConvars.Add(convarName, value);
-    //         }
-    //         else
-    //         {
-    //             Console.WriteLine($"[OpenPrefirePrac] Can't find convar {convarName}.");
-    //         }
-    //     }
+    //     SaveConvars();
+    //     Server.ExecuteCommand("sv_cheats 1");
+    //     var tmpConvar = ConVar.Find("sv_cheats");
+    //     AddTimer(1f, () => {
+    //         Console.WriteLine($"[OpenPrefirePrac] DEBUG: sv_cheats = {tmpConvar.GetPrimitiveValue<bool>()}");
+    //         RestoreConvars();
+    //     });
+    //     AddTimer(2f, () => {Console.WriteLine($"[OpenPrefirePrac] DEBUG: sv_cheats = {tmpConvar.GetPrimitiveValue<bool>()}");});
     // }
+
+    private void SaveConvars()
+    {
+        string[] boolConvarNames = [
+            "tv_enable",
+            "sv_cheats",
+            "bot_allow_grenades",
+            "bot_allow_snipers",
+            "bot_allow_shotguns",
+            "mp_autoteambalance",
+            "sv_alltalk",
+            "sv_full_alltalk",
+        ];
+
+        string[] intConvarNames = [
+            "mp_buy_anywhere",
+            "mp_warmup_pausetimer",
+            "mp_free_armor",
+            "mp_limitteams",
+            "sv_infinite_ammo",
+            "mp_maxmoney",
+            "mp_startmoney",
+            "bot_difficulty",
+            "custom_bot_difficulty",
+        ];
+
+        string[] floatConvarNames = [
+            "mp_respawn_immunitytime",
+            "mp_buytime",
+        ];
+
+        string[] stringConvarNames = [
+            "bot_quota_mode",
+        ];
+
+        try
+        {
+            // Bool convars
+            foreach (var convarName in boolConvarNames)
+            {
+                var tmpConvar = ConVar.Find(convarName);
+                if (tmpConvar != null)
+                {
+                    var value = tmpConvar.GetPrimitiveValue<bool>();
+                    _serverStatus.BoolConvars.Add(convarName, value);
+                    // Console.WriteLine($"[OpenPrefirePrac] {convarName}: {value}");
+                }
+            }
+
+            // Int convars
+            foreach (var convarName in intConvarNames)
+            {
+                var tmpConvar = ConVar.Find(convarName);
+                if (tmpConvar != null)
+                {
+                    var value = tmpConvar.GetPrimitiveValue<int>();
+                    _serverStatus.IntConvars.Add(convarName, value);
+                    // Console.WriteLine($"[OpenPrefirePrac] {convarName}: {value}");
+                }
+            }
+
+            // Float convars
+            foreach (var convarName in floatConvarNames)
+            {
+                var tmpConvar = ConVar.Find(convarName);
+                if (tmpConvar != null)
+                {
+                    var value = tmpConvar.GetPrimitiveValue<float>();
+                    _serverStatus.FloatConvars.Add(convarName, value);
+                    // Console.WriteLine($"[OpenPrefirePrac] {convarName}: {value}");
+                }
+            }
+
+            // String convars
+            foreach (var convarName in stringConvarNames)
+            {
+                var tmpConvar = ConVar.Find(convarName);
+                if (tmpConvar != null)
+                {
+                    var value = tmpConvar.StringValue;
+                    _serverStatus.StringConvars.Add(convarName, value);
+                    // Console.WriteLine($"[OpenPrefirePrac] {convarName}: {value}");
+                }
+            }
+        }
+        catch (System.Exception)
+        {
+            Console.WriteLine("[OpenPrefirePrac] Error reading convars.");
+            throw;
+        }
+
+        // Read Warmup status
+        try
+        {
+            if (_serverGameRules == null)
+            {
+                _serverGameRules = Utilities.FindAllEntitiesByDesignerName<CCSGameRulesProxy>("cs_gamerules").First().GameRules!;
+            }
+            _serverStatus.WarmupStatus = _serverGameRules.WarmupPeriod;
+            // Console.WriteLine($"[OpenPrefirePrac] Warmup Status: {_serverGameRules.WarmupPeriod}");
+        }
+        catch (System.Exception)
+        {
+            Console.WriteLine($"[OpenPrefirePrac] Can't read server's warmup status, will use the default value {_serverStatus.WarmupStatus}.");
+        }
+    }
+
+    private void RestoreConvars()
+    {
+        // Bool convars
+        foreach (var convar in _serverStatus.BoolConvars)
+        {
+            var tmpConvar = ConVar.Find(convar.Key);
+            tmpConvar!.SetValue(convar.Value);
+        }
+        _serverStatus.BoolConvars.Clear();
+
+        // Int convars
+        foreach (var convar in _serverStatus.IntConvars)
+        {
+            var tmpConvar = ConVar.Find(convar.Key);
+            // Somehow the following 2 methods don't work, just make up a command to implement this.
+            Server.ExecuteCommand(convar.Key + " " + convar.Value.ToString());
+            // tmpConvar!.GetPrimitiveValue<int>() = convar.Value;
+            // tmpConvar!.SetValue(convar.Value);
+        }
+        _serverStatus.IntConvars.Clear();
+
+        // Float convars
+        foreach (var convar in _serverStatus.FloatConvars)
+        {
+            var tmpConvar = ConVar.Find(convar.Key);
+            // Somehow the following 2 methods don't work, just make up a command to implement this.
+            Server.ExecuteCommand(convar.Key + " " + convar.Value.ToString());
+            // tmpConvar!.GetPrimitiveValue<float>() = convar.Value;
+            // tmpConvar!.SetValue(convar.Value);
+        }
+        _serverStatus.FloatConvars.Clear();
+
+        // String convars
+        foreach (var convar in _serverStatus.StringConvars)
+        {
+            var tmpConvar = ConVar.Find(convar.Key);
+            tmpConvar!.StringValue = convar.Value;
+        }
+        _serverStatus.StringConvars.Clear();
+
+        // Restore warmup status
+        if (!_serverStatus.WarmupStatus)
+        {
+            Server.ExecuteCommand("mp_warmup_end");
+        }
+    }
+
+    private void SetupConvars()
+    {
+        Server.ExecuteCommand("tv_enable 0");
+        Server.ExecuteCommand("sv_cheats 1");
+        Server.ExecuteCommand("mp_maxmoney 60000");
+        Server.ExecuteCommand("mp_startmoney 60000");
+        Server.ExecuteCommand("mp_buytime 9999");
+        Server.ExecuteCommand("mp_buy_anywhere 1");
+        Server.ExecuteCommand("bot_allow_grenades 0");
+        Server.ExecuteCommand("bot_allow_snipers 0");
+        Server.ExecuteCommand("bot_allow_shotguns 0");
+        // Server.ExecuteCommand("bot_autodifficulty_threshold_high 5");
+        // Server.ExecuteCommand("bot_autodifficulty_threshold_low 5");
+        Server.ExecuteCommand("bot_difficulty 5");
+        Server.ExecuteCommand("custom_bot_difficulty 5");
+        // Server.ExecuteCommand("sv_auto_adjust_bot_difficulty 0");
+        Server.ExecuteCommand("sv_infinite_ammo 1");
+        Server.ExecuteCommand("mp_limitteams 0");
+        Server.ExecuteCommand("mp_autoteambalance 0");
+        Server.ExecuteCommand("mp_warmup_pausetimer 1");
+        Server.ExecuteCommand("bot_quota_mode normal");
+        Server.ExecuteCommand("weapon_auto_cleanup_time 1");
+        Server.ExecuteCommand("mp_free_armor 2");
+        Server.ExecuteCommand("mp_respawn_immunitytime -1");
+        // Server.ExecuteCommand("mp_roundtime 60");
+        // Server.ExecuteCommand("mp_roundtime_defuse 60");
+        // Server.ExecuteCommand("mp_freezetime 0");
+        // Server.ExecuteCommand("mp_team_intro_time 0");
+        // Server.ExecuteCommand("mp_ignore_round_win_conditions 1");
+        // Server.ExecuteCommand("mp_respawn_on_death_ct 1");
+        // Server.ExecuteCommand("mp_respawn_on_death_t 1");
+        Server.ExecuteCommand("sv_alltalk 1");
+        Server.ExecuteCommand("sv_full_alltalk 1");
+        Server.ExecuteCommand("mp_warmup_start");
+    }
 }

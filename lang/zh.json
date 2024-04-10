@@ -49,6 +49,7 @@
     "map.de_overpass.a_long": "从 A 大进攻 A 包点",
     "map.de_overpass.a_short": "从 A 小（厕所）进攻 A 包点",
     "map.de_anubis.b_main": "从 B 门进攻 B 包点",
+    "map.de_anubis.mid_to_b": "从中路（B 连接）进攻 B 包点",
     "map.de_dust2.a_long": "A 大到 A 包点",
     "map.de_dust2.a_short": "A 小到 A 包点"
 } 
