@@ -11,4 +11,6 @@ public class ServerStatus
     public readonly Dictionary<string, string> StringConvars = new();
 
     public bool WarmupStatus = false;
+
+    public bool sv_cheats = false;
 }

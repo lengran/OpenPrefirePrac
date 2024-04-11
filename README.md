@@ -112,7 +112,7 @@ Finished practices:
     - Attack A site from A short (mid)
 - de_anubis
     - Attack B site from B main
-    - Attack B site from mid (b connector)
+    - Attack B site from mid (B connector)
 - de_dust2
     - Attack A site from A long
     - Attack A site from A short
