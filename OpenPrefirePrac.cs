@@ -40,11 +40,7 @@ public class OpenPrefirePrac : BasePlugin
     
     private Translator ?_translator;
 
-    // public OpenPrefirePrac()
-    // {
-        // _playerCount = 0;
-        // _translator = new Translator(Localizer, ModuleDirectory, CultureInfo.CurrentCulture.Name);      // This doesn't work. The ModuleDirectory is not assigned now. Put it here to get rid of the warning of not initialized objects.
-    // }
+    private readonly Dictionary<CCSPlayerController, int> _botRequests = new();         // make this thread-safe if necessary
     
     public override void Load(bool hotReload)
     {
@@ -55,7 +51,6 @@ public class OpenPrefirePrac : BasePlugin
 	    Console.WriteLine("[OpenPrefirePrac] Registering listeners.");
         RegisterListener<Listeners.OnClientPutInServer>(OnClientPutInServerHandler);
         RegisterListener<Listeners.OnMapStart>(OnMapStartHandler);
-        // RegisterListener<Listeners.OnClientDisconnectPost>(OnClientDisconnectHandler);
 
         if (hotReload)
         {
@@ -99,37 +94,55 @@ public class OpenPrefirePrac : BasePlugin
     {
         var player = new CCSPlayerController(NativeAPI.GetEntityFromIndex(slot + 1));
 
-        if (!player.IsValid || player.IsBot || player.IsHLTV)
+        if (!player.IsValid || player.IsHLTV)
         {
             return;
         }
 
-        _playerStatuses.Add(player, new PlayerStatus());
+        if (player.IsBot)
+        {
+            // For bots: If someone is practicing and it's an unmanaged bot, add or kick the bot
+            if (_playerCount > 0 && !_ownerOfBots.ContainsKey(player))
+            {
+                if (_botRequests.Count > 0)
+                {
+                    // Update requests (move this to the begining of this block)
+                    var tmpPlayerNumBots = _botRequests.FirstOrDefault();
+                    if (tmpPlayerNumBots.Value == 1)
+                    {
+                        _botRequests.Remove(tmpPlayerNumBots.Key);
+                    }
+                    else
+                    {
+                        _botRequests[tmpPlayerNumBots.Key]--;
+                    }
 
-        // Record player language
-        _translator!.RecordPlayerCulture(player);
+                    // Put this bot under management
+                    _playerStatuses[tmpPlayerNumBots.Key].Bots.Add(player);
+                    _ownerOfBots.Add(player, tmpPlayerNumBots.Key);
+                    Console.WriteLine($"[OpenPrefirePrac] Bot {player.PlayerName}, slot: {player.Slot} has been spawned.");
+                }
+                else
+                {
+                    // Already have enough bots, kick this bot.
+                    Server.ExecuteCommand($"bot_kick {player.PlayerName}");
+                    Console.WriteLine($"[OpenPrefirePrac] Exec command: bot_kick {player.PlayerName}");
+                }
+            }
+        }
+        else
+        {
+            // For players:
+            _playerStatuses.Add(player, new PlayerStatus());
+
+            // Record player language
+            _translator!.RecordPlayerCulture(player);
+        }
     }
-
-    // Don't know if this works. Can't test it myself. Need two people.
-    // public void OnClientDisconnectHandler(int slot)
-    // {
-    //     var player = new CCSPlayerController(NativeAPI.GetEntityFromIndex(slot + 1));
-
-    //     if (!player_manager.ContainsKey(slot))
-    //         return;
-
-    //     if (player_manager[slot].practice_no != -1)
-    //         ExitPrefireMode(slot);
-
-    //     // Release resources(practices, targets, bots...)
-    //     player_manager.Remove(slot);
-    // }
 
     [GameEventHandler]
     public HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
     {
-        // Console.WriteLine($"[OpenPrefirePrac] Player {@event.Userid.PlayerName} disconnected.");
-        // Still don't know if this works. I can't test this myself. Need two people.
         var player = @event.Userid;
 
         if (!_playerStatuses.ContainsKey(player))
@@ -185,46 +198,56 @@ public class OpenPrefirePrac : BasePlugin
             return HookResult.Continue;
         }
         
-        if (playerOrBot.IsBot && _ownerOfBots.ContainsKey(playerOrBot))
+        if (playerOrBot.IsBot)
         {
-            // For managed bots
-            var owner = _ownerOfBots[playerOrBot];
-            var targetNo = _playerStatuses[owner].Progress;
-            var practiceIndex = _playerStatuses[owner].PracticeIndex;
-
-            if (targetNo < _playerStatuses[owner].EnabledTargets.Count)
+            
+            if (_ownerOfBots.ContainsKey(playerOrBot))
             {
-                // If there are more targets to place, move bot to next place
-                _playerStatuses[owner].Progress++;
+                // For managed bots
+                var owner = _ownerOfBots[playerOrBot];
+                var targetNo = _playerStatuses[owner].Progress;
+                var practiceIndex = _playerStatuses[owner].PracticeIndex;
 
-                MovePlayer(playerOrBot,
-                    _practices[practiceIndex].Targets[_playerStatuses[owner].EnabledTargets[targetNo]]
-                        .IsCrouching,
-                    _practices[practiceIndex].Targets[_playerStatuses[owner].EnabledTargets[targetNo]].Position,
-                    _practices[practiceIndex].Targets[_playerStatuses[owner].EnabledTargets[targetNo]]
-                        .Rotation);
-                // Server.ExecuteCommand($"css_freeze_helper {playerOrBot.Slot}");
-                Server.NextFrame(() => FreezeBot(playerOrBot));
-            }
-            else
-            {
-                // This code block is to patch the issue of extra bots.
-                // Explain:
-                //     Bot B is died while Bot A is still spawning, so progress 
-                //     is not updated in time. This could cause Bot B not being
-                //     kicked. So kick them here.
-                _ownerOfBots.Remove(playerOrBot);
-                _playerStatuses[owner].Bots.Remove(playerOrBot);
-                Server.ExecuteCommand($"bot_kick {playerOrBot.PlayerName}");
-
-                if (_playerStatuses[owner].Bots.Count == 0)
+                if (targetNo < _playerStatuses[owner].EnabledTargets.Count)
                 {
-                    // Practice finished.
-                    owner.PrintToChat(
-                        $" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator!.Translate(owner, "practice.finish")}");
-                    ExitPrefireMode(owner);
+                    // If there are more targets to place, move bot to next place
+                    _playerStatuses[owner].Progress++;
+
+                    MovePlayer(playerOrBot,
+                        _practices[practiceIndex].Targets[_playerStatuses[owner].EnabledTargets[targetNo]]
+                            .IsCrouching,
+                        _practices[practiceIndex].Targets[_playerStatuses[owner].EnabledTargets[targetNo]].Position,
+                        _practices[practiceIndex].Targets[_playerStatuses[owner].EnabledTargets[targetNo]]
+                            .Rotation);
+                    
+                    Server.NextFrame(() => FreezeBot(playerOrBot));
+                }
+                else
+                {
+                    // This code block is to patch the issue of extra bots.
+                    // Explain:
+                    //     Bot B is died while Bot A is still spawning, so progress 
+                    //     is not updated in time. This could cause Bot B not being
+                    //     kicked. So kick them here.
+                    _ownerOfBots.Remove(playerOrBot);
+                    _playerStatuses[owner].Bots.Remove(playerOrBot);
+                    Server.ExecuteCommand($"bot_kick {playerOrBot.PlayerName}");
+
+                    if (_playerStatuses[owner].Bots.Count == 0)
+                    {
+                        // Practice finished.
+                        owner.PrintToChat(
+                            $" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator!.Translate(owner, "practice.finish")}");
+                        ExitPrefireMode(owner);
+                    }
                 }
             }
+            // else
+            // {
+            //     // For unmanaged bots, kick them.
+            //     Console.WriteLine($"[OpenPrefirePrac] Find an unmanaged bot ({playerOrBot.PlayerName}) spawning, kick it.");
+            //     Server.ExecuteCommand($"bot_kick {playerOrBot.PlayerName}");
+            // }
         }
         else
         {
@@ -251,54 +274,66 @@ public class OpenPrefirePrac : BasePlugin
             return HookResult.Continue;
         }
         
-        if (playerOrBot.IsBot && _ownerOfBots.ContainsKey(playerOrBot)) 
+        if (playerOrBot.IsBot) 
         {
-            // For managed bots
-            var owner = _ownerOfBots[playerOrBot];
-            var targetNo = _playerStatuses[owner].Progress;
-            var practiceIndex = _playerStatuses[owner].PracticeIndex;
-
-            if (targetNo >= _practices[practiceIndex].NumBots)         // Bots will be killed after their first time getting spawned, so as to move them to target spots.
+            if (_ownerOfBots.ContainsKey(playerOrBot))
             {
-                // Award the player.
-                if (owner.PawnIsAlive && owner.Pawn.Value != null  && _playerStatuses[owner].HealingMethod > 1)
+                // For managed bots
+                var owner = _ownerOfBots[playerOrBot];
+                var targetNo = _playerStatuses[owner].Progress;
+                var practiceIndex = _playerStatuses[owner].PracticeIndex;
+
+                if (targetNo >= _practices[practiceIndex].NumBots)         // Bots will be killed after their first time getting spawned, so as to move them to target spots.
                 {
-                    owner.GiveNamedItem("item_assaultsuit");
-                    
-                    var currentHp = owner.Pawn.Value.Health;
-                    switch (_playerStatuses[owner].HealingMethod)
+                    // Award the player.
+                    if (owner.PawnIsAlive && owner.Pawn.Value != null  && _playerStatuses[owner].HealingMethod > 1)
                     {
-                        case 2:
-                            currentHp = currentHp + 25;
-                            break;
-                        case 4:
-                            currentHp = currentHp + 500;
-                            break;
-                        default:
-                            currentHp = currentHp + 100;
-                            break;
+                        owner.GiveNamedItem("item_assaultsuit");
+
+                        var currentHp = owner.Pawn.Value.Health;
+                        switch (_playerStatuses[owner].HealingMethod)
+                        {
+                            case 2:
+                                currentHp = currentHp + 25;
+                                break;
+                            case 4:
+                                currentHp = currentHp + 500;
+                                break;
+                            default:
+                                currentHp = currentHp + 100;
+                                break;
+                        }
+                        SetPlayerHealth(owner, currentHp);
                     }
-                    SetPlayerHealth(owner, currentHp);
+
+                    // Print progress
+                    owner.PrintToCenter(_translator!.Translate(owner, "practice.progress", _playerStatuses[owner].EnabledTargets.Count, _playerStatuses[owner].EnabledTargets.Count - targetNo + _playerStatuses[owner].Bots.Count - 1));
+
+                    // Respawn it at once.
+                    // playerOrBot.Respawn();
                 }
 
-                // Print progress
-                owner.PrintToCenter(_translator!.Translate(owner, "practice.progress", _playerStatuses[owner].EnabledTargets.Count, _playerStatuses[owner].EnabledTargets.Count - targetNo + _playerStatuses[owner].Bots.Count - 1));
-                }
-
-            // Kick unnecessary bots
-            if (targetNo >= _playerStatuses[owner].EnabledTargets.Count)
-            {
-                _ownerOfBots.Remove(playerOrBot);
-                _playerStatuses[owner].Bots.Remove(playerOrBot);
-                Server.ExecuteCommand($"bot_kick {playerOrBot.PlayerName}");
-
-                if (_playerStatuses[owner].Bots.Count == 0)
+                // Kick unnecessary bots
+                if (targetNo >= _playerStatuses[owner].EnabledTargets.Count)
                 {
-                    // Practice finished.
-                    owner.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator!.Translate(owner, "practice.finish")}");
-                    ExitPrefireMode(owner);
+                    _ownerOfBots.Remove(playerOrBot);
+                    _playerStatuses[owner].Bots.Remove(playerOrBot);
+                    Server.ExecuteCommand($"bot_kick {playerOrBot.PlayerName}");
+
+                    if (_playerStatuses[owner].Bots.Count == 0)
+                    {
+                        // Practice finished.
+                        owner.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator!.Translate(owner, "practice.finish")}");
+                        ExitPrefireMode(owner);
+                    }
                 }
             }
+            // else
+            // {
+            //     // For unmanaged bots, kick them.
+            //     Console.WriteLine($"[OpenPrefirePrac] Find an unmanaged bot ({playerOrBot.PlayerName}) dying, kick it.");
+            //     Server.ExecuteCommand($"bot_kick {playerOrBot.PlayerName}");
+            // }
         }
         else
         {
@@ -688,6 +723,10 @@ public class OpenPrefirePrac : BasePlugin
     private void AddBot(CCSPlayerController player, int numberOfBots)
     {
         Console.WriteLine($"[OpenPrefirePrac] Creating {numberOfBots} bots.");
+
+        // Test a new method of adding bots
+        _botRequests.Add(player, numberOfBots);
+
         for (var i = 0; i < numberOfBots; i++)
         {
             if (player.TeamNum == (byte)CsTeam.CounterTerrorist)
@@ -702,36 +741,36 @@ public class OpenPrefirePrac : BasePlugin
             }
         }
 
-        AddTimer(0.2f, () =>
-        {
-            var numberBotToFind = numberOfBots;
-            var playerEntities = Utilities.GetPlayers();
+        // AddTimer(0.2f, () =>
+        // {
+        //     var numberBotToFind = numberOfBots;
+        //     var playerEntities = Utilities.GetPlayers();
 
-            foreach (var tempPlayer in playerEntities)
-            {
-                if (!tempPlayer.IsValid || !tempPlayer.IsBot || tempPlayer.IsHLTV) continue;
-                if (!tempPlayer.UserId.HasValue) continue;
+        //     foreach (var tempPlayer in playerEntities)
+        //     {
+        //         if (!tempPlayer.IsValid || !tempPlayer.IsBot || tempPlayer.IsHLTV) continue;
+        //         if (!tempPlayer.UserId.HasValue) continue;
                 
-                // Check if it belongs to someone, if so, do nothing
-                if (_ownerOfBots.ContainsKey(tempPlayer)) continue;
+        //         // Check if it belongs to someone, if so, do nothing
+        //         if (_ownerOfBots.ContainsKey(tempPlayer)) continue;
 
-                // If it's a newly added bot
-                if (numberBotToFind == 0)
-                {
-                    // a redundent bot, kick it
-                    Server.ExecuteCommand($"bot_kick {tempPlayer.PlayerName}");
-                    Console.WriteLine($"[OpenPrefirePrac] Exec command: bot_kick {tempPlayer.PlayerName}");
-                    continue;
-                }
+        //         // If it's a newly added bot
+        //         if (numberBotToFind == 0)
+        //         {
+        //             // a redundent bot, kick it
+        //             Server.ExecuteCommand($"bot_kick {tempPlayer.PlayerName}");
+        //             Console.WriteLine($"[OpenPrefirePrac] Exec command: bot_kick {tempPlayer.PlayerName}");
+        //             continue;
+        //         }
 
-                _playerStatuses[player].Bots.Add(tempPlayer);
-                _ownerOfBots.Add(tempPlayer, player);
+        //         _playerStatuses[player].Bots.Add(tempPlayer);
+        //         _ownerOfBots.Add(tempPlayer, player);
 
-                numberBotToFind--;
+        //         numberBotToFind--;
                     
-                Console.WriteLine($"[OpenPrefirePrac] Bot {tempPlayer.PlayerName}, slot: {tempPlayer.Slot} has been spawned.");
-            }
-        });
+        //         Console.WriteLine($"[OpenPrefirePrac] Bot {tempPlayer.PlayerName}, slot: {tempPlayer.Slot} has been spawned.");
+        //     }
+        // });
     }
 
     private void MovePlayer(CCSPlayerController player, bool crouch, Vector pos, QAngle ang)
@@ -1079,6 +1118,7 @@ public class OpenPrefirePrac : BasePlugin
         Server.ExecuteCommand("bot_quota_mode normal");
         
         Server.ExecuteCommand("mp_warmup_start");
+        Server.ExecuteCommand("bot_kick all");
 
         // Server.ExecuteCommand("bot_autodifficulty_threshold_high 5");
         // Server.ExecuteCommand("bot_autodifficulty_threshold_low 5");
