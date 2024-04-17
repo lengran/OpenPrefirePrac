@@ -286,31 +286,32 @@ public class OpenPrefirePrac : BasePlugin
                 if (targetNo >= _practices[practiceIndex].NumBots)         // Bots will be killed after their first time getting spawned, so as to move them to target spots.
                 {
                     // Award the player.
-                    if (owner.PawnIsAlive && owner.Pawn.Value != null  && _playerStatuses[owner].HealingMethod > 1)
+                    if (owner.PawnIsAlive && owner.Pawn.Value != null)
                     {
                         owner.GiveNamedItem("item_assaultsuit");
+                        RefillAmmo(owner);
 
-                        var currentHp = owner.Pawn.Value.Health;
-                        switch (_playerStatuses[owner].HealingMethod)
+                        if (_playerStatuses[owner].HealingMethod > 1)
                         {
-                            case 2:
-                                currentHp = currentHp + 25;
-                                break;
-                            case 4:
-                                currentHp = currentHp + 500;
-                                break;
-                            default:
-                                currentHp = currentHp + 100;
-                                break;
+                            var currentHp = owner.Pawn.Value.Health;
+                            switch (_playerStatuses[owner].HealingMethod)
+                            {
+                                case 2:
+                                    currentHp = currentHp + 25;
+                                    break;
+                                case 4:
+                                    currentHp = currentHp + 500;
+                                    break;
+                                default:
+                                    currentHp = currentHp + 100;
+                                    break;
+                            }
+                            SetPlayerHealth(owner, currentHp);
                         }
-                        SetPlayerHealth(owner, currentHp);
                     }
 
                     // Print progress
                     owner.PrintToCenter(_translator!.Translate(owner, "practice.progress", _playerStatuses[owner].EnabledTargets.Count, _playerStatuses[owner].EnabledTargets.Count - targetNo + _playerStatuses[owner].Bots.Count - 1));
-
-                    // Respawn it at once.
-                    // playerOrBot.Respawn();
                 }
 
                 // Kick unnecessary bots
@@ -430,8 +431,9 @@ public class OpenPrefirePrac : BasePlugin
             }
             _practiceEnabled[practiceNo] = false;
 
-        // Setup practice
-        AddBot(player, _practices[practiceNo].NumBots);
+            // Setup practice
+            AddBot(player, _practices[practiceNo].NumBots);
+            // DrawGuidingLine(player);
         }
         else
         {
@@ -676,7 +678,8 @@ public class OpenPrefirePrac : BasePlugin
             var bot = _playerStatuses[player].Bots[i];
             if (bot.IsValid || bot.PawnIsAlive)
             {
-                Server.ExecuteCommand($"bot_kill {bot.PlayerName}");
+                // Server.ExecuteCommand($"bot_kill {bot.PlayerName}");
+                KillBot(bot);
             }
             else
             {
@@ -915,17 +918,10 @@ public class OpenPrefirePrac : BasePlugin
     }
 
     // [ConsoleCommand("css_test", "For debug purpose.")]
-    // [CommandHelper(whoCanExecute: CommandUsage.SERVER_ONLY)]
+    // [CommandHelper(whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
     // public void OnTestCommand(CCSPlayerController player, CommandInfo commandInfo)
     // {
-    //     SaveConvars();
-    //     Server.ExecuteCommand("sv_cheats 1");
-    //     var tmpConvar = ConVar.Find("sv_cheats");
-    //     AddTimer(1f, () => {
-    //         Console.WriteLine($"[OpenPrefirePrac] DEBUG: sv_cheats = {tmpConvar.GetPrimitiveValue<bool>()}");
-    //         RestoreConvars();
-    //     });
-    //     AddTimer(2f, () => {Console.WriteLine($"[OpenPrefirePrac] DEBUG: sv_cheats = {tmpConvar.GetPrimitiveValue<bool>()}");});
+    //     RefillAmmo(player);
     // }
 
     private void SaveConvars()
@@ -945,7 +941,7 @@ public class OpenPrefirePrac : BasePlugin
             "mp_warmup_pausetimer",
             "mp_free_armor",
             "mp_limitteams",
-            "sv_infinite_ammo",
+            // "sv_infinite_ammo",
             "mp_maxmoney",
             "mp_startmoney",
             "bot_difficulty",
@@ -1035,6 +1031,8 @@ public class OpenPrefirePrac : BasePlugin
         {
             Console.WriteLine($"[OpenPrefirePrac] Can't read server's warmup status, will use the default value {_serverStatus.WarmupStatus}.");
         }
+
+        Console.WriteLine("[OpenPrefirePrac] Values of convars saved.");
     }
 
     private void RestoreConvars()
@@ -1089,12 +1087,14 @@ public class OpenPrefirePrac : BasePlugin
         {
             Server.ExecuteCommand("mp_warmup_end");
         }
+
+        Console.WriteLine("[OpenPrefirePrac] Values of convars restored.");
     }
 
     private void SetupConvars()
     {
         Server.ExecuteCommand("tv_enable 0");
-        Server.ExecuteCommand("sv_cheats 1");
+        // Server.ExecuteCommand("sv_cheats 1");
         Server.ExecuteCommand("bot_allow_grenades 0");
         Server.ExecuteCommand("bot_allow_snipers 0");
         Server.ExecuteCommand("bot_allow_shotguns 0");
@@ -1106,7 +1106,7 @@ public class OpenPrefirePrac : BasePlugin
         Server.ExecuteCommand("mp_warmup_pausetimer 1");
         Server.ExecuteCommand("mp_free_armor 2");
         Server.ExecuteCommand("mp_limitteams 0");
-        Server.ExecuteCommand("sv_infinite_ammo 1");
+        // Server.ExecuteCommand("sv_infinite_ammo 1");
         Server.ExecuteCommand("mp_maxmoney 60000");
         Server.ExecuteCommand("mp_startmoney 60000");
         Server.ExecuteCommand("bot_difficulty 5");
@@ -1131,5 +1131,61 @@ public class OpenPrefirePrac : BasePlugin
         // Server.ExecuteCommand("mp_ignore_round_win_conditions 1");
         // Server.ExecuteCommand("mp_respawn_on_death_ct 1");
         // Server.ExecuteCommand("mp_respawn_on_death_t 1");
+
+        Console.WriteLine("[OpenPrefirePrac] Values of convars set.");
+    }
+
+    private void RefillAmmo(CCSPlayerController player)
+    {
+        if (!player.IsValid || !player.PawnIsAlive || player.Pawn == null || player.Pawn.Value == null || player.Pawn.Value.WeaponServices == null)
+        {
+            return;
+        }
+
+        var weapons = player.Pawn.Value.WeaponServices.MyWeapons;
+        foreach (var weapon in weapons)
+        {
+            if (weapon.IsValid && weapon != null && weapon.Value != null && weapon.Value.DesignerName.Length != 0 && !weapon.Value.DesignerName.Contains("knife") && !weapon.Value.DesignerName.Contains("bayonet"))
+            {
+                int magAmmo = 999;
+                int reservedAmmo = 999;
+                switch (weapon.Value.DesignerName)
+                {
+                    case "weapon_ak47":
+                        magAmmo = 31;
+                        reservedAmmo = 90;
+                        break;
+                    case "weapon_m4a1":         // M4A4
+                        magAmmo = 31;
+                        reservedAmmo = 90;
+                        break;
+                    case "weapon_m4a1_":         // M4A1_silencer
+                        magAmmo = 21;
+                        reservedAmmo = 80;
+                        break;
+                    case "weapon_deagle":
+                        magAmmo = 8;
+                        reservedAmmo = 35;
+                        break;
+                    default:
+                        break;
+                }
+
+                weapon.Value.Clip1 = magAmmo;
+                Utilities.SetStateChanged(weapon.Value, "CBasePlayerWeapon", "m_iClip1");
+                weapon.Value.ReserveAmmo[0] = reservedAmmo;
+                Utilities.SetStateChanged(weapon.Value, "CBasePlayerWeapon", "m_pReserveAmmo");
+            }
+        }
+    }
+
+    private void KillBot(CCSPlayerController bot)
+    {
+        if (!bot.IsValid || !bot.IsBot || bot.IsHLTV || !bot.PawnIsAlive)
+        {
+            return;
+        }
+
+        bot.CommitSuicide(false, false);
     }
 }
