@@ -328,6 +328,16 @@ public class OpenPrefirePrac : BasePlugin
                         ExitPrefireMode(owner);
                     }
                 }
+                else
+                {
+                    // Fast respawn
+                    AddTimer(0.2f, () => {
+                        if (playerOrBot.IsValid && !playerOrBot.PawnIsAlive)
+                        {
+                            playerOrBot.Respawn();
+                        }
+                    });
+                }
             }
             // else
             // {
