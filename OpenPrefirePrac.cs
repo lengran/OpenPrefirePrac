@@ -814,6 +814,7 @@ public class OpenPrefirePrac : BasePlugin
         player.GiveNamedItem("weapon_deagle");
         player.GiveNamedItem("weapon_knife");
         player.GiveNamedItem("weapon_flashbang");
+        player.GiveNamedItem("weapon_flashbang");
         player.GiveNamedItem("weapon_smokegrenade");
         player.GiveNamedItem("item_assaultsuit");
 
@@ -946,6 +947,8 @@ public class OpenPrefirePrac : BasePlugin
             "mp_startmoney",
             "bot_difficulty",
             "custom_bot_difficulty",
+            "mp_death_drop_gun",
+            "mp_death_drop_grenade",
         ];
 
         string[] floatConvarNames = [
@@ -1111,6 +1114,8 @@ public class OpenPrefirePrac : BasePlugin
         Server.ExecuteCommand("mp_startmoney 60000");
         Server.ExecuteCommand("bot_difficulty 5");
         Server.ExecuteCommand("custom_bot_difficulty 5");
+        Server.ExecuteCommand("mp_death_drop_gun 0");
+        Server.ExecuteCommand("mp_death_drop_grenade 0");
 
         Server.ExecuteCommand("mp_respawn_immunitytime -1");
         Server.ExecuteCommand("mp_buytime 9999");
@@ -1152,9 +1157,6 @@ public class OpenPrefirePrac : BasePlugin
                 switch (weapon.Value.DesignerName)
                 {
                     case "weapon_ak47":
-                        magAmmo = 31;
-                        reservedAmmo = 90;
-                        break;
                     case "weapon_m4a1":         // M4A4
                         magAmmo = 31;
                         reservedAmmo = 90;
@@ -1167,7 +1169,15 @@ public class OpenPrefirePrac : BasePlugin
                         magAmmo = 8;
                         reservedAmmo = 35;
                         break;
+                    case "weapon_flashbang":
+                    case "weapon_smokegrenade":
+                    case "weapon_decoy":
+                    case "weapon_molotov":
+                    case "weapon_incgrenade":
+                        continue;
                     default:
+                        magAmmo = 999;
+                        reservedAmmo = 999;
                         break;
                 }
 
