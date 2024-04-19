@@ -30,6 +30,22 @@ Note: "**-maxplayers_override 64**" is the most important one. It allows the ser
 
 Send "**!prefire**" in chatbox or use command "**css_prefire**" in console.
 
+### Adjust default settings
+
+Now the plugins supports loading default settings of difficulty and training mode from a json file. You can rename *default_cfg.json.example* to *default_cfg.json* and modify the value as you like.
+
+Explaination of values:
+
+- Difficulty
+    - 0: No healing.
+    - 1: Init hp 500 with no healing.
+    - 2: +25hp for each kill.
+    - 3: +100hp for each kill.
+    - 4: +500hp for each kill.
+- Training Mode
+    - 0: Random mode, randomly spawn some targets.
+    - 1: Full mode, all targets.
+
 ## Development
 
 ### Provide translation
