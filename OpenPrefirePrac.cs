@@ -8,6 +8,7 @@ using CounterStrikeSharp.API.Modules.Memory;
 using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 using System.Globalization;
 using CounterStrikeSharp.API.Modules.Cvars;
+using System.Text.Json;
 
 namespace OpenPrefirePrac;
 
@@ -41,6 +42,8 @@ public class OpenPrefirePrac : BasePlugin
     private Translator ?_translator;
 
     private readonly Dictionary<CCSPlayerController, int> _botRequests = new();         // make this thread-safe if necessary
+
+    private DefaultConfig ?_defaultPlayerSettings;
     
     public override void Load(bool hotReload)
     {
@@ -51,6 +54,8 @@ public class OpenPrefirePrac : BasePlugin
 	    Console.WriteLine("[OpenPrefirePrac] Registering listeners.");
         RegisterListener<Listeners.OnClientPutInServer>(OnClientPutInServerHandler);
         RegisterListener<Listeners.OnMapStart>(OnMapStartHandler);
+
+        LoadDefaultSettings();
 
         if (hotReload)
         {
@@ -133,7 +138,7 @@ public class OpenPrefirePrac : BasePlugin
         else
         {
             // For players:
-            _playerStatuses.Add(player, new PlayerStatus());
+            _playerStatuses.Add(player, new PlayerStatus(_defaultPlayerSettings!));
 
             // Record player language
             _translator!.RecordPlayerCulture(player);
@@ -932,7 +937,10 @@ public class OpenPrefirePrac : BasePlugin
     // [CommandHelper(whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
     // public void OnTestCommand(CCSPlayerController player, CommandInfo commandInfo)
     // {
-    //     RefillAmmo(player);
+    //     LoadDefaultSetting();
+    //     int defaultDifficulty = _defaultPlayerSettings!.Difficulty;
+    //     int defaultTrainingMode = _defaultPlayerSettings!.TrainingMode;
+    //     player.PrintToChat($"[DEBUG] DefaultDifficulty = {defaultDifficulty}, DefaultTrainingMode = {defaultTrainingMode}");
     // }
 
     private void SaveConvars()
@@ -1207,5 +1215,48 @@ public class OpenPrefirePrac : BasePlugin
         }
 
         bot.CommitSuicide(false, false);
+    }
+
+    private void LoadDefaultSettings()
+    {
+        string path = $"{ModuleDirectory}/default_cfg.json";
+
+        // Read default settings from PlayerStatus.cs
+        PlayerStatus tmpStatus = new PlayerStatus();
+        int tmpDifficulty = tmpStatus.HealingMethod;
+        int tmpTrainingMode = tmpStatus.TrainingMode;
+
+        if (!File.Exists(path))
+        {
+            // Use default settings
+            Console.WriteLine("[OpenPrefirePrac] No default settings provided. Will use default settings.");
+        }
+        else
+        {
+            // Load settings from default_cfg.json
+            var options = new JsonSerializerOptions
+            {
+                ReadCommentHandling = JsonCommentHandling.Skip,
+                AllowTrailingCommas = true,
+            };
+
+            string jsonString = File.ReadAllText(path);
+            
+            try
+            {
+                DefaultConfig jsonConfig = JsonSerializer.Deserialize<DefaultConfig>(jsonString, options)!;
+
+                tmpDifficulty = jsonConfig.Difficulty;
+                tmpTrainingMode = jsonConfig.TrainingMode;
+
+                Console.WriteLine($"[OpenPrefirePrac] Successfully load default settings. Difficulty = {tmpDifficulty}, TrainingMode = {tmpTrainingMode}");
+            }
+            catch (System.Exception)
+            {
+                Console.WriteLine("[OpenPrefirePrac] Failed to load default settings. Will use default settings.");
+            }
+        }
+
+        _defaultPlayerSettings = new DefaultConfig(tmpDifficulty, tmpTrainingMode);
     }
 }

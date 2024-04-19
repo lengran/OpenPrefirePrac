@@ -33,4 +33,15 @@ public class PlayerStatus
     public readonly Dictionary<string, int> LocalizedTrainingModeNames = new();
     public readonly List<int> EnabledTargets = new();
     public readonly List<int> Beams = new();
+
+    public PlayerStatus(DefaultConfig defaultConfig)
+    {
+        HealingMethod = defaultConfig.Difficulty;
+        TrainingMode = defaultConfig.TrainingMode;
+    }
+
+    public PlayerStatus()
+    {
+        // Default constructor
+    }
 }

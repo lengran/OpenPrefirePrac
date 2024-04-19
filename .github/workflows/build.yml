@@ -37,6 +37,7 @@ jobs:
           mv ./bin/Debug/net8.0/MaxMind.GeoIP2.dll output/OpenPrefirePrac/
           mv ./maps output/OpenPrefirePrac/
           mv ./lang output/OpenPrefirePrac/
+          mv ./default_cfg.json.example output/OpenPrefirePrac/
           wget https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-Country.mmdb -P output/OpenPrefirePrac/ -q
       - name: Publish artifact
         uses: actions/upload-artifact@v4
