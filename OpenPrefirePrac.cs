@@ -980,9 +980,9 @@ public class OpenPrefirePrac : BasePlugin
 
         try
         {
-            // sv_cheats
-            var sv_cheats = ConVar.Find("sv_cheats");
-            _serverStatus.sv_cheats = sv_cheats!.GetPrimitiveValue<bool>();
+            // // sv_cheats
+            // var sv_cheats = ConVar.Find("sv_cheats");
+            // _serverStatus.sv_cheats = sv_cheats!.GetPrimitiveValue<bool>();
 
             // Bool convars
             foreach (var convarName in boolConvarNames)
@@ -1101,7 +1101,7 @@ public class OpenPrefirePrac : BasePlugin
         // Restore sv_cheats
         // var sv_cheats = ConVar.Find("sv_cheats");
         // sv_cheats!.SetValue(_serverStatus.sv_cheats);
-        Server.ExecuteCommand("sv_cheats " + _serverStatus.sv_cheats.ToString());
+        // Server.ExecuteCommand("sv_cheats " + _serverStatus.sv_cheats.ToString());
 
         // Restore warmup status
         if (!_serverStatus.WarmupStatus)

@@ -12,5 +12,5 @@ public class ServerStatus
 
     public bool WarmupStatus = false;
 
-    public bool sv_cheats = false;
+    // public bool sv_cheats = false;
 }
