@@ -32,9 +32,9 @@ Send "**!prefire**" in chatbox or use command "**css_prefire**" in console.
 
 ### Adjust default settings
 
-Now the plugins supports loading default settings of difficulty and training mode from a json file. You can rename *default_cfg.json.example* to *default_cfg.json* and modify the value as you like.
+Now the plugin supports loading default settings of difficulty and training mode from a json file. You can rename *default_cfg.json.example* to *default_cfg.json* and modify the value as you like.
 
-Explaination of values:
+Explanation of values:
 
 - Difficulty
     - 0: No healing.
@@ -130,6 +130,7 @@ Finished practices:
     - Attack B site from B main
     - Attack B site from mid (B connector)
     - Attack B site from water
+    - Attack A site from mid (A connector)
 - de_dust2
     - Attack A site from A long
     - Attack A site from A short

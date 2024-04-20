@@ -51,6 +51,7 @@
     "map.de_anubis.b_main": "Attack B site from B main",
     "map.de_anubis.mid_to_b": "Attack B site from mid (B connector)",
     "map.de_anubis.water_to_b": "Attack B site from water",
+    "map.de_anubis.mid_to_a": "Attack A site from mid (A connector)",
     "map.de_dust2.a_long": "Attack A site from A long",
     "map.de_dust2.a_short": "Attack A site from A short"
 } 
