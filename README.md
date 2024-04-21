@@ -37,14 +37,14 @@ Now the plugin supports loading default settings of difficulty and training mode
 Explanation of values:
 
 - Difficulty
-    - 0: No healing.
-    - 1: Init hp 500 with no healing.
-    - 2: +25hp for each kill.
-    - 3: +100hp for each kill.
-    - 4: +500hp for each kill.
+  - 0: No healing.
+  - 1: Init hp 500 with no healing.
+  - 2: +25hp for each kill.
+  - 3: +100hp for each kill.
+  - 4: +500hp for each kill.
 - Training Mode
-    - 0: Random mode, randomly spawn some targets.
-    - 1: Full mode, all targets.
+  - 0: Random mode, randomly spawn some targets.
+  - 1: Full mode, all targets.
 
 ## Development
 
@@ -56,9 +56,9 @@ Then you might want to create a pull request. Because the plugin uses player's I
 
 ### How to customize a practice profile?
 
-The folder "*map*" is organize as follows. Each sub-folder in "*map*" contains practice profiles for the corresponding map. Each text file in that sub-folder is a practice profile.
+The folder "*maps*" is organized as follows: Each sub-folder in "*maps*" contains practice profiles for the corresponding map. Each text file in that sub-folder is a practice profile.
 
-A practice profile consists of 3 parts.
+A practice profile consists of five parts:
 
 The first line contains the name of incompatible practices, separated by spaces.
 
@@ -66,17 +66,17 @@ The second line indicates how many bots are needed in this practice.
 
 The third line instructs the place and facing direction of the player. The first 3 floating numbers are the position and the other 3 are the rotation.
 
-```
+```text
 pos_x pos_y pos_z ang_x ang_y ang_z
 ```
 
 The fourth part with an arbitrary number of lines describes how to place bots. The first 3 numbers is position, following 3 numbers of the rotation. The 7th value is either True of False indicating whether the bot is crouching.
 
-```
+```text
 pos_x pos_y pos_z ang_x ang_y ang_z is_crouching
 ```
 
-The positions and facing rotations can be retrived from in-game get\_pos command. But please notice that, the height values used in profiles should be the values returned by get\_pos minus 65. I made a python script that does this calculation for you. You can stack the strings retured by get\_pos and put them in a txt file, and pass the file to the python script as described below and the script will automatically print out the formatted bot positions.
+The positions and facing rotations can be retrieved from in-game get\_pos command. But please notice that, the height values used in profiles should be the values returned by get\_pos minus 65. I made a python script that does this calculation for you. You can stack the strings returned by get\_pos and put them in a txt file, and pass the file to the python script as described below and the script will automatically print out the formatted bot positions.
 
 ```bash
 python3 calculate_height.py [PATH TO YOUR FILE]
@@ -84,7 +84,7 @@ python3 calculate_height.py [PATH TO YOUR FILE]
 
 The fifth part with an arbitrary number of lines describes joint points of a guiding line. The guiding line is used to provide a better narration of how the practice is designed to be played.
 
-```
+```text
 pos_x pos_y pos_z
 ```
 
@@ -101,56 +101,56 @@ Currently it's still under active developing.
 Finished practices:
 
 - de_inferno
-    - A short to A site
-    - A long to A site
-    - A apartments to A site
-    - Banana to B site
-    - Retake B from CT spawn
+  - A short to A site
+  - A long to A site
+  - A apartments to A site
+  - Banana to B site
+  - Retake B from CT spawn
 - de_ancient
-    - B ramp to B site
-    - B house to B site
-    - Mid to A site
-    - A main to A site
-    - Retake A from CT spawn
+  - B ramp to B site
+  - B house to B site
+  - Mid to A site
+  - A main to A site
+  - Retake A from CT spawn
 - de_mirage
-    - Attack A site from A ramp (to CT spawn)
-    - Attack B site from B apartments
-    - Attack A site from A palace (to jungle)
-    - Attack B site from mid
-    - Attack A site from underpass
-    - Retake B site from CT spawn
+  - Attack A site from A ramp (to CT spawn)
+  - Attack B site from B apartments
+  - Attack A site from A palace (to jungle)
+  - Attack B site from mid
+  - Attack A site from underpass
+  - Retake B site from CT spawn
 - de_overpass
-    - Attack B site from B long
-    - Attack B site from B short
-    - Clear underpass and go upwards to mid
-    - Clear underpass and go towards B short
-    - Attack A site from A long
-    - Attack A site from A short (mid)
+  - Attack B site from B long
+  - Attack B site from B short
+  - Clear underpass and go upwards to mid
+  - Clear underpass and go towards B short
+  - Attack A site from A long
+  - Attack A site from A short (mid)
 - de_anubis
-    - Attack B site from B main
-    - Attack B site from mid (B palace)
-    - Attack B site from water
-    - Attack A site from mid (A connector)
-    - Attack A site from A main
+  - Attack B site from B main
+  - Attack B site from mid (B palace)
+  - Attack B site from water
+  - Attack A site from mid (A connector)
+  - Attack A site from A main
 - de_dust2
-    - Attack A site from A long
-    - Attack A site from A short
+  - Attack A site from A long
+  - Attack A site from A short
 
 TODO:
 
 1. Create prefire profiles for all maps.
 2. Improve bot logic.
 3. Improve localization support (The supporting framework is done. Submitting translations is warmly welcomed.).
-4. Reroute saperate logs into one gathered place for better debug experience.
+4. Reroute separate logs into one gathered place for better debug experience.
 
 ## Reference
 
 I have referred these open-source projects during the development.
 
-- https://github.com/shobhit-pathak/MatchZy/
-- https://github.com/B3none/cs2-retakes
-- https://github.com/aprox2/GeoLocationLanguageManagerPlugin
-- https://github.com/daffyyyy/CS2-SimpleAdmin
+- [shobhit-pathak/MatchZy: MatchZy is a plugin for CS2 (Counter Strike 2) for running and managing practice/pugs/scrims/matches with easy configuration and Get5 (G5API/G5V) support as well!](https://github.com/shobhit-pathak/MatchZy)
+- [B3none/cs2-retakes: CS2 implementation of retakes. Based on the version for CS:GO by Splewis.](https://github.com/B3none/cs2-retakes)
+- [aprox2/GeoLocationLanguageManagerPlugin: Language manager plugin for CSSharp that uses users ip for geo location.](https://github.com/aprox2/GeoLocationLanguageManagerPlugin)
+- [daffyyyy/CS2-SimpleAdmin: Manage your Counter-Strike 2 server by simple commands :)](https://github.com/daffyyyy/CS2-SimpleAdmin)
 
 This project is inspired by a close-source prefire plugin developed by https://space.bilibili.com/283758782.
 
