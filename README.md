@@ -128,7 +128,7 @@ Finished practices:
     - Attack A site from A short (mid)
 - de_anubis
     - Attack B site from B main
-    - Attack B site from mid (B connector)
+    - Attack B site from mid (B palace)
     - Attack B site from water
     - Attack A site from mid (A connector)
     - Attack A site from A main
