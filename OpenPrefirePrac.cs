@@ -15,7 +15,7 @@ namespace OpenPrefirePrac;
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.1.27";
+    public override string ModuleVersion => "0.1.28";
     public override string ModuleAuthor => "Lengran";
     public override string ModuleDescription => "A plugin for practicing prefire in CS2. https://github.com/lengran/OpenPrefirePrac";
 
@@ -336,7 +336,7 @@ public class OpenPrefirePrac : BasePlugin
                 else
                 {
                     // Fast respawn
-                    AddTimer(0.2f, () => {
+                    AddTimer(0.35f, () => {
                         if (playerOrBot.IsValid && !playerOrBot.PawnIsAlive)
                         {
                             playerOrBot.Respawn();

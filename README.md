@@ -131,6 +131,7 @@ Finished practices:
     - Attack B site from mid (B connector)
     - Attack B site from water
     - Attack A site from mid (A connector)
+    - Attack A site from A main
 - de_dust2
     - Attack A site from A long
     - Attack A site from A short
