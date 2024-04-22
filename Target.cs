@@ -78,8 +78,8 @@ public class PrefirePractice
         {
             w = s.Split(Delimiters);
             
-            // A line with 7 segments defines a target bot.
-            if (w.Length == 7)
+            // A line with 7 segments defines a target bot. Comments will be ignored.
+            if (w.Length >= 7)
                 Targets.Add(new TargetBot(Convert.ToSingle(w[0]), Convert.ToSingle(w[1]), Convert.ToSingle(w[2]), Convert.ToSingle(w[3]), Convert.ToSingle(w[4]), Convert.ToSingle(w[5]), Convert.ToBoolean(w[6])));
             
             // A line with 3 real numbers defines a joint point of the guiding line.
