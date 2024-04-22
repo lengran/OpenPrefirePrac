@@ -655,6 +655,12 @@ public class OpenPrefirePrac : BasePlugin
 
             _playerStatuses[player].PracticeIndex = -1;
             _playerCount--;
+
+            // patch: check and remove request of bots in case something goes wrong resulting in a stuck request
+            if (_botRequests.ContainsKey(player))
+            {
+                _botRequests.Remove(player);
+            }
         }
         
         if (_playerCount == 0)
@@ -743,7 +749,14 @@ public class OpenPrefirePrac : BasePlugin
         Console.WriteLine($"[OpenPrefirePrac] Creating {numberOfBots} bots.");
 
         // Test a new method of adding bots
-        _botRequests.Add(player, numberOfBots);
+        if (_botRequests.ContainsKey(player))
+        {
+            _botRequests[player] = numberOfBots;
+        }
+        else
+        {
+            _botRequests.Add(player, numberOfBots);
+        }
 
         for (var i = 0; i < numberOfBots; i++)
         {
