@@ -3,6 +3,7 @@ using CounterStrikeSharp.API.Core.Translations;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
 using MaxMind.GeoIP2;
+using CounterStrikeSharp.API.Modules.Utils;
 
 namespace OpenPrefirePrac;
 
@@ -79,13 +80,39 @@ public class Translator
 
         using (new WithTemporaryCulture(CultureInfo.GetCultureInfo(playerCulture)))
         {
-            return _localizer[tokenToLocalize, arguments];
+            return ParseMsg(_localizer[tokenToLocalize, arguments]);
         }
     }
 
     public void UpdatePlayerCulture(ulong steamId, string cultureCode)
     {
         _languageManager[steamId] = cultureCode;
+    }
+
+    private string ParseMsg(string coloredMsg)
+    {
+        return coloredMsg
+            .Replace("[GREEN]", " " + ChatColors.Green.ToString())
+            .Replace("[RED]", " " + ChatColors.Red.ToString())
+            .Replace("[YELLOW]", " " + ChatColors.Yellow.ToString())
+            .Replace("[BLUE]", " " + ChatColors.Blue.ToString())
+            .Replace("[PURPLE]", " " + ChatColors.Purple.ToString())
+            .Replace("[ORANGE]", " " + ChatColors.Orange.ToString())
+            .Replace("[WHITE]", " " + ChatColors.White.ToString())
+            .Replace("[NORMAL]", " " + ChatColors.White.ToString())
+            .Replace("[GREY]", " " + ChatColors.Grey.ToString())
+            .Replace("[LIGHT_RED]", " " + ChatColors.LightRed.ToString())
+            .Replace("[LIGHT_BLUE]", " " + ChatColors.LightBlue.ToString())
+            .Replace("[LIGHT_PURPLE]", " " + ChatColors.LightPurple.ToString())
+            .Replace("[LIGHT_YELLOW]", ChatColors.LightYellow.ToString())
+            .Replace("[DARK_RED]", " " + ChatColors.DarkRed.ToString())
+            .Replace("[DARK_BLUE]", " " + ChatColors.DarkBlue.ToString())
+            .Replace("[BLUE_GREY]", " " + ChatColors.BlueGrey.ToString())
+            .Replace("[OLIVE]", " " + ChatColors.Olive.ToString())
+            .Replace("[LIME]", " " + ChatColors.Lime.ToString())
+            .Replace("[GOLD]", " " + ChatColors.Gold.ToString())
+            .Replace("[SILVER]", " " + ChatColors.Silver.ToString())
+            .Replace("[MAGENTA]", " " + ChatColors.Magenta.ToString());
     }
 
     // These two functions are borrowed from https://github.com/aprox2/GeoLocationLanguageManagerPlugin/. Huge thanks!

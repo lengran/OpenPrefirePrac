@@ -9,6 +9,7 @@ using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 using System.Globalization;
 using CounterStrikeSharp.API.Modules.Cvars;
 using System.Text.Json;
+using CounterStrikeSharp.API.Core.Commands;
 
 namespace OpenPrefirePrac;
 
@@ -44,6 +45,8 @@ public class OpenPrefirePrac : BasePlugin
     private readonly Dictionary<CCSPlayerController, int> _botRequests = new();         // make this thread-safe if necessary
 
     private DefaultConfig ?_defaultPlayerSettings;
+
+    private CommandDefinition ?_command;
     
     public override void Load(bool hotReload)
     {
@@ -90,6 +93,33 @@ public class OpenPrefirePrac : BasePlugin
 
                 OnClientPutInServerHandler(tempPlayer.Slot);    
             }
+        }
+
+        RegisterCommand();
+    }
+
+    public override void Unload(bool hotReload)
+    {
+        UnregisterCommand();
+
+        if (hotReload)
+        {
+            // Clear status registers
+            _ownerOfBots.Clear();
+            _practiceNameToId.Clear();
+            _practiceEnabled.Clear();
+            _practices.Clear();
+            _availableMaps.Clear();
+            _mapName = "";
+            _playerCount = 0;
+            _playerStatuses.Clear();
+            
+            // Clear saved convars
+            _serverStatus.WarmupStatus = false;
+            _serverStatus.BoolConvars.Clear();
+            _serverStatus.IntConvars.Clear();
+            _serverStatus.FloatConvars.Clear();
+            _serverStatus.StringConvars.Clear();
         }
     }
 
@@ -370,111 +400,183 @@ public class OpenPrefirePrac : BasePlugin
         return HookResult.Continue;
     }
 
-    [ConsoleCommand("css_prefire", "Print available prefire routes and receive user's choice")]
-    [CommandHelper(whoCanExecute: CommandUsage.CLIENT_ONLY)]
-    public void OnPrefireCommand(CCSPlayerController player, CommandInfo commandInfo)
-    {       
-        var mainMenu = new ChatMenu(_translator!.Translate(player, "mainmenu.title"));
+    // [ConsoleCommand("css_prefire", "Print available prefire routes and receive user's choice")]
+    // [CommandHelper(whoCanExecute: CommandUsage.CLIENT_ONLY)]
+    // public void OnPrefireCommand(CCSPlayerController player, CommandInfo commandInfo)
+    // {
+    //     // Command shortcuts
+    //     if (commandInfo.ArgCount > 1)
+    //     {
+    //         switch (commandInfo.ArgByIndex(1))
+    //         {
+    //             case "prac":
+    //                 int choice = 0;
+    //                 if (int.TryParse(commandInfo.ArgByIndex(2), out choice) && choice > 0 && choice <= _practices.Count)
+    //                 {
+    //                     StartPractice(player, choice - 1);
+    //                     return;
+    //                 }
+    //                 player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "practice.help", _practices.Count)}");
+    //                 return;
+    //             case "mp":
+    //                 string mapName = commandInfo.ArgByIndex(2);
+    //                 ChangeMap(player, mapName);
+    //                 return;
+    //             case "hd":
+    //                 int difficulty = 0;
+    //                 if (int.TryParse(commandInfo.ArgByIndex(2), out difficulty) && difficulty > 0 && difficulty <= 5)
+    //                 {
+    //                     ChangeDifficulty(player, 5 - difficulty);
+    //                     return;
+    //                 }
+    //                 player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "difficulty.help")}");
+    //                 return;
+    //             case "mode":
+    //                 string trainingMode = commandInfo.ArgByIndex(2);
+    //                 switch (trainingMode)
+    //                 {
+    //                     case "full":
+    //                         ChangeTrainingMode(player, 1);
+    //                         return;
+    //                     case "rand":
+    //                         ChangeTrainingMode(player, 0);
+    //                         return;
+    //                     default:
+    //                         player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "modemenu.help")}");
+    //                         return;
+    //                 }
+    //             case "lang":
+    //                 string language = commandInfo.ArgByIndex(2);
+    //                 switch (language)
+    //                 {
+    //                     case "en":
+    //                         _translator!.UpdatePlayerCulture(player.SteamID, "EN");
+    //                         break;
+    //                     case "pt":
+    //                         _translator!.UpdatePlayerCulture(player.SteamID, "pt-BR");
+    //                         break;
+    //                     case "zh":
+    //                         _translator!.UpdatePlayerCulture(player.SteamID, "ZH");
+    //                         break;
+    //                     default:
+    //                         player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "languagemenu.help")}");
+    //                         return;
+    //                 }
+    //                 player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "languagemenu.set")}");
+    //                 return;
+    //             case "exit":
+    //                 ForceStopPractice(player);
+    //                 return;
+    //             case "help":
+    //                 player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "mainmenu.help", _practices.Count)}");
+    //                 return;
+    //             default:
+    //                 player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "mainmenu.help", _practices.Count)}");
+    //                 break;
+    //         }
+    //     }
 
-        mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.practice"), OpenPracticeMenu);
-        mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.map"), OpenMapMenu);
-        var currentDifficulty = _translator.Translate(player, $"difficulty.{_playerStatuses[player].HealingMethod}");
-        mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.difficulty", currentDifficulty), OpenDifficultyMenu);
-        var currentTrainingMode = _translator.Translate(player, $"modemenu.{_playerStatuses[player].TrainingMode}");
-        mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.mode", currentTrainingMode), OpenModeMenu);
-        mainMenu.AddMenuOption("Language preference", OpenLanguageMenu);
-        mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.exit"), ForceExitPrefireMode);
+    //     // Use the menu
+    //     var mainMenu = new ChatMenu(_translator!.Translate(player, "mainmenu.title"));
+
+    //     mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.practice"), OpenPracticeMenu);
+    //     mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.map"), OpenMapMenu);
+    //     var currentDifficulty = _translator.Translate(player, $"difficulty.{_playerStatuses[player].HealingMethod}");
+    //     mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.difficulty", currentDifficulty), OpenDifficultyMenu);
+    //     var currentTrainingMode = _translator.Translate(player, $"modemenu.{_playerStatuses[player].TrainingMode}");
+    //     mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.mode", currentTrainingMode), OpenModeMenu);
+    //     mainMenu.AddMenuOption("Language preference", OpenLanguageMenu);
+    //     mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.exit"), OnForceExitPrefireMode);
         
-        player.PrintToChat("============ [OpenPrefirePrac] ============");
-        MenuManager.OpenChatMenu(player, mainMenu);
-        player.PrintToChat("===========================================");
-    }
+    //     player.PrintToChat("============ [OpenPrefirePrac] ============");
+    //     MenuManager.OpenChatMenu(player, mainMenu);
+    //     player.PrintToChat("===========================================");
+    // }
 
     public void OnRouteSelect(CCSPlayerController player, ChatMenuOption option)
     {
-        if (_playerCount == 0)
-        {
-            SaveConvars();
-            SetupConvars();
-        }
+        // if (_playerCount == 0)
+        // {
+        //     SaveConvars();
+        //     SetupConvars();
+        // }
 
         int practiceNo = _playerStatuses[player].LocalizedPracticeNames[option.Text];
-        var previousPracticeNo = _playerStatuses[player].PracticeIndex;
+        StartPractice(player, practiceNo);
+        // var previousPracticeNo = _playerStatuses[player].PracticeIndex;
 
-        // Check if selected practice route is compatible with other on-playing routes.
-        if (previousPracticeNo != practiceNo && !_practiceEnabled[practiceNo])
-        {
-            player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator!.Translate(player, "practice.incompatible")}");
-            return;
-        }
+        // // Check if selected practice route is compatible with other on-playing routes.
+        // if (previousPracticeNo != practiceNo && !_practiceEnabled[practiceNo])
+        // {
+        //     player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator!.Translate(player, "practice.incompatible")}");
+        //     return;
+        // }
 
         
-        if (previousPracticeNo != practiceNo)
-        {
-            // Update practice status
-            if (previousPracticeNo > -1)
-            {
-                // Enable disabled practice routes
-                for (var i = 0; i < _practices[previousPracticeNo].IncompatiblePractices.Count; i++)
-                {
-                    if (_practiceNameToId.ContainsKey(_practices[previousPracticeNo].IncompatiblePractices[i]))
-                    {
-                        var disabledPracticeNo = _practiceNameToId[_practices[previousPracticeNo].IncompatiblePractices[i]];
-                        _practiceEnabled[disabledPracticeNo] = true;
-                    }
-                }
-                _practiceEnabled[previousPracticeNo] = true;
+        // if (previousPracticeNo != practiceNo)
+        // {
+        //     // Update practice status
+        //     if (previousPracticeNo > -1)
+        //     {
+        //         // Enable disabled practice routes
+        //         for (var i = 0; i < _practices[previousPracticeNo].IncompatiblePractices.Count; i++)
+        //         {
+        //             if (_practiceNameToId.ContainsKey(_practices[previousPracticeNo].IncompatiblePractices[i]))
+        //             {
+        //                 var disabledPracticeNo = _practiceNameToId[_practices[previousPracticeNo].IncompatiblePractices[i]];
+        //                 _practiceEnabled[disabledPracticeNo] = true;
+        //             }
+        //         }
+        //         _practiceEnabled[previousPracticeNo] = true;
 
-                RemoveBots(player);
-                DeleteGuidingLine(player);
-            }
-            else
-            {
-                _playerCount++;
-            }
+        //         RemoveBots(player);
+        //         DeleteGuidingLine(player);
+        //     }
+        //     else
+        //     {
+        //         _playerCount++;
+        //     }
 
-            _playerStatuses[player].PracticeIndex = practiceNo;
+        //     _playerStatuses[player].PracticeIndex = practiceNo;
 
-            // Disable incompatible practices.
-            for (var i = 0; i < _practices[practiceNo].IncompatiblePractices.Count; i++)
-            {
-                if (_practiceNameToId.ContainsKey(_practices[practiceNo].IncompatiblePractices[i]))
-                {
-                    var disabledPracticeNo = _practiceNameToId[_practices[practiceNo].IncompatiblePractices[i]];
-                    _practiceEnabled[disabledPracticeNo] = false;
-                }
-            }
-            _practiceEnabled[practiceNo] = false;
+        //     // Disable incompatible practices.
+        //     for (var i = 0; i < _practices[practiceNo].IncompatiblePractices.Count; i++)
+        //     {
+        //         if (_practiceNameToId.ContainsKey(_practices[practiceNo].IncompatiblePractices[i]))
+        //         {
+        //             var disabledPracticeNo = _practiceNameToId[_practices[practiceNo].IncompatiblePractices[i]];
+        //             _practiceEnabled[disabledPracticeNo] = false;
+        //         }
+        //     }
+        //     _practiceEnabled[practiceNo] = false;
 
-            // Setup practice
-            AddBot(player, _practices[practiceNo].NumBots);
-            // DrawGuidingLine(player);
-        }
-        else
-        {
-            // If some bots have already been kicked, add them back.
-            var numRemainingBots = _playerStatuses[player].Bots.Count;
+        //     // Setup practice
+        //     AddBot(player, _practices[practiceNo].NumBots);
+        //     // DrawGuidingLine(player);
+        // }
+        // else
+        // {
+        //     // If some bots have already been kicked, add them back.
+        //     var numRemainingBots = _playerStatuses[player].Bots.Count;
             
-            if (numRemainingBots < _practices[practiceNo].NumBots)
-            {
-                _playerStatuses[player].Progress = 0;
-                AddBot(player, _practices[practiceNo].NumBots - numRemainingBots);
-            }
-        }
+        //     if (numRemainingBots < _practices[practiceNo].NumBots)
+        //     {
+        //         _playerStatuses[player].Progress = 0;
+        //         AddBot(player, _practices[practiceNo].NumBots - numRemainingBots);
+        //     }
+        // }
         
 
-        // Practice begin
-        SetupPrefireMode(player);
-        var localizedPracticeName = _translator!.Translate(player, "map." + _mapName + "." + _practices[practiceNo].PracticeName);
-        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator.Translate(player, "practice.choose", localizedPracticeName)}");
-        player.PrintToCenter(_translator.Translate(player, "practice.begin"));
+        // // Practice begin
+        // SetupPrefireMode(player);
+        // var localizedPracticeName = _translator!.Translate(player, "map." + _mapName + "." + _practices[practiceNo].PracticeName);
+        // player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator.Translate(player, "practice.choose", localizedPracticeName)}");
+        // player.PrintToCenter(_translator.Translate(player, "practice.begin"));
     }
 
-    public void ForceExitPrefireMode(CCSPlayerController player, ChatMenuOption option)
+    public void OnForceExitPrefireMode(CCSPlayerController player, ChatMenuOption option)
     {
-        ExitPrefireMode(player);
-        
-        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator!.Translate(player, "practice.exit")}");
+        ForceStopPractice(player);
     }
 
     public void OpenMapMenu(CCSPlayerController player, ChatMenuOption option)
@@ -482,7 +584,7 @@ public class OpenPrefirePrac : BasePlugin
         var mapMenu = new ChatMenu(_translator!.Translate(player, "mapmenu.title"));
         foreach (var map in _availableMaps)
         {
-            mapMenu.AddMenuOption(map, ChangeMap);
+            mapMenu.AddMenuOption(map, OnMapSelected);
         }
 
         player.PrintToChat("============ [OpenPrefirePrac] ============");
@@ -490,17 +592,9 @@ public class OpenPrefirePrac : BasePlugin
         player.PrintToChat("===========================================");
     }
 
-    public void ChangeMap(CCSPlayerController player, ChatMenuOption option)
+    public void OnMapSelected(CCSPlayerController player, ChatMenuOption option)
     {
-        // Only allow change map when nobody is practicing.
-        if (_playerCount == 0)
-        {
-            Server.ExecuteCommand($"changelevel {option.Text}");
-        }
-        else
-        {
-            player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator!.Translate(player, "mapmenu.busy")}");
-        }
+        ChangeMap(player, option.Text);
     }
 
     public void OpenPracticeMenu(CCSPlayerController player, ChatMenuOption option)
@@ -552,10 +646,8 @@ public class OpenPrefirePrac : BasePlugin
 
     public void OnDifficultyChosen(CCSPlayerController player, ChatMenuOption option)
     {
-        var difficultyNo = _playerStatuses[player].LocalizedDifficultyNames[option.Text];
-        _playerStatuses[player].HealingMethod = difficultyNo;
-        var currentDifficulty = _translator!.Translate(player, $"difficulty.{difficultyNo}");
-        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator.Translate(player, "difficulty.set", currentDifficulty)}");
+        int difficultyNo = _playerStatuses[player].LocalizedDifficultyNames[option.Text];
+        ChangeDifficulty(player, difficultyNo);
     }
 
     public void OpenModeMenu(CCSPlayerController player, ChatMenuOption option)
@@ -578,9 +670,7 @@ public class OpenPrefirePrac : BasePlugin
     public void OnModeChosen(CCSPlayerController player, ChatMenuOption option)
     {
         var trainingModeNo = _playerStatuses[player].LocalizedTrainingModeNames[option.Text];
-        _playerStatuses[player].TrainingMode = trainingModeNo;
-        var currentTrainingMode = _translator!.Translate(player, $"modemenu.{trainingModeNo}");
-        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "modemenu.set", currentTrainingMode)}");
+        ChangeTrainingMode(player, trainingModeNo);
     }
 
     public void OpenLanguageMenu(CCSPlayerController player, ChatMenuOption option)
@@ -1271,5 +1361,241 @@ public class OpenPrefirePrac : BasePlugin
         }
 
         _defaultPlayerSettings = new DefaultConfig(tmpDifficulty, tmpTrainingMode);
+    }
+
+    private void StartPractice(CCSPlayerController player, int practiceIndex)
+    {
+        if (_playerCount == 0)
+        {
+            SaveConvars();
+            SetupConvars();
+        }
+
+        var previousPracticeIndex = _playerStatuses[player].PracticeIndex;
+
+        // Check if selected practice route is compatible with other on-playing routes.
+        if (previousPracticeIndex != practiceIndex && !_practiceEnabled[practiceIndex])
+        {
+            player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator!.Translate(player, "practice.incompatible")}");
+            return;
+        }
+
+        
+        if (previousPracticeIndex != practiceIndex)
+        {
+            // Update practice status
+            if (previousPracticeIndex > -1)
+            {
+                // Enable disabled practice routes
+                for (var i = 0; i < _practices[previousPracticeIndex].IncompatiblePractices.Count; i++)
+                {
+                    if (_practiceNameToId.ContainsKey(_practices[previousPracticeIndex].IncompatiblePractices[i]))
+                    {
+                        var disabledPracticeNo = _practiceNameToId[_practices[previousPracticeIndex].IncompatiblePractices[i]];
+                        _practiceEnabled[disabledPracticeNo] = true;
+                    }
+                }
+                _practiceEnabled[previousPracticeIndex] = true;
+
+                RemoveBots(player);
+                DeleteGuidingLine(player);
+            }
+            else
+            {
+                _playerCount++;
+            }
+
+            _playerStatuses[player].PracticeIndex = practiceIndex;
+
+            // Disable incompatible practices.
+            for (var i = 0; i < _practices[practiceIndex].IncompatiblePractices.Count; i++)
+            {
+                if (_practiceNameToId.ContainsKey(_practices[practiceIndex].IncompatiblePractices[i]))
+                {
+                    var disabledPracticeNo = _practiceNameToId[_practices[practiceIndex].IncompatiblePractices[i]];
+                    _practiceEnabled[disabledPracticeNo] = false;
+                }
+            }
+            _practiceEnabled[practiceIndex] = false;
+
+            // Setup practice
+            AddBot(player, _practices[practiceIndex].NumBots);
+            // DrawGuidingLine(player);
+        }
+        else
+        {
+            // If some bots have already been kicked, add them back.
+            var numRemainingBots = _playerStatuses[player].Bots.Count;
+            
+            if (numRemainingBots < _practices[practiceIndex].NumBots)
+            {
+                _playerStatuses[player].Progress = 0;
+                AddBot(player, _practices[practiceIndex].NumBots - numRemainingBots);
+            }
+        }
+        
+
+        // Practice begin
+        SetupPrefireMode(player);
+        var localizedPracticeName = _translator!.Translate(player, "map." + _mapName + "." + _practices[practiceIndex].PracticeName);
+        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator.Translate(player, "practice.choose", localizedPracticeName)}");
+        player.PrintToCenter(_translator.Translate(player, "practice.begin"));
+    }
+
+    private void ChangeMap(CCSPlayerController player, string mapName)
+    {
+        // Check if the map has practice routes
+        if (!_availableMaps.Contains(mapName))
+        {
+            player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator!.Translate(player, "mapmenu.not_available")}");
+            return;
+        }
+
+        // Only allow change map when nobody is practicing.
+        if (_playerCount == 0)
+        {
+            Server.ExecuteCommand($"changelevel {mapName}");
+        }
+        else
+        {
+            player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator!.Translate(player, "mapmenu.busy")}");
+        }
+    }
+
+    private void ChangeDifficulty(CCSPlayerController player, int difficultyNo)
+    {
+        _playerStatuses[player].HealingMethod = difficultyNo;
+        var currentDifficulty = _translator!.Translate(player, $"difficulty.{difficultyNo}");
+        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "difficulty.set", currentDifficulty)}");
+    }
+
+    private void ChangeTrainingMode(CCSPlayerController player, int trainingMode)
+    {
+        _playerStatuses[player].TrainingMode = trainingMode;
+        var currentTrainingMode = _translator!.Translate(player, $"modemenu.{trainingMode}");
+        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "modemenu.set", currentTrainingMode)}");
+    }
+
+    private void ForceStopPractice(CCSPlayerController player)
+    {
+        ExitPrefireMode(player);
+        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator!.Translate(player, "practice.exit")}");
+    }
+
+    private void UnregisterCommand()
+    {
+        if (_command == null)
+        {
+            return;
+        }
+
+        CommandManager.RemoveCommand(_command);
+        _command = null;
+    }
+
+    private void RegisterCommand()
+    {
+        if (_command != null)
+        {
+            UnregisterCommand();
+        }
+
+        _command = new CommandDefinition("css_prefire", "Command to bring up the main menu of OpenPrefirePrac.", (player, commandInfo) => {
+            // This is a client only command
+            if (player == null)
+            {
+                return;
+            }
+
+            // Command shortcuts
+            if (commandInfo.ArgCount > 1)
+            {
+                switch (commandInfo.ArgByIndex(1))
+                {
+                    case "prac":
+                        int choice = 0;
+                        if (int.TryParse(commandInfo.ArgByIndex(2), out choice) && choice > 0 && choice <= _practices.Count)
+                        {
+                            StartPractice(player, choice - 1);
+                            return;
+                        }
+                        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "practice.help", _practices.Count)}");
+                        return;
+                    case "mp":
+                        string mapName = commandInfo.ArgByIndex(2);
+                        ChangeMap(player, mapName);
+                        return;
+                    case "hd":
+                        int difficulty = 0;
+                        if (int.TryParse(commandInfo.ArgByIndex(2), out difficulty) && difficulty > 0 && difficulty <= 5)
+                        {
+                            ChangeDifficulty(player, 5 - difficulty);
+                            return;
+                        }
+                        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "difficulty.help")}");
+                        return;
+                    case "mode":
+                        string trainingMode = commandInfo.ArgByIndex(2);
+                        switch (trainingMode)
+                        {
+                            case "full":
+                                ChangeTrainingMode(player, 1);
+                                return;
+                            case "rand":
+                                ChangeTrainingMode(player, 0);
+                                return;
+                            default:
+                                player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "modemenu.help")}");
+                                return;
+                        }
+                    case "lang":
+                        string language = commandInfo.ArgByIndex(2);
+                        switch (language)
+                        {
+                            case "en":
+                                _translator!.UpdatePlayerCulture(player.SteamID, "EN");
+                                break;
+                            case "pt":
+                                _translator!.UpdatePlayerCulture(player.SteamID, "pt-BR");
+                                break;
+                            case "zh":
+                                _translator!.UpdatePlayerCulture(player.SteamID, "ZH");
+                                break;
+                            default:
+                                player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "languagemenu.help")}");
+                                return;
+                        }
+                        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "languagemenu.set")}");
+                        return;
+                    case "exit":
+                        ForceStopPractice(player);
+                        return;
+                    case "help":
+                        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "mainmenu.help", _practices.Count)}");
+                        return;
+                    default:
+                        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "mainmenu.help", _practices.Count)}");
+                        break;
+                }
+            }
+
+            // Use the menu
+            var mainMenu = new ChatMenu(_translator!.Translate(player, "mainmenu.title"));
+
+            mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.practice"), OpenPracticeMenu);
+            mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.map"), OpenMapMenu);
+            var currentDifficulty = _translator.Translate(player, $"difficulty.{_playerStatuses[player].HealingMethod}");
+            mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.difficulty", currentDifficulty), OpenDifficultyMenu);
+            var currentTrainingMode = _translator.Translate(player, $"modemenu.{_playerStatuses[player].TrainingMode}");
+            mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.mode", currentTrainingMode), OpenModeMenu);
+            mainMenu.AddMenuOption("Language preference", OpenLanguageMenu);
+            mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.exit"), OnForceExitPrefireMode);
+
+            player.PrintToChat("============ [OpenPrefirePrac] ============");
+            MenuManager.OpenChatMenu(player, mainMenu);
+            player.PrintToChat("===========================================");
+        });
+
+        CommandManager.RegisterCommand(_command);
     }
 }
