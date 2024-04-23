@@ -36,7 +36,7 @@ public class PrefirePractice
         // Construct a practice from the description file.
         PracticeName = practice;
         var path = $"{moduleDirectory}/maps/{map}/{practice}.txt";
-        Console.WriteLine("[OpenPrefirePrac] Reading practice file: " + path);
+        // Console.WriteLine("[OpenPrefirePrac] Reading practice file: " + path);
         
         using var sr = File.OpenText(path);
 

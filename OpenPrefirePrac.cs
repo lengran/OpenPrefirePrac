@@ -71,6 +71,7 @@ public class OpenPrefirePrac : BasePlugin
             _mapName = "";
             _playerCount = 0;
             _playerStatuses.Clear();
+            _botRequests.Clear();
             
             // Clear saved convars
             _serverStatus.WarmupStatus = false;
@@ -113,6 +114,7 @@ public class OpenPrefirePrac : BasePlugin
             _mapName = "";
             _playerCount = 0;
             _playerStatuses.Clear();
+            _botRequests.Clear();
             
             // Clear saved convars
             _serverStatus.WarmupStatus = false;
@@ -184,10 +186,16 @@ public class OpenPrefirePrac : BasePlugin
             return HookResult.Continue;
 
         if (_playerStatuses[player].PracticeIndex != -1)
+        {
             ExitPrefireMode(player);
+        }
 
         // Release resources(practices, targets, bots...)
         _playerStatuses.Remove(player);
+        if (_botRequests.ContainsKey(player))
+        {
+            _botRequests.Remove(player);
+        }
 
         return HookResult.Continue;
     }
@@ -1521,11 +1529,11 @@ public class OpenPrefirePrac : BasePlugin
                         }
                         player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "practice.help", _practices.Count)}");
                         return;
-                    case "mp":
+                    case "map":
                         string mapName = commandInfo.ArgByIndex(2);
                         ChangeMap(player, mapName);
                         return;
-                    case "hd":
+                    case "df":
                         int difficulty = 0;
                         if (int.TryParse(commandInfo.ArgByIndex(2), out difficulty) && difficulty > 0 && difficulty <= 5)
                         {
@@ -1593,6 +1601,7 @@ public class OpenPrefirePrac : BasePlugin
 
             player.PrintToChat("============ [OpenPrefirePrac] ============");
             MenuManager.OpenChatMenu(player, mainMenu);
+            player.PrintToChat(_translator.Translate(player, "mainmenu.shortcut_prompt"));
             player.PrintToChat("===========================================");
         });
 
