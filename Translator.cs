@@ -68,7 +68,7 @@ public class Translator
 
         using (new WithTemporaryCulture(CultureInfo.GetCultureInfo(playerCulture)))
         {
-            return _localizer[tokenToLocalize];
+            return ParseMsg(_localizer[tokenToLocalize]);
         }
     }
 
