@@ -511,6 +511,8 @@ public class OpenPrefirePrac : BasePlugin
 
         int practiceNo = _playerStatuses[player].LocalizedPracticeNames[option.Text];
         StartPractice(player, practiceNo);
+        CloseCurrentMenu(player);
+
         // var previousPracticeNo = _playerStatuses[player].PracticeIndex;
 
         // // Check if selected practice route is compatible with other on-playing routes.
@@ -585,6 +587,7 @@ public class OpenPrefirePrac : BasePlugin
     public void OnForceExitPrefireMode(CCSPlayerController player, ChatMenuOption option)
     {
         ForceStopPractice(player);
+        CloseCurrentMenu(player);
     }
 
     public void OpenMapMenu(CCSPlayerController player, ChatMenuOption option)
@@ -594,6 +597,7 @@ public class OpenPrefirePrac : BasePlugin
         {
             mapMenu.AddMenuOption(map, OnMapSelected);
         }
+        mapMenu.AddMenuOption(_translator!.Translate(player, "mainmenu.close_menu"), OnCloseMenu);
 
         player.PrintToChat("============ [OpenPrefirePrac] ============");
         MenuManager.OpenChatMenu(player, mapMenu);
@@ -611,6 +615,7 @@ public class OpenPrefirePrac : BasePlugin
         var practiceMenu = new ChatMenu(_translator!.Translate(player, "practicemenu.title"));
         _playerStatuses[player].LocalizedPracticeNames.Clear();
 
+        // Add menu options for practices
         for (var i = 0; i < _practices.Count; i++)
         {
             if (_practiceEnabled[i])
@@ -627,6 +632,8 @@ public class OpenPrefirePrac : BasePlugin
             _playerStatuses[player].LocalizedPracticeNames.Add(tmpLocalizedPracticeName, practiceNo);
             practiceMenu.AddMenuOption(tmpLocalizedPracticeName, OnRouteSelect);
         }
+
+        practiceMenu.AddMenuOption(_translator!.Translate(player, "mainmenu.close_menu"), OnCloseMenu);
 
 
         player.PrintToChat("============ [OpenPrefirePrac] ============");
@@ -646,6 +653,7 @@ public class OpenPrefirePrac : BasePlugin
             _playerStatuses[player].LocalizedDifficultyNames.Add(tmpLocalizedDifficultyName, i);
             difficultyMenu.AddMenuOption(tmpLocalizedDifficultyName, OnDifficultyChosen); // practice name here is split by space instead of underline. TODO: Use localized text.
         }
+        difficultyMenu.AddMenuOption(_translator!.Translate(player, "mainmenu.close_menu"), OnCloseMenu);
 
         player.PrintToChat("============ [OpenPrefirePrac] ============");
         MenuManager.OpenChatMenu(player, difficultyMenu);
@@ -656,6 +664,7 @@ public class OpenPrefirePrac : BasePlugin
     {
         int difficultyNo = _playerStatuses[player].LocalizedDifficultyNames[option.Text];
         ChangeDifficulty(player, difficultyNo);
+        CloseCurrentMenu(player);
     }
 
     public void OpenModeMenu(CCSPlayerController player, ChatMenuOption option)
@@ -669,6 +678,7 @@ public class OpenPrefirePrac : BasePlugin
             _playerStatuses[player].LocalizedTrainingModeNames.Add(tmpLocalizedTrainingModeName, i);
             trainingModeMenu.AddMenuOption(tmpLocalizedTrainingModeName, OnModeChosen);
         }
+        trainingModeMenu.AddMenuOption(_translator!.Translate(player, "mainmenu.close_menu"), OnCloseMenu);
 
         player.PrintToChat("============ [OpenPrefirePrac] ============");
         MenuManager.OpenChatMenu(player, trainingModeMenu);
@@ -679,6 +689,7 @@ public class OpenPrefirePrac : BasePlugin
     {
         var trainingModeNo = _playerStatuses[player].LocalizedTrainingModeNames[option.Text];
         ChangeTrainingMode(player, trainingModeNo);
+        CloseCurrentMenu(player);
     }
 
     public void OpenLanguageMenu(CCSPlayerController player, ChatMenuOption option)
@@ -689,6 +700,7 @@ public class OpenPrefirePrac : BasePlugin
         languageMenu.AddMenuOption("English", OnLanguageChosen);
         languageMenu.AddMenuOption("Português", OnLanguageChosen);
         languageMenu.AddMenuOption("中文", OnLanguageChosen);
+        languageMenu.AddMenuOption(_translator!.Translate(player, "mainmenu.close_menu"), OnCloseMenu);
 
         player.PrintToChat("============ [OpenPrefirePrac] ============");
         MenuManager.OpenChatMenu(player, languageMenu);
@@ -714,6 +726,12 @@ public class OpenPrefirePrac : BasePlugin
         }
 
         player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "languagemenu.set")}");
+        CloseCurrentMenu(player);
+    }
+
+    public void OnCloseMenu(CCSPlayerController player, ChatMenuOption option)
+    {
+        CloseCurrentMenu(player);
     }
 
     private void LoadPractice()
@@ -1597,7 +1615,11 @@ public class OpenPrefirePrac : BasePlugin
             var currentTrainingMode = _translator.Translate(player, $"modemenu.{_playerStatuses[player].TrainingMode}");
             mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.mode", currentTrainingMode), OpenModeMenu);
             mainMenu.AddMenuOption("Language preference", OpenLanguageMenu);
-            mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.exit"), OnForceExitPrefireMode);
+            if (_playerStatuses[player].PracticeIndex > 0)
+            {
+                mainMenu.AddMenuOption(_translator.Translate(player, "mainmenu.exit"), OnForceExitPrefireMode);
+            }
+            mainMenu.AddMenuOption(_translator!.Translate(player, "mainmenu.close_menu"), OnCloseMenu);
 
             player.PrintToChat("============ [OpenPrefirePrac] ============");
             MenuManager.OpenChatMenu(player, mainMenu);
@@ -1606,5 +1628,11 @@ public class OpenPrefirePrac : BasePlugin
         });
 
         CommandManager.RegisterCommand(_command);
+    }
+
+    private void CloseCurrentMenu(CCSPlayerController player)
+    {
+        MenuManager.CloseActiveMenu(player);
+        player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "mainmenu.menu_closed")}");
     }
 }

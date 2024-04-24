@@ -34,6 +34,14 @@ public class PlayerStatus
     public readonly List<int> EnabledTargets = new();
     public readonly List<int> Beams = new();
 
+    /**
+     * 0: Bots buy weapons randomly.
+     * 1: Bots use UMP45.
+     * 2: Bots use AK47.
+     * 3: Bots use AWP.
+     */
+    public int BotWeapon = 0;
+
     public PlayerStatus(DefaultConfig defaultConfig)
     {
         HealingMethod = defaultConfig.Difficulty;

@@ -7,6 +7,8 @@
     "mainmenu.mode": "Modo de prática atual: {0}",
     "mainmenu.help": "Uso: !prefire [PURPLE][Shortcut] [option][NORMAL]\u2029Sem atalhos, esse comando abre o menu principal.\u2029Atalhos disponíveis:\u2029[PURPLE]prac[NORMAL] [1-{0}]: Iniciar a prática em uma rota selecionada.\u2029[PURPLE]map[NORMAL] [map name]: Mudar para outro mapa.\u2029[PURPLE]df[NORMAL] [1-5]: Definir a dificuldade.\u2029[PURPLE]lang[NORMAL] [en/pt/zh]: Definir a configuração de idioma. en for English, pt para português, 中文选择 zh。\u2029[PURPLE]exit[NORMAL]: Pare de praticar.",
     "mainmenu.shortcut_prompt": "Digite [PURPLE]!prefire help[NORMAL] para usar os comandos de atalho.",
+    "mainmenu.close_menu": "Sair desse menu.",
+    "mainmenu.menu_closed": "O menu foi fechado.",
     "mapmenu.title": "Trocar mapa",
     "mapmenu.busy": "Outros jogadores estão praticando. Tente novamente mais tarde.",
     "mapmenu.not_available": "Desculpe, mas não temos nenhuma rota de prática para o mapa escolhido.",
