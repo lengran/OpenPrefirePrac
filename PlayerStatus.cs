@@ -31,6 +31,7 @@ public class PlayerStatus
     public int TrainingMode = 0;
     
     public readonly Dictionary<string, int> LocalizedTrainingModeNames = new();
+
     public readonly List<int> EnabledTargets = new();
     public readonly List<int> Beams = new();
 
@@ -44,8 +45,9 @@ public class PlayerStatus
 
     public PlayerStatus(DefaultConfig defaultConfig)
     {
-        HealingMethod = defaultConfig.Difficulty;
-        TrainingMode = defaultConfig.TrainingMode;
+        HealingMethod = defaultConfig.Difficulty!.Value;
+        TrainingMode = defaultConfig.TrainingMode!.Value;
+        BotWeapon = defaultConfig.BotWeapon!.Value;
     }
 
     public PlayerStatus()
