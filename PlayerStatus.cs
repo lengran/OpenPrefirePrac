@@ -39,7 +39,8 @@ public class PlayerStatus
      * 0: Bots buy weapons randomly.
      * 1: Bots use UMP45.
      * 2: Bots use AK47.
-     * 3: Bots use AWP.
+     * 3: Bots use Scout.
+     * 4: Bots use AWP.
      */
     public int BotWeapon = 0;
 

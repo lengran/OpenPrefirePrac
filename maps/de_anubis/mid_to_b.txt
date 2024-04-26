@@ -1,4 +1,4 @@
-b_main water_to_b mid_to_a a_main
+b_main water_to_b mid_to_a a_main aggressive_a aggressive_b
 7 0.65
 -617.816223 -516.206604 78.031250 13.794003 40.232063 0.000000
 -6.373291 460.537109 -0.5674360000000007 -0.065985 -109.917862 0.000000 False

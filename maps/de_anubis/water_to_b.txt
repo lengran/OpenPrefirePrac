@@ -1,4 +1,4 @@
-b_main mid_to_b mid_to_a a_main
+b_main mid_to_b mid_to_a a_main aggressive_a aggressive_b
 8 0.6
 532.429199 -1445.558838 2.031250 3.277905 83.888344 0.000000
 -31.825989 -166.655884 -0.8082279999999997 0.374009 -47.311642 0.000000 False

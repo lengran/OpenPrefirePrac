@@ -16,7 +16,7 @@ namespace OpenPrefirePrac;
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.1.28";
+    public override string ModuleVersion => "0.1.29";
     public override string ModuleAuthor => "Lengran";
     public override string ModuleDescription => "A plugin for practicing prefire in CS2. https://github.com/lengran/OpenPrefirePrac";
 
@@ -268,6 +268,7 @@ public class OpenPrefirePrac : BasePlugin
                     // Give bot weapons
                     if (_playerStatuses[owner].BotWeapon > 0)
                     {
+                        SetMoney(playerOrBot, 0);
                         playerOrBot.RemoveWeapons();
                         switch (_playerStatuses[owner].BotWeapon)
                         {
@@ -278,6 +279,9 @@ public class OpenPrefirePrac : BasePlugin
                                 playerOrBot.GiveNamedItem("weapon_ak47");
                                 break;
                             case 3:
+                                playerOrBot.GiveNamedItem("weapon_ssg08");
+                                break;
+                            case 4:
                                 playerOrBot.GiveNamedItem("weapon_awp");
                                 break;
                             default:
@@ -643,6 +647,7 @@ public class OpenPrefirePrac : BasePlugin
         botWeaponMenu.AddMenuOption(_translator!.Translate(player, "weaponmenu.random"), OnBotWeaponChosen);
         botWeaponMenu.AddMenuOption("UMP-45", OnBotWeaponChosen);
         botWeaponMenu.AddMenuOption("AK47", OnBotWeaponChosen);
+        botWeaponMenu.AddMenuOption("SSG08", OnBotWeaponChosen);
         botWeaponMenu.AddMenuOption("AWP", OnBotWeaponChosen);
 
         botWeaponMenu.AddMenuOption(_translator!.Translate(player, "mainmenu.close_menu"), OnCloseMenu);
@@ -664,8 +669,11 @@ public class OpenPrefirePrac : BasePlugin
             case "AK47":
                 botWeaponChoice = 2;
                 break;
-            case "AWP":
+            case "SSG08":
                 botWeaponChoice = 3;
+                break;
+            case "AWP":
+                botWeaponChoice = 4;
                 break;
             default:
                 botWeaponChoice = 0;
@@ -696,32 +704,33 @@ public class OpenPrefirePrac : BasePlugin
     
     private void ExitPrefireMode(CCSPlayerController player)
     {
-        var previousPracticeNo = _playerStatuses[player].PracticeIndex;
-        if (previousPracticeNo > -1)
-        {
-            RemoveBots(player);
-            DeleteGuidingLine(player);
+        // var previousPracticeNo = _playerStatuses[player].PracticeIndex;
+        // if (previousPracticeNo > -1)
+        // {
+        //     RemoveBots(player);
+        //     DeleteGuidingLine(player);
 
-            // Enable disabled practice routes
-            for (var i = 0; i < _practices[previousPracticeNo].IncompatiblePractices.Count; i++)
-            {
-                if (_practiceNameToId.TryGetValue(_practices[previousPracticeNo].IncompatiblePractices[i], out var value))
-                {
-                    _practiceEnabled[value] = true;
-                }
-            }
-            _practiceEnabled[previousPracticeNo] = true;
+        //     // Enable disabled practice routes
+        //     for (var i = 0; i < _practices[previousPracticeNo].IncompatiblePractices.Count; i++)
+        //     {
+        //         if (_practiceNameToId.TryGetValue(_practices[previousPracticeNo].IncompatiblePractices[i], out var value))
+        //         {
+        //             _practiceEnabled[value] = true;
+        //         }
+        //     }
+        //     _practiceEnabled[previousPracticeNo] = true;
 
-            _playerStatuses[player].PracticeIndex = -1;
-            _playerCount--;
+        //     _playerStatuses[player].PracticeIndex = -1;
+        //     _playerCount--;
 
-            // patch: check and remove request of bots in case something goes wrong resulting in a stuck request
-            if (_botRequests.ContainsKey(player))
-            {
-                _botRequests.Remove(player);
-            }
-        }
-        
+        //     // patch: check and remove request of bots in case something goes wrong resulting in a stuck request
+        //     if (_botRequests.ContainsKey(player))
+        //     {
+        //         _botRequests.Remove(player);
+        //     }
+        // }
+        UnsetPrefireMode(player);
+
         if (_playerCount == 0)
         {
             // Server.ExecuteCommand("sv_cheats 0");
@@ -979,11 +988,13 @@ public class OpenPrefirePrac : BasePlugin
         string[] boolConvarNames = [
             "tv_enable",
             "bot_allow_grenades",
-            "bot_allow_snipers",
             "bot_allow_shotguns",
             "mp_autoteambalance",
             "sv_alltalk",
             "sv_full_alltalk",
+            "bot_allow_pistols",
+            "bot_allow_rifles",
+            "bot_allow_snipers",
         ];
 
         string[] intConvarNames = [
@@ -998,6 +1009,7 @@ public class OpenPrefirePrac : BasePlugin
             "custom_bot_difficulty",
             "mp_death_drop_gun",
             "mp_death_drop_grenade",
+            "bot_quota",
         ];
 
         string[] floatConvarNames = [
@@ -1148,11 +1160,13 @@ public class OpenPrefirePrac : BasePlugin
         Server.ExecuteCommand("tv_enable 0");
         // Server.ExecuteCommand("sv_cheats 1");
         Server.ExecuteCommand("bot_allow_grenades 0");
-        Server.ExecuteCommand("bot_allow_snipers 0");
         Server.ExecuteCommand("bot_allow_shotguns 0");
         Server.ExecuteCommand("mp_autoteambalance 0");
         Server.ExecuteCommand("sv_alltalk 1");
         Server.ExecuteCommand("sv_full_alltalk 1");
+        Server.ExecuteCommand("bot_allow_pistols 1");
+        Server.ExecuteCommand("bot_allow_rifles 1");
+        Server.ExecuteCommand("bot_allow_snipers 1");
 
         Server.ExecuteCommand("mp_buy_anywhere 1");
         Server.ExecuteCommand("mp_warmup_pausetimer 1");
@@ -1165,11 +1179,12 @@ public class OpenPrefirePrac : BasePlugin
         Server.ExecuteCommand("custom_bot_difficulty 5");
         Server.ExecuteCommand("mp_death_drop_gun 0");
         Server.ExecuteCommand("mp_death_drop_grenade 0");
+        Server.ExecuteCommand("bot_quota 0");
 
         Server.ExecuteCommand("mp_respawn_immunitytime -1");
         Server.ExecuteCommand("mp_buytime 9999");
 
-        Server.ExecuteCommand("bot_quota_mode normal");
+        Server.ExecuteCommand("bot_quota_mode fill");
         
         Server.ExecuteCommand("mp_warmup_start");
         Server.ExecuteCommand("bot_kick all");
@@ -1327,24 +1342,26 @@ public class OpenPrefirePrac : BasePlugin
             // Update practice status
             if (previousPracticeIndex > -1)
             {
-                // Enable disabled practice routes
-                for (var i = 0; i < _practices[previousPracticeIndex].IncompatiblePractices.Count; i++)
-                {
-                    if (_practiceNameToId.ContainsKey(_practices[previousPracticeIndex].IncompatiblePractices[i]))
-                    {
-                        var disabledPracticeNo = _practiceNameToId[_practices[previousPracticeIndex].IncompatiblePractices[i]];
-                        _practiceEnabled[disabledPracticeNo] = true;
-                    }
-                }
-                _practiceEnabled[previousPracticeIndex] = true;
+                // // Enable disabled practice routes
+                // for (var i = 0; i < _practices[previousPracticeIndex].IncompatiblePractices.Count; i++)
+                // {
+                //     if (_practiceNameToId.ContainsKey(_practices[previousPracticeIndex].IncompatiblePractices[i]))
+                //     {
+                //         var disabledPracticeNo = _practiceNameToId[_practices[previousPracticeIndex].IncompatiblePractices[i]];
+                //         _practiceEnabled[disabledPracticeNo] = true;
+                //     }
+                // }
+                // _practiceEnabled[previousPracticeIndex] = true;
 
-                RemoveBots(player);
-                DeleteGuidingLine(player);
+                // RemoveBots(player);
+                // DeleteGuidingLine(player);
+                UnsetPrefireMode(player);
             }
-            else
-            {
-                _playerCount++;
-            }
+            // else
+            // {
+            //     _playerCount++;
+            // }
+            _playerCount++;
 
             _playerStatuses[player].PracticeIndex = practiceIndex;
 
@@ -1502,8 +1519,11 @@ public class OpenPrefirePrac : BasePlugin
                             case "ak":
                                 SetBotWeapon(player, 2);
                                 return;
-                            case "awp":
+                            case "sct":
                                 SetBotWeapon(player, 3);
+                                return;
+                            case "awp":
+                                SetBotWeapon(player, 4);
                                 return;
                             default:
                                 player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "weaponmenu.help")}");
@@ -1534,6 +1554,10 @@ public class OpenPrefirePrac : BasePlugin
                     case "help":
                         player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "mainmenu.help", _practices.Count)}");
                         return;
+                    // case "test":
+                    //     SetMoney(player, 0);
+                    //     AddTimer(5f, () => SetMoney(player, 123));
+                    //     return;
                     default:
                         player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "mainmenu.help", _practices.Count)}");
                         break;
@@ -1622,6 +1646,9 @@ public class OpenPrefirePrac : BasePlugin
                 weaponName = "AK47";
                 break;
             case 3:
+                weaponName = "SSG08";
+                break;
+            case 4:
                 weaponName = "AWP";
                 break;
         }
@@ -1659,5 +1686,46 @@ public class OpenPrefirePrac : BasePlugin
         player.PrintToChat("============ [OpenPrefirePrac] ============");
         MenuManager.OpenChatMenu(player, practiceMenu);
         player.PrintToChat("===========================================");
+    }
+
+    private void UnsetPrefireMode(CCSPlayerController player)
+    {
+        var previousPracticeNo = _playerStatuses[player].PracticeIndex;
+        if (previousPracticeNo > -1)
+        {
+            RemoveBots(player);
+            DeleteGuidingLine(player);
+
+            // Enable disabled practice routes
+            for (var i = 0; i < _practices[previousPracticeNo].IncompatiblePractices.Count; i++)
+            {
+                if (_practiceNameToId.TryGetValue(_practices[previousPracticeNo].IncompatiblePractices[i], out var value))
+                {
+                    _practiceEnabled[value] = true;
+                }
+            }
+            _practiceEnabled[previousPracticeNo] = true;
+
+            _playerStatuses[player].PracticeIndex = -1;
+            _playerCount--;
+
+            // patch: check and remove request of bots in case something goes wrong resulting in a stuck request
+            if (_botRequests.ContainsKey(player))
+            {
+                _botRequests.Remove(player);
+            }
+        }
+    }
+
+    private void SetMoney(CCSPlayerController player, int money)
+    {
+        var moneyServices = player.InGameMoneyServices;
+        if (moneyServices == null)
+        {
+            return;
+        }
+        
+        moneyServices.Account = money;
+        Utilities.SetStateChanged(player, "CCSPlayerController", "m_pInGameMoneyServices");
     }
 }

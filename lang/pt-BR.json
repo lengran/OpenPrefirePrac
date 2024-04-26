@@ -5,7 +5,7 @@
     "mainmenu.exit": "Sair do modo de prefire",
     "mainmenu.difficulty": "Dificuldade atual: {0}.",
     "mainmenu.mode": "Modo de prática atual: {0}",
-    "mainmenu.help": "Uso: !prefire [PURPLE][Shortcut] [option][NORMAL]\u2029Sem atalhos, esse comando abre o menu principal.\u2029Atalhos disponíveis:\u2029[PURPLE]prac[NORMAL] [1-{0}]: Iniciar a prática em uma rota selecionada.\u2029[PURPLE]map[NORMAL] [map name]: Mudar para outro mapa.\u2029[PURPLE]df[NORMAL] [1-5]: Definir a dificuldade.\u2029[PURPLE]mode[NORMAL] [rand/full]: Definir o modo de treinamento.\u2029[PURPLE]bw[NORMAL] [rand/ump/ak/awp]: Definir armas para bots.\u2029[PURPLE]lang[NORMAL] [en/pt/zh]: Definir a configuração de idioma. en for English, pt para português, 中文选择 zh。\u2029[PURPLE]exit[NORMAL]: Pare de praticar.",
+    "mainmenu.help": "Uso: !prefire [PURPLE][Shortcut] [option][NORMAL]\u2029Sem atalhos, esse comando abre o menu principal.\u2029Atalhos disponíveis:\u2029[PURPLE]prac[NORMAL] [1-{0}]: Iniciar a prática em uma rota selecionada.\u2029[PURPLE]map[NORMAL] [map name]: Mudar para outro mapa.\u2029[PURPLE]df[NORMAL] [1-5]: Definir a dificuldade.\u2029[PURPLE]mode[NORMAL] [rand/full]: Definir o modo de treinamento.\u2029[PURPLE]bw[NORMAL] [rand/ump/ak/sct/awp]: Definir armas para bots.\u2029[PURPLE]lang[NORMAL] [en/pt/zh]: Definir a configuração de idioma. en for English, pt para português, 中文选择 zh。\u2029[PURPLE]exit[NORMAL]: Pare de praticar.",
     "mainmenu.shortcut_prompt": "Digite [PURPLE]!prefire help[NORMAL] para usar os comandos de atalho.",
     "mainmenu.close_menu": "Sair desse menu.",
     "mainmenu.menu_closed": "O menu foi fechado.",
@@ -32,7 +32,7 @@
     "weaponmenu.title": "Definir armas para bots",
     "weaponmenu.random": "Aleatório",
     "weaponmenu.set": "A arma do bot está definida como {0}.",
-    "weaponmenu.help": "Uso: !prefire bw [PURPLE][rand/ump/ak/awp][NORMAL]",
+    "weaponmenu.help": "Uso: !prefire bw [PURPLE][rand/ump/ak/sct/awp][NORMAL]",
     "modemenu.title": "Escolha um modo de treinamento. No modo Aleatório, apenas parte dos bots será spawnada.",
     "modemenu.0": "Modo Aleatório",
     "modemenu.1": "Modo Completo",
@@ -67,6 +67,8 @@
     "map.de_anubis.water_to_b": "Atacar o local B a partir da água",
     "map.de_anubis.mid_to_a": "Ataque o local A a partir do meio (conector A)",
     "map.de_anubis.a_main": "Atacar o local A a partir do local A principal",
+    "map.de_anubis.aggressive_a": "CT empurrando agressivamente a partir do principal A",
+    "map.de_anubis.aggressive_b": "CT empurrando agressivamente a partir do principal B",
     "map.de_dust2.a_long": "Ataque ao site A do A longo",
     "map.de_dust2.a_short": "Ataque ao site A do A curto"
 }
