@@ -10,6 +10,7 @@ using System.Globalization;
 using CounterStrikeSharp.API.Modules.Cvars;
 using System.Text.Json;
 using CounterStrikeSharp.API.Core.Commands;
+using CounterStrikeSharp.API.Modules.Timers;
 
 namespace OpenPrefirePrac;
 
@@ -47,6 +48,8 @@ public class OpenPrefirePrac : BasePlugin
     private DefaultConfig ?_defaultPlayerSettings;
 
     private CommandDefinition ?_command;
+
+    private CounterStrikeSharp.API.Modules.Timers.Timer ?_timerBroadcastProgress;
     
     public override void Load(bool hotReload)
     {
@@ -97,6 +100,12 @@ public class OpenPrefirePrac : BasePlugin
         }
 
         RegisterCommand();
+
+        // if (_timerBroadcastProgress == null)
+        // {
+        //     // How often should this be called?
+        //     _timerBroadcastProgress = AddTimer(1f, () => PrintProgress(), TimerFlags.REPEAT);
+        // }
     }
 
     public override void Unload(bool hotReload)
@@ -122,6 +131,12 @@ public class OpenPrefirePrac : BasePlugin
             _serverStatus.IntConvars.Clear();
             _serverStatus.FloatConvars.Clear();
             _serverStatus.StringConvars.Clear();
+        }
+
+        if (_timerBroadcastProgress != null)
+        {
+            _timerBroadcastProgress.Kill();
+            _timerBroadcastProgress = null;
         }
     }
 
@@ -780,9 +795,16 @@ public class OpenPrefirePrac : BasePlugin
     private void SetupPrefireMode(CCSPlayerController player)
     {
         var practiceNo = _playerStatuses[player].PracticeIndex;
+
+        // // Add bots
+        // player.PrintToChat($"DEBUG: total: {_practices[practiceNo].NumBots}, own: {_playerStatuses[player].Bots.Count}");
+        // if (_playerStatuses[player].Bots.Count < _practices[practiceNo].NumBots)
+        // {
+        //     AddBot(player, _practices[practiceNo].NumBots - _playerStatuses[player].Bots.Count);
+        // }
         
         GenerateRandomPractice(player);
-        AddTimer(0.5f, () => ResetBots(player));
+        AddTimer(1.5f, () => ResetBots(player));
 
         DeleteGuidingLine(player);
         DrawGuidingLine(player);
@@ -1184,7 +1206,7 @@ public class OpenPrefirePrac : BasePlugin
         Server.ExecuteCommand("mp_respawn_immunitytime -1");
         Server.ExecuteCommand("mp_buytime 9999");
 
-        Server.ExecuteCommand("bot_quota_mode fill");
+        Server.ExecuteCommand("bot_quota_mode normal");
         
         Server.ExecuteCommand("mp_warmup_start");
         Server.ExecuteCommand("bot_kick all");
@@ -1727,5 +1749,25 @@ public class OpenPrefirePrac : BasePlugin
         
         moneyServices.Account = money;
         Utilities.SetStateChanged(player, "CCSPlayerController", "m_pInGameMoneyServices");
+    }
+
+    private void PrintProgress()
+    {
+        var players = Utilities.GetPlayers();
+
+        foreach (var player in players)
+        {
+            if (!player.IsValid || player.IsBot || player.IsHLTV || !_playerStatuses.ContainsKey(player) || _playerStatuses[player].PracticeIndex < 0)
+            {
+                continue;
+            }
+
+            // If player is practicing, print timer
+            string tmpPractice = _translator!.Translate(player, "map." + _mapName + "." + _practices[_playerStatuses[player].PracticeIndex].PracticeName);
+            string tmpProgress = _translator!.Translate(player, "practice.progress", _playerStatuses[player].EnabledTargets.Count, _playerStatuses[player].EnabledTargets.Count - _playerStatuses[player].Progress + _playerStatuses[player].Bots.Count);
+            string content = $"{tmpPractice}\u2029{tmpProgress}";
+
+            player.PrintToCenter(content);
+        }
     }
 }
