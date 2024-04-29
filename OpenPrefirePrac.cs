@@ -804,7 +804,7 @@ public class OpenPrefirePrac : BasePlugin
         // }
         
         GenerateRandomPractice(player);
-        AddTimer(1.5f, () => ResetBots(player));
+        AddTimer(0.5f, () => ResetBots(player));
 
         DeleteGuidingLine(player);
         DrawGuidingLine(player);
