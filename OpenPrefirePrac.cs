@@ -101,11 +101,10 @@ public class OpenPrefirePrac : BasePlugin
 
         RegisterCommand();
 
-        // if (_timerBroadcastProgress == null)
-        // {
-        //     // How often should this be called?
-        //     _timerBroadcastProgress = AddTimer(1f, () => PrintProgress(), TimerFlags.REPEAT);
-        // }
+        if (_timerBroadcastProgress == null)
+        {
+            _timerBroadcastProgress = AddTimer(3f, () => PrintProgress(), TimerFlags.REPEAT);
+        }
     }
 
     public override void Unload(bool hotReload)
@@ -394,7 +393,10 @@ public class OpenPrefirePrac : BasePlugin
                     }
 
                     // Print progress
-                    owner.PrintToCenter(_translator!.Translate(owner, "practice.progress", _playerStatuses[owner].EnabledTargets.Count, _playerStatuses[owner].EnabledTargets.Count - targetNo + _playerStatuses[owner].Bots.Count - 1));
+                    string tmpPractice = _translator!.Translate(owner, "map." + _mapName + "." + _practices[_playerStatuses[owner].PracticeIndex].PracticeName);
+                    string tmpProgress = _translator!.Translate(owner, "practice.progress", _playerStatuses[owner].EnabledTargets.Count, _playerStatuses[owner].EnabledTargets.Count - targetNo + _playerStatuses[owner].Bots.Count - 1);
+                    string content = $"{tmpPractice}\u2029{tmpProgress}";
+                    owner.PrintToCenter(content);
                 }
 
                 // Kick unnecessary bots
