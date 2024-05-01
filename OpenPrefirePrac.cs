@@ -17,7 +17,7 @@ namespace OpenPrefirePrac;
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.1.29";
+    public override string ModuleVersion => "0.1.30";
     public override string ModuleAuthor => "Lengran";
     public override string ModuleDescription => "A plugin for practicing prefire in CS2. https://github.com/lengran/OpenPrefirePrac";
 
@@ -312,6 +312,11 @@ public class OpenPrefirePrac : BasePlugin
                                 break;
                         }
                     }
+
+                    // Try to increase bot difficulty
+                    playerOrBot.PlayerPawn.Value!.Bot!.CombatRange = 2000;
+                    playerOrBot.ExecuteClientCommand("slot2");
+                    playerOrBot.ExecuteClientCommand("slot1");
                 }
                 else
                 {
@@ -796,8 +801,8 @@ public class OpenPrefirePrac : BasePlugin
             // Console.WriteLine($"[OpenPrefirePrac] DEBUG: Bot {bot.PlayerName} freezed.");
 
             // bot.PlayerPawn.Value.MoveType = MoveType_t.MOVETYPE_OBSOLETE;
-            bot.PlayerPawn.Value.MoveType = MoveType_t.MOVETYPE_NONE;
-            Schema.SetSchemaValue(bot.PlayerPawn.Value.Handle, "CBaseEntity", "m_nActualMoveType", 0);
+            bot.PlayerPawn.Value.MoveType = MoveType_t.MOVETYPE_VPHYSICS;
+            Schema.SetSchemaValue(bot.PlayerPawn.Value.Handle, "CBaseEntity", "m_nActualMoveType", 5);
             Utilities.SetStateChanged(bot.PlayerPawn.Value, "CBaseEntity", "m_MoveType");
         }
     }

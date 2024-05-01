@@ -70,5 +70,7 @@
     "map.de_anubis.aggressive_a": "CT aggressively pushing from A main",
     "map.de_anubis.aggressive_b": "CT aggressively pushing from B main",
     "map.de_dust2.a_long": "Attack A site from A long",
-    "map.de_dust2.a_short": "Attack A site from A short"
+    "map.de_dust2.a_short": "Attack A site from A short",
+    "map.de_dust2.b_tunnel": "Attack B site from tunnel",
+    "map.de_dust2.mid_to_b": "Attack B site from mid"
 } 

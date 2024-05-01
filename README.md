@@ -149,6 +149,8 @@ Finished practices:
 - de_dust2
   - Attack A site from A long
   - Attack A site from A short
+  - Attack B site from tunnel
+  - Attack B site from mid
 
 TODO:
 

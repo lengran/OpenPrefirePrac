@@ -70,5 +70,7 @@
     "map.de_anubis.aggressive_a": "CT A 点激进的前压防守",
     "map.de_anubis.aggressive_b": "CT B 点激进的前压防守",
     "map.de_dust2.a_long": "A 大到 A 包点",
-    "map.de_dust2.a_short": "A 小到 A 包点"
+    "map.de_dust2.a_short": "A 小到 A 包点",
+    "map.de_dust2.b_tunnel": "从 B 洞进攻 B 包点",
+    "map.de_dust2.mid_to_b": "从中门进攻 B 包点"
 } 

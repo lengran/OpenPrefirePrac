@@ -70,5 +70,7 @@
     "map.de_anubis.aggressive_a": "CT empurrando agressivamente a partir do principal A",
     "map.de_anubis.aggressive_b": "CT empurrando agressivamente a partir do principal B",
     "map.de_dust2.a_long": "Ataque ao site A do A longo",
-    "map.de_dust2.a_short": "Ataque ao site A do A curto"
+    "map.de_dust2.a_short": "Ataque ao site A do A curto",
+    "map.de_dust2.b_tunnel": "Atacar o local B a partir do túnel",
+    "map.de_dust2.mid_to_b": "Atacar o local B a partir do meio"
 }
