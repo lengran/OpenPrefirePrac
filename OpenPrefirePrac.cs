@@ -1688,7 +1688,7 @@ public class OpenPrefirePrac : BasePlugin
             _ownerOfBots.Remove(bot);
         }
 
-        AddTimer(0.5f, () => Server.ExecuteCommand($"bot_kick {bot.PlayerName}"));
+        Server.ExecuteCommand($"bot_kick {bot.PlayerName}");
         Console.WriteLine($"[OpenPrefirePrac] Exec command: bot_kick {bot.PlayerName}");
     }
 }
