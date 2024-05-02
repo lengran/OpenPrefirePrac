@@ -28,7 +28,7 @@
     "difficulty.3": "正常 - 每个击杀恢复 100HP",
     "difficulty.4": "简单 - 每个击杀恢复 500HP",
     "difficulty.set": "难度已设置为：{0}。",
-    "difficulty.help": "用法: !prefire df [1-5]",
+    "difficulty.help": "用法: !prefire df [PURPLE][1-5][NORMAL]",
     "weaponmenu.title": "设置 bot 所使用的武器",
     "weaponmenu.random": "随机",
     "weaponmenu.set": "Bot 使用的武器已设置为 {0}。",
@@ -37,9 +37,9 @@
     "modemenu.0": "随机模式",
     "modemenu.1": "完整模式",
     "modemenu.set": "训练模式已被设置为：{0}",
-    "modemenu.help": "用法：!prefire mode [full/rand]",
+    "modemenu.help": "用法：!prefire mode [PURPLE][full/rand][NORMAL]",
     "languagemenu.set": "您的语言设置已更新。",
-    "languagemenu.help": "用法：!prefire lang [en/pt/zh]. en for English, pt para português, 中文选择 zh。",
+    "languagemenu.help": "用法：!prefire lang [PURPLE][en/pt/zh][NORMAL]. en for English, pt para português, 中文选择 zh。",
     "map.de_inferno.a_apts": "A 二楼到 A 包点",
     "map.de_inferno.banana_to_b": "香蕉道到 B 包点",
     "map.de_inferno.mid_to_a_long": "A 连接到 A 包点",
@@ -72,5 +72,6 @@
     "map.de_dust2.a_long": "A 大到 A 包点",
     "map.de_dust2.a_short": "A 小到 A 包点",
     "map.de_dust2.b_tunnel": "从 B 洞进攻 B 包点",
-    "map.de_dust2.mid_to_b": "从中门进攻 B 包点"
+    "map.de_dust2.mid_to_b": "从中门进攻 B 包点",
+    "map.de_nuke.hut_to_a": "从黄房进攻 A 包点"
 } 

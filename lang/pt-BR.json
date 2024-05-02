@@ -28,7 +28,7 @@
     "difficulty.3": "Normal - +100HP por eliminação",
     "difficulty.4": "Easy - +500HP por eliminação",
     "difficulty.set": "A dificuldade foi definida para: {0}.",
-    "difficulty.help": "Uso: !prefire df [1-5]",
+    "difficulty.help": "Uso: !prefire df [PURPLE][1-5][NORMAL]",
     "weaponmenu.title": "Definir armas para bots",
     "weaponmenu.random": "Aleatório",
     "weaponmenu.set": "A arma do bot está definida como {0}.",
@@ -37,9 +37,9 @@
     "modemenu.0": "Modo Aleatório",
     "modemenu.1": "Modo Completo",
     "modemenu.set": "O modo de treinamento foi definido para: {0}",
-    "modemenu.help": "Uso: !prefire mode [full/rand]",
+    "modemenu.help": "Uso: !prefire mode [PURPLE][full/rand][NORMAL]",
     "languagemenu.set": "Sua preferência de idioma foi salva.",
-    "languagemenu.help": "Uso: !prefire lang [en/pt/zh]. en for English, pt para português, 中文选择 zh。",
+    "languagemenu.help": "Uso: !prefire lang [PURPLE][en/pt/zh][NORMAL]. en for English, pt para português, 中文选择 zh。",
     "map.de_inferno.a_apts": "Apartamento A para site A",
     "map.de_inferno.banana_to_b": "Banana para site B",
     "map.de_inferno.mid_to_a_long": "Meio para site A através de A Longa",
@@ -72,5 +72,6 @@
     "map.de_dust2.a_long": "Ataque ao site A do A longo",
     "map.de_dust2.a_short": "Ataque ao site A do A curto",
     "map.de_dust2.b_tunnel": "Atacar o local B a partir do túnel",
-    "map.de_dust2.mid_to_b": "Atacar o local B a partir do meio"
+    "map.de_dust2.mid_to_b": "Atacar o local B a partir do meio",
+    "map.de_nuke.hut_to_a": "Atacar o local do A a partir do HUT"
 }

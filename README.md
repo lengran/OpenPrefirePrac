@@ -157,6 +157,8 @@ Finished practices:
   - Attack A site from A short
   - Attack B site from tunnel
   - Attack B site from mid
+- de_nuke
+  - Attack A site from HUT
 
 TODO:
 

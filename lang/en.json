@@ -28,7 +28,7 @@
     "difficulty.3": "Normal - +100HP per kill",
     "difficulty.4": "Easy - +500HP per kill",
     "difficulty.set": "Difficulty has been set to: {0}.",
-    "difficulty.help": "Usage: !prefire df [1-5]",
+    "difficulty.help": "Usage: !prefire df [PURPLE][1-5][NORMAL]",
     "weaponmenu.title": "Set weapons for bots",
     "weaponmenu.random": "Random",
     "weaponmenu.set": "Bot weapon is set to {0}.",
@@ -37,9 +37,9 @@
     "modemenu.0": "Random mode",
     "modemenu.1": "Full mode",
     "modemenu.set": "Training mode has been set to: {0}",
-    "modemenu.help": "Usage: !prefire mode [full/rand]",
+    "modemenu.help": "Usage: !prefire mode [PURPLE][full/rand][NORMAL]",
     "languagemenu.set": "Your language preference has been saved.",
-    "languagemenu.help": "Usage: !prefire lang [en/pt/zh]. en for English, pt para português, 中文选择 zh。",
+    "languagemenu.help": "Usage: !prefire lang [PURPLE][en/pt/zh][NORMAL]. en for English, pt para português, 中文选择 zh。",
     "map.de_inferno.a_apts": "A apartment to A site",
     "map.de_inferno.banana_to_b": "Banana to B site",
     "map.de_inferno.mid_to_a_long": "Mid to A site through A Long",
@@ -72,5 +72,6 @@
     "map.de_dust2.a_long": "Attack A site from A long",
     "map.de_dust2.a_short": "Attack A site from A short",
     "map.de_dust2.b_tunnel": "Attack B site from tunnel",
-    "map.de_dust2.mid_to_b": "Attack B site from mid"
+    "map.de_dust2.mid_to_b": "Attack B site from mid",
+    "map.de_nuke.hut_to_a": "Attack A site from HUT"
 } 
