@@ -90,7 +90,7 @@ public class OpenPrefirePrac : BasePlugin
             var players = Utilities.GetPlayers();
             foreach (var tempPlayer in players)
             {
-                if (!tempPlayer.IsValid || tempPlayer.IsBot || tempPlayer.IsHLTV)
+                if (tempPlayer == null || tempPlayer.IsBot || tempPlayer.IsHLTV)
                 {
                     continue;
                 }
@@ -176,8 +176,7 @@ public class OpenPrefirePrac : BasePlugin
                 else
                 {
                     // Already have enough bots, kick this bot.
-                    Server.ExecuteCommand($"bot_kick {player.PlayerName}");
-                    Console.WriteLine($"[OpenPrefirePrac] Exec command: bot_kick {player.PlayerName}");
+                    KickBot(player);
                 }
             }
         }
@@ -194,7 +193,7 @@ public class OpenPrefirePrac : BasePlugin
     [GameEventHandler]
     public HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
     {
-        var player = @event.Userid!;
+        var player = @event.Userid;
 
         if (player == null)
         {
@@ -254,9 +253,9 @@ public class OpenPrefirePrac : BasePlugin
     [GameEventHandler]
     public HookResult OnPlayerSpawn(EventPlayerSpawn @event, GameEventInfo info)
     {
-        var playerOrBot = @event.Userid!;
+        var playerOrBot = @event.Userid;
         
-        if (playerOrBot == null || playerOrBot.IsHLTV)
+        if (playerOrBot == null || !playerOrBot.IsValid|| playerOrBot.IsHLTV)
         {
             // Console.WriteLine($"[OpenPrefirePrac] DEBUG: player is null or hltv.");
             return HookResult.Continue;
@@ -327,7 +326,7 @@ public class OpenPrefirePrac : BasePlugin
                     //     kicked. So kick them here.
                     _ownerOfBots.Remove(playerOrBot);
                     _playerStatuses[owner].Bots.Remove(playerOrBot);
-                    Server.ExecuteCommand($"bot_kick {playerOrBot.PlayerName}");
+                    KickBot(playerOrBot);
 
                     if (_playerStatuses[owner].Bots.Count == 0)
                     {
@@ -420,7 +419,7 @@ public class OpenPrefirePrac : BasePlugin
                 {
                     _ownerOfBots.Remove(playerOrBot);
                     _playerStatuses[owner].Bots.Remove(playerOrBot);
-                    Server.ExecuteCommand($"bot_kick {playerOrBot.PlayerName}");
+                    KickBot(playerOrBot);
 
                     if (_playerStatuses[owner].Bots.Count == 0)
                     {
@@ -692,11 +691,13 @@ public class OpenPrefirePrac : BasePlugin
             }
         }
 
-        foreach (var bot in botsToDelete)
-        {
-            _playerStatuses[player].Bots.Remove(bot);
-            _ownerOfBots.Remove(bot);
-        }
+        AddTimer(3f, () => {
+            foreach (var bot in botsToDelete)
+            {
+                _playerStatuses[player].Bots.Remove(bot);
+                _ownerOfBots.Remove(bot);
+            }
+        });
     }
 
     private void SetupPrefireMode(CCSPlayerController player)
@@ -729,7 +730,7 @@ public class OpenPrefirePrac : BasePlugin
         {
             if (bot.IsValid)
             {
-                Server.ExecuteCommand($"bot_kick {bot.PlayerName}");
+                KickBot(bot);
             }
             else
             {
@@ -787,14 +788,14 @@ public class OpenPrefirePrac : BasePlugin
             AddTimer(0.2f, () => player.PlayerPawn.Value.Bot!.IsCrouching = true);
         }
         
-        player.PlayerPawn.Value.Teleport(pos, ang, new Vector(0, 0, 0));
+        player.PlayerPawn.Value.Teleport(pos, ang, Vector.Zero);
     }
 
     private void FreezeBot(CCSPlayerController? bot)
     {
         // Console.WriteLine($"[OpenPrefirePrac] DEBUG: Trying to freeze a bot.");
         if (bot != null &&
-            bot is { IsBot: true, IsHLTV: false, PawnIsAlive: true } 
+            bot is { IsValid: true, IsBot: true, IsHLTV: false, PawnIsAlive: true } 
             && bot.PlayerPawn.Value != null
         )
         {
@@ -809,7 +810,7 @@ public class OpenPrefirePrac : BasePlugin
 
     private static void EquipPlayer(CCSPlayerController player)
     {
-        if (!player.PawnIsAlive || player.Pawn.Value == null)
+        if (player == null || !player.PawnIsAlive || player.PlayerPawn.Value == null)
             return;
         
         player.RemoveWeapons();
@@ -861,7 +862,7 @@ public class OpenPrefirePrac : BasePlugin
         // 1: Use all of the targets.
     }
 
-    private void DrawGuidingLine(CCSPlayerController player)
+    private void CreateGuidingLine(CCSPlayerController player)
     {
         var practiceNo = _playerStatuses[player].PracticeIndex;
 
@@ -917,7 +918,7 @@ public class OpenPrefirePrac : BasePlugin
         beam.Render = System.Drawing.Color.Blue;
         beam.Width = 2.0f;
 
-        beam.Teleport(startPos, new QAngle(0, 0, 0), new Vector(0, 0, 0));
+        beam.Teleport(startPos, QAngle.Zero, Vector.Zero);
         beam.EndPos.Add(endPos);
         beam.DispatchSpawn();
 
@@ -1148,15 +1149,15 @@ public class OpenPrefirePrac : BasePlugin
 
     private void RefillAmmo(CCSPlayerController player)
     {
-        if (!player.IsValid || !player.PawnIsAlive || player.Pawn == null || player.Pawn.Value == null || player.Pawn.Value.WeaponServices == null)
+        if (player == null || !player.IsValid || !player.PawnIsAlive || player.PlayerPawn == null || player.PlayerPawn.Value == null || player.PlayerPawn.Value.WeaponServices == null)
         {
             return;
         }
 
-        var weapons = player.Pawn.Value.WeaponServices.MyWeapons;
+        var weapons = player.PlayerPawn.Value.WeaponServices.MyWeapons;
         foreach (var weapon in weapons)
         {
-            if (weapon.IsValid && weapon != null && weapon.Value != null && weapon.Value.DesignerName.Length != 0 && !weapon.Value.DesignerName.Contains("knife") && !weapon.Value.DesignerName.Contains("bayonet"))
+            if (weapon != null && weapon.IsValid && weapon.Value != null && weapon.Value.DesignerName.Length != 0 && !weapon.Value.DesignerName.Contains("knife") && !weapon.Value.DesignerName.Contains("bayonet"))
             {
                 int magAmmo = 999;
                 int reservedAmmo = 999;
@@ -1290,7 +1291,7 @@ public class OpenPrefirePrac : BasePlugin
             
             _playerCount++;
             _playerStatuses[player].PracticeIndex = practiceIndex;
-            AddTimer(1f, () => DrawGuidingLine(player));
+            AddTimer(1f, () => CreateGuidingLine(player));
 
             // Disable incompatible practices.
             for (var i = 0; i < _practices[practiceIndex].IncompatiblePractices.Count; i++)
@@ -1673,5 +1674,21 @@ public class OpenPrefirePrac : BasePlugin
 
             player.PrintToCenter(content);
         }
+    }
+
+    private void KickBot(CCSPlayerController bot)
+    {
+        if (bot == null || !bot.IsBot)
+        {
+            return;
+        }
+
+        if (_ownerOfBots.ContainsKey(bot))
+        {
+            _ownerOfBots.Remove(bot);
+        }
+
+        AddTimer(0.5f, () => Server.ExecuteCommand($"bot_kick {bot.PlayerName}"));
+        Console.WriteLine($"[OpenPrefirePrac] Exec command: bot_kick {bot.PlayerName}");
     }
 }

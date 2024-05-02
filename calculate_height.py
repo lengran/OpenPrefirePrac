@@ -13,7 +13,7 @@ if __name__ == "__main__":
             # Targets
             if len(words) > 6:
                 height = float(words[3][:-7])
-                height -=65
+                height -=64
                 crunching = False
                 if len(words) == 8:
                     print(words[1] + " " + words[2] + " " + str(height) + " " + words[4] + " " + words[5] + " " + words[6] + " True")
@@ -25,3 +25,7 @@ if __name__ == "__main__":
                 height = float(words[3])
                 height -=55
                 print(words[1] + " " + words[2] + " " + str(height))
+
+# A note in the end.
+# player height = 64
+# player crouch height = stand height - 18
