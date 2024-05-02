@@ -1228,6 +1228,7 @@ public class OpenPrefirePrac : BasePlugin
             {
                 ReadCommentHandling = JsonCommentHandling.Skip,
                 AllowTrailingCommas = true,
+
             };
 
             string jsonString = File.ReadAllText(path);
@@ -1236,26 +1237,27 @@ public class OpenPrefirePrac : BasePlugin
             {
                 DefaultConfig jsonConfig = JsonSerializer.Deserialize<DefaultConfig>(jsonString, options)!;
 
-                if (jsonConfig.Difficulty.HasValue)
+                if (jsonConfig.Difficulty > -1 && jsonConfig.Difficulty < 5)
                 {
-                    tmpDifficulty = jsonConfig.Difficulty.Value;
+                    tmpDifficulty = jsonConfig.Difficulty;
+                }
+
+                if (jsonConfig.TrainingMode > -1 && jsonConfig.TrainingMode < 2)
+                {
+                    tmpTrainingMode = jsonConfig.TrainingMode;
                 }
                 
-                if (jsonConfig.TrainingMode.HasValue)
+                if (jsonConfig.BotWeapon > -1 && jsonConfig.BotWeapon < 5)
                 {
-                    tmpTrainingMode = jsonConfig.TrainingMode.Value;
+                    tmpBotWeapon = jsonConfig.BotWeapon;
                 }
 
-                if (jsonConfig.BotWeapon.HasValue)
-                {
-                    tmpBotWeapon = jsonConfig.BotWeapon.Value;
-                }
-
-                Console.WriteLine($"[OpenPrefirePrac] Successfully load default settings. Difficulty = {tmpDifficulty}, TrainingMode = {tmpTrainingMode}");
+                Console.WriteLine($"[OpenPrefirePrac] Using default settings: Difficulty = {tmpDifficulty}, TrainingMode = {tmpTrainingMode}, BotWeapon = {tmpBotWeapon}");
             }
             catch (System.Exception)
             {
-                Console.WriteLine("[OpenPrefirePrac] Failed to load default settings. Will use default settings.");
+                Console.WriteLine("[OpenPrefirePrac] Failed to load custom settings. Will use default settings.");
+                
             }
         }
 

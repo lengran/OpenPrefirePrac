@@ -46,9 +46,9 @@ public class PlayerStatus
 
     public PlayerStatus(DefaultConfig defaultConfig)
     {
-        HealingMethod = defaultConfig.Difficulty!.Value;
-        TrainingMode = defaultConfig.TrainingMode!.Value;
-        BotWeapon = defaultConfig.BotWeapon!.Value;
+        HealingMethod = defaultConfig.Difficulty;
+        TrainingMode = defaultConfig.TrainingMode;
+        BotWeapon = defaultConfig.BotWeapon;
     }
 
     public PlayerStatus()

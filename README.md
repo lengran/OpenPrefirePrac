@@ -57,6 +57,12 @@ Explanation of values:
 - Training Mode
   - 0: Random mode, randomly spawn some targets.
   - 1: Full mode, all targets.
+- Bot Weapon
+  - 0: Bots buy weapons randomly.
+  - 1: Bots use UMP45.
+  - 2: Bots use AK47.
+  - 3: Bots use Scout.
+  - 4: Bots use AWP.
 
 ## Development
 
