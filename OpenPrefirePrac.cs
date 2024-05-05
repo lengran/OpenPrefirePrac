@@ -11,13 +11,14 @@ using CounterStrikeSharp.API.Modules.Cvars;
 using System.Text.Json;
 using CounterStrikeSharp.API.Core.Commands;
 using CounterStrikeSharp.API.Modules.Timers;
+using CounterStrikeSharp.API.Modules.Entities;
 
 namespace OpenPrefirePrac;
 
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.1.31";
+    public override string ModuleVersion => "0.1.32";
     public override string ModuleAuthor => "Lengran";
     public override string ModuleDescription => "A plugin for practicing prefire in CS2. https://github.com/lengran/OpenPrefirePrac";
 
@@ -1270,6 +1271,7 @@ public class OpenPrefirePrac : BasePlugin
         {
             SaveConvars();
             SetupConvars();
+            AddTimer(0.5f, () => BreakBreakables());
         }
 
         var previousPracticeIndex = _playerStatuses[player].PracticeIndex;
@@ -1692,5 +1694,87 @@ public class OpenPrefirePrac : BasePlugin
 
         Server.ExecuteCommand($"bot_kick {bot.PlayerName}");
         Console.WriteLine($"[OpenPrefirePrac] Exec command: bot_kick {bot.PlayerName}");
+    }
+
+    // Thanks to B3none
+    // Code borrowed from cs2-retake/RetakesPlugin/Modules/Managers/BreakerManager.cs
+    private void BreakBreakables()
+    {
+        // Enable this feature only on nuke and mirage. (mirage is disabled because of the crash issue on Windows)
+        if (Server.MapName != "de_nuke") // && Server.MapName != "de_mirage")
+        {
+            Console.WriteLine($"[OpenPrefirePrac] Map {Server.MapName} doesn't have breakables to break.");
+            return;
+        }
+
+        Console.WriteLine($"[OpenPrefirePrac] Map {Server.MapName} have breakables to break.");
+
+        // Enable certain breakables on certain maps to avoid game crash
+        List<string> enabled_breakables =
+        [
+            // Common breakables
+            "func_breakable",
+            "func_breakable_surf",
+            "prop.breakable.01",
+            "prop.breakable.02",
+        ];
+
+        if (Server.MapName == "de_nuke")
+        {
+            enabled_breakables.Add("prop_door_rotating");
+            enabled_breakables.Add("prop_dynamic");
+        }
+
+        if (Server.MapName == "de_mirage")
+        {
+            enabled_breakables.Add("prop_dynamic");
+        }
+
+        Console.WriteLine($"[OpenPrefirePrac] DEBUG: Have breakables: {enabled_breakables}");
+
+        // Loop to find breakables
+        CEntityIdentity ?pEntity = new CEntityIdentity(EntitySystem.FirstActiveEntity);
+        while (pEntity != null && pEntity.Handle != IntPtr.Zero)
+        {
+            if (!enabled_breakables.Contains(pEntity.DesignerName))
+            {
+                pEntity = pEntity.Next;
+                continue;
+            }
+
+            switch (pEntity.DesignerName)
+            {
+                case "func_breakable":
+                case "func_breakable_surf":
+                case "prop.breakable.01":
+                case "prop.breakable.02":
+                case "prop_dynamic":
+                    CBreakable breakableEntity = new PointerTo<CBreakable>(pEntity.Handle).Value;
+                    if (breakableEntity.IsValid)
+                    {
+                        breakableEntity.AcceptInput("Break");
+                    }
+                    break;
+                case "func_button":
+                    CBaseButton button = new PointerTo<CBaseButton>(pEntity.Handle).Value;
+                    if (button.IsValid)
+                    {
+                        button.AcceptInput("Kill");
+                    }
+                    break;
+                case "prop_door_rotating":
+                    CPropDoorRotating propDoorRotating = new PointerTo<CPropDoorRotating>(pEntity.Handle).Value;
+                    if (propDoorRotating.IsValid)
+                    {
+                        propDoorRotating.AcceptInput("Open");
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            // Get next entity
+            pEntity = pEntity.Next;
+        }
     }
 }

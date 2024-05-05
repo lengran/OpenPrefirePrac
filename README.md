@@ -159,6 +159,7 @@ Finished practices:
   - Attack B site from mid
 - de_nuke
   - Attack A site from HUT
+  - Attack B site from ramp
 
 TODO:
 
