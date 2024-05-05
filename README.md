@@ -166,7 +166,8 @@ TODO:
 1. Create prefire profiles for all maps.
 2. Improve bot logic.
 3. Improve localization support (The supporting framework is done. Submitting translations is warmly welcomed.).
-4. Reroute separate logs into one gathered place for better debug experience.
+4. Reorganize the files and code structure. Try to put code into submodules to improve readability.
+5. Reroute separate logs into one gathered place for better debug experience.
 
 ## Reference
 
