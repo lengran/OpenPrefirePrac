@@ -314,9 +314,9 @@ public class OpenPrefirePrac : BasePlugin
                     }
 
                     // Try to increase bot difficulty
-                    playerOrBot.PlayerPawn.Value!.Bot!.CombatRange = 2000;
-                    playerOrBot.ExecuteClientCommand("slot2");
-                    playerOrBot.ExecuteClientCommand("slot1");
+                    // playerOrBot.PlayerPawn.Value!.Bot!.CombatRange = 2000;
+                    // playerOrBot.ExecuteClientCommand("slot2");
+                    // playerOrBot.ExecuteClientCommand("slot1");
                 }
                 else
                 {
@@ -684,6 +684,7 @@ public class OpenPrefirePrac : BasePlugin
             {
                 Console.WriteLine($"[OpenPrefirePrac] Error: Player has an invalid bot. Unmanage it.");
                 botsToDelete.Add(bot);
+                continue;
             }
 
             if (bot.PawnIsAlive)
@@ -774,7 +775,7 @@ public class OpenPrefirePrac : BasePlugin
 
     private void MovePlayer(CCSPlayerController? player, bool crouch, Vector pos, QAngle ang)
     {
-        if (player == null || !player.PawnIsAlive || player.PlayerPawn.Value == null)
+        if (player == null || !player.IsValid || !player.PawnIsAlive || player.PlayerPawn.Value == null)
         {
             return;
         }
@@ -834,7 +835,7 @@ public class OpenPrefirePrac : BasePlugin
         if (player == null || !player.PawnIsAlive || player.Pawn.Value == null || hp < 0)
             return;
         
-        Console.WriteLine($"[OpenPrefirePrac] DEBUG: Setup player {player.PlayerName} with health.");
+        // Console.WriteLine($"[OpenPrefirePrac] DEBUG: Setup player {player.PlayerName} with health.");
 
         if (hp > 100)
             player.Pawn.Value.MaxHealth = hp;
@@ -939,6 +940,7 @@ public class OpenPrefirePrac : BasePlugin
             "bot_allow_pistols",
             "bot_allow_rifles",
             "bot_allow_snipers",
+            "sv_auto_adjust_bot_difficulty",
         ];
 
         string[] intConvarNames = [
@@ -959,6 +961,7 @@ public class OpenPrefirePrac : BasePlugin
         string[] floatConvarNames = [
             "mp_respawn_immunitytime",
             "mp_buytime",
+            "bot_max_vision_distance_override",
         ];
 
         string[] stringConvarNames = [
@@ -1111,6 +1114,7 @@ public class OpenPrefirePrac : BasePlugin
         Server.ExecuteCommand("bot_allow_pistols 1");
         Server.ExecuteCommand("bot_allow_rifles 1");
         Server.ExecuteCommand("bot_allow_snipers 1");
+        Server.ExecuteCommand("sv_auto_adjust_bot_difficulty 0");
 
         Server.ExecuteCommand("mp_buy_anywhere 1");
         Server.ExecuteCommand("mp_warmup_pausetimer 1");
@@ -1127,6 +1131,7 @@ public class OpenPrefirePrac : BasePlugin
 
         Server.ExecuteCommand("mp_respawn_immunitytime -1");
         Server.ExecuteCommand("mp_buytime 9999");
+        Server.ExecuteCommand("bot_max_vision_distance_override 99999");
 
         Server.ExecuteCommand("bot_quota_mode normal");
         
@@ -1730,7 +1735,7 @@ public class OpenPrefirePrac : BasePlugin
             enabled_breakables.Add("prop_dynamic");
         }
 
-        Console.WriteLine($"[OpenPrefirePrac] DEBUG: Have breakables: {enabled_breakables}");
+        // Console.WriteLine($"[OpenPrefirePrac] DEBUG: Have breakables: {enabled_breakables}");
 
         // Loop to find breakables
         CEntityIdentity ?pEntity = new CEntityIdentity(EntitySystem.FirstActiveEntity);
