@@ -61,6 +61,7 @@ public class OpenPrefirePrac : BasePlugin
 	    Console.WriteLine("[OpenPrefirePrac] Registering listeners.");
         RegisterListener<Listeners.OnClientPutInServer>(OnClientPutInServerHandler);
         RegisterListener<Listeners.OnMapStart>(OnMapStartHandler);
+        RegisterListener<Listeners.OnTick>(OnTickHandler);
 
         LoadDefaultSettings();
 
@@ -1784,4 +1785,47 @@ public class OpenPrefirePrac : BasePlugin
             pEntity = pEntity.Next;
         }
     }
+
+    private void OnTickHandler()
+    {
+        foreach (var player in _playerStatuses.Keys)
+        {
+            if (player == null || !player.IsValid || !player.PawnIsAlive || player.PlayerPawn.Value == null)
+            {
+                continue;
+            }
+
+            // Aimlock bots
+            Vector ownerEyePos = new Vector(player.PlayerPawn.Value.AbsOrigin!.X, player.PlayerPawn.Value.AbsOrigin!.Y, player.PlayerPawn.Value.AbsOrigin!.Z + player.PlayerPawn.Value.ViewmodelOffsetZ);
+
+            foreach(var bot in _playerStatuses[player].Bots)
+            {
+                if (!bot.IsValid || !bot.PawnIsAlive || bot.PlayerPawn.Value == null)
+                {
+                    continue;
+                }
+
+                Vector botEyePosition = new Vector(bot.PlayerPawn.Value.AbsOrigin!.X, bot.PlayerPawn.Value.AbsOrigin!.Y, bot.PlayerPawn.Value.AbsOrigin!.Z + bot.PlayerPawn.Value.ViewmodelOffsetZ);
+
+                // calculate angle
+                float deltaX = ownerEyePos.X - botEyePosition.X;
+                float deltaY = ownerEyePos.Y - botEyePosition.Y;
+                float deltaZ = ownerEyePos.Z - botEyePosition.Z;
+                double yaw = 180 * Math.Atan2(deltaY, deltaX) / Math.PI;
+                double tmp = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+                double pitch= 180 * Math.Atan2(-1 * deltaZ, tmp) / Math.PI;
+                QAngle angle = new QAngle((float)pitch, (float)yaw, 0);
+
+                Server.NextFrame(() => {
+                    if (pitch < 15 && pitch > -15)
+                    {
+                        bot.PlayerPawn.Value.Teleport(null, angle, null);
+                    }
+                    bot.PlayerPawn.Value.EyeAngles.X = (float)pitch;
+                    bot.PlayerPawn.Value.EyeAngles.Y = (float)yaw;
+                });
+            }
+        }
+    }
+
 }
