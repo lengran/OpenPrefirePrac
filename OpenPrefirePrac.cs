@@ -760,16 +760,18 @@ public class OpenPrefirePrac : BasePlugin
 
         for (var i = 0; i < numberOfBots; i++)
         {
-            if (player.TeamNum == (byte)CsTeam.CounterTerrorist)
-            {
-                Server.ExecuteCommand("bot_join_team T");
-                Server.ExecuteCommand("bot_add_t");
-            }
-            else if (player.TeamNum == (byte)CsTeam.Terrorist)
-            {
-                Server.ExecuteCommand("bot_join_team CT");
-                Server.ExecuteCommand("bot_add_ct");
-            }
+            AddTimer(i * 0.1f, () => {
+                if (player.TeamNum == (byte)CsTeam.CounterTerrorist)
+                {
+                    Server.ExecuteCommand("bot_join_team T");
+                    Server.ExecuteCommand("bot_add_t");
+                }
+                else if (player.TeamNum == (byte)CsTeam.Terrorist)
+                {
+                    Server.ExecuteCommand("bot_join_team CT");
+                    Server.ExecuteCommand("bot_add_ct");
+                }
+            });
         }
     }
 
