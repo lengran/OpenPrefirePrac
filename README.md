@@ -158,8 +158,9 @@ Finished practices:
   - Attack B site from tunnel
   - Attack B site from mid
 - de_nuke
-  - Attack A site from HUT
+  - Attack A site from hut
   - Attack B site from ramp
+  - Entrance of lobby (T side)
 
 TODO:
 

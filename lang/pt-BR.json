@@ -74,5 +74,6 @@
     "map.de_dust2.b_tunnel": "Atacar o local B a partir do túnel",
     "map.de_dust2.mid_to_b": "Atacar o local B a partir do meio",
     "map.de_nuke.hut_to_a": "Atacar o local do A a partir do HUT",
-    "map.de_nuke.ramp_to_b": "Atacar o local B a partir da rampa"
+    "map.de_nuke.ramp_to_b": "Atacar o local B a partir da rampa",
+    "map.de_nuke.t_side_entrance_of_lobby": "Entrada do saguão (lado T)"
 }

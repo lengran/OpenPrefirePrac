@@ -969,6 +969,8 @@ public class OpenPrefirePrac : BasePlugin
 
         string[] stringConvarNames = [
             "bot_quota_mode",
+            "mp_ct_default_melee",
+            "mp_t_default_melee",
         ];
 
         try
@@ -1137,6 +1139,8 @@ public class OpenPrefirePrac : BasePlugin
         Server.ExecuteCommand("bot_max_vision_distance_override 99999");
 
         Server.ExecuteCommand("bot_quota_mode normal");
+        Server.ExecuteCommand("mp_ct_default_melee \"\"");
+        Server.ExecuteCommand("mp_t_default_melee \"\"");
         
         Server.ExecuteCommand("mp_warmup_start");
         Server.ExecuteCommand("bot_kick all");
