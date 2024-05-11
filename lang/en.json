@@ -75,5 +75,8 @@
     "map.de_dust2.mid_to_b": "Attack B site from mid",
     "map.de_nuke.hut_to_a": "Attack A site from hut",
     "map.de_nuke.ramp_to_b": "Attack B site from ramp",
-    "map.de_nuke.t_side_entrance_of_lobby": "Entrance of lobby (T side)"
+    "map.de_nuke.t_side_entrance_of_lobby": "Entrance of lobby (T side)",
+    "map.de_nuke.j_hall_to_upper": "Attack Upper from Ramp/J-Hall",
+    "map.de_nuke.t_outside_to_lower": "Attack Lower from T-Side Outside",
+    "map.de_nuke.ropzPlay_to_upper": "Attack Upper doing the ropz maneuver"
 } 
