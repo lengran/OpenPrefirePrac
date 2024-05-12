@@ -793,11 +793,19 @@ public class OpenPrefirePrac : BasePlugin
         // Console.WriteLine($"[OpenPrefirePrac] DEBUG: {player.PlayerName} moved to spawn point.");
 
         // Only bot can crouch
-        if (crouch && player.IsBot)
+        if (player.IsBot)
         {
             var movementService = new CCSPlayer_MovementServices(player.PlayerPawn.Value.MovementServices!.Handle);
-            AddTimer(0.1f, () => movementService.DuckAmount = 1);
-            AddTimer(0.2f, () => player.PlayerPawn.Value.Bot!.IsCrouching = true);
+            if (crouch)
+            {
+                AddTimer(0.05f, () => movementService.DuckAmount = 1);
+                AddTimer(0.1f, () => player.PlayerPawn.Value.Bot!.IsCrouching = true);
+            }
+            else
+            {
+                AddTimer(0.05f, () => movementService.DuckAmount = 0);
+                AddTimer(0.1f, () => player.PlayerPawn.Value.Bot!.IsCrouching = false);
+            }
         }
         
         player.PlayerPawn.Value.Teleport(pos, ang, Vector.Zero);
@@ -1030,7 +1038,7 @@ public class OpenPrefirePrac : BasePlugin
                 {
                     var value = tmpConvar.StringValue;
                     _serverStatus.StringConvars.Add(convarName, value);
-                    // Console.WriteLine($"[OpenPrefirePrac] {convarName}: {value}");
+                    // Console.WriteLine($"[OpenPrefirePrac] DEBUG {convarName}: {value}");
                 }
             }
         }
