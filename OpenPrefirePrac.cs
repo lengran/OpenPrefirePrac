@@ -1104,7 +1104,7 @@ public class OpenPrefirePrac : BasePlugin
         {
             // var tmpConvar = ConVar.Find(convar.Key);
             // tmpConvar!.StringValue = convar.Value;
-            Server.ExecuteCommand(convar.Key + " " + convar.Value.ToString());
+            Server.ExecuteCommand(convar.Key + " \"" + convar.Value + "\"");
         }
         _serverStatus.StringConvars.Clear();
 

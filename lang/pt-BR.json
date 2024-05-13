@@ -77,5 +77,6 @@
     "map.de_nuke.ramp_to_b": "Atacar o local B a partir da rampa",
     "map.de_nuke.t_side_entrance_of_lobby": "Entrada do saguão (lado T)",
     "map.de_nuke.radio_to_ramp": "Do rádio à rampa",
-    "map.de_nuke.j_hall_to_upper": "Ataque ao site A da rampa/J-Hall"
+    "map.de_nuke.j_hall_to_upper": "Ataque ao site A da rampa/J-Hall",
+    "map.de_nuke.t_outside_to_secret": "Do lado T externo ao secreto"
 }

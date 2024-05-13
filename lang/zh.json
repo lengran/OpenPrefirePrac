@@ -77,5 +77,6 @@
     "map.de_nuke.ramp_to_b": "从铁板进攻 B 包点",
     "map.de_nuke.t_side_entrance_of_lobby": "（匪家侧）匪厅入口",
     "map.de_nuke.radio_to_ramp": "从连接进攻铁板",
-    "map.de_nuke.j_hall_to_upper": "从三楼下回防/进攻 A 区"
+    "map.de_nuke.j_hall_to_upper": "从三楼下回防/进攻 A 区",
+    "map.de_nuke.t_outside_to_secret": "从匪家外场到 K1"
 } 
