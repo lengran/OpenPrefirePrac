@@ -8,7 +8,6 @@ using CounterStrikeSharp.API.Modules.Memory;
 using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 using System.Globalization;
 using CounterStrikeSharp.API.Modules.Cvars;
-using System.Text.Json;
 using CounterStrikeSharp.API.Core.Commands;
 using CounterStrikeSharp.API.Modules.Timers;
 using CounterStrikeSharp.API.Modules.Entities;
@@ -62,7 +61,8 @@ public class OpenPrefirePrac : BasePlugin
         RegisterListener<Listeners.OnMapStart>(OnMapStartHandler);
         RegisterListener<Listeners.OnTick>(OnTickHandler);
 
-        LoadDefaultSettings();
+        _defaultPlayerSettings = new DefaultConfig(ModuleDirectory);
+        _defaultPlayerSettings.LoadDefaultSettings();
 
         if (hotReload)
         {
@@ -1234,64 +1234,6 @@ public class OpenPrefirePrac : BasePlugin
         bot.CommitSuicide(false, false);
     }
 
-    private void LoadDefaultSettings()
-    {
-        string path = $"{ModuleDirectory}/default_cfg.json";
-
-        // Read default settings from PlayerStatus.cs
-        PlayerStatus tmpStatus = new PlayerStatus();
-        int tmpDifficulty = tmpStatus.HealingMethod;
-        int tmpTrainingMode = tmpStatus.TrainingMode;
-        int tmpBotWeapon = tmpStatus.BotWeapon;
-
-        if (!File.Exists(path))
-        {
-            // Use default settings
-            Console.WriteLine("[OpenPrefirePrac] No default settings provided. Will use default settings.");
-        }
-        else
-        {
-            // Load settings from default_cfg.json
-            JsonSerializerOptions options = new JsonSerializerOptions
-            {
-                ReadCommentHandling = JsonCommentHandling.Skip,
-                AllowTrailingCommas = true,
-
-            };
-
-            string jsonString = File.ReadAllText(path);
-            
-            try
-            {
-                DefaultConfig jsonConfig = JsonSerializer.Deserialize<DefaultConfig>(jsonString, options)!;
-
-                if (jsonConfig.Difficulty > -1 && jsonConfig.Difficulty < 5)
-                {
-                    tmpDifficulty = jsonConfig.Difficulty;
-                }
-
-                if (jsonConfig.TrainingMode > -1 && jsonConfig.TrainingMode < 2)
-                {
-                    tmpTrainingMode = jsonConfig.TrainingMode;
-                }
-                
-                if (jsonConfig.BotWeapon > -1 && jsonConfig.BotWeapon < 5)
-                {
-                    tmpBotWeapon = jsonConfig.BotWeapon;
-                }
-
-                Console.WriteLine($"[OpenPrefirePrac] Using default settings: Difficulty = {tmpDifficulty}, TrainingMode = {tmpTrainingMode}, BotWeapon = {tmpBotWeapon}");
-            }
-            catch (System.Exception)
-            {
-                Console.WriteLine("[OpenPrefirePrac] Failed to load custom settings. Will use default settings.");
-                
-            }
-        }
-
-        _defaultPlayerSettings = new DefaultConfig(tmpDifficulty, tmpTrainingMode, tmpBotWeapon);
-    }
-
     private void StartPractice(CCSPlayerController player, int practiceIndex)
     {
         if (_playerCount == 0)
@@ -1807,42 +1749,45 @@ public class OpenPrefirePrac : BasePlugin
 
     private void OnTickHandler()
     {
-        foreach (var player in _playerStatuses.Keys)
+        if (_defaultPlayerSettings!.BotAimLock)
         {
-            if (player == null || !player.IsValid || !player.PawnIsAlive || player.PlayerPawn.Value == null)
+            foreach (var player in _playerStatuses.Keys)
             {
-                continue;
-            }
-
-            // Aimlock bots
-            Vector ownerEyePos = new Vector(player.PlayerPawn.Value.AbsOrigin!.X, player.PlayerPawn.Value.AbsOrigin!.Y, player.PlayerPawn.Value.AbsOrigin!.Z + player.PlayerPawn.Value.ViewmodelOffsetZ);
-
-            foreach(var bot in _playerStatuses[player].Bots)
-            {
-                if (!bot.IsValid || !bot.PawnIsAlive || bot.PlayerPawn.Value == null)
+                if (player == null || !player.IsValid || !player.PawnIsAlive || player.PlayerPawn.Value == null)
                 {
                     continue;
                 }
 
-                Vector botEyePosition = new Vector(bot.PlayerPawn.Value.AbsOrigin!.X, bot.PlayerPawn.Value.AbsOrigin!.Y, bot.PlayerPawn.Value.AbsOrigin!.Z + bot.PlayerPawn.Value.ViewmodelOffsetZ);
+                // Aimlock bots
+                Vector ownerEyePos = new Vector(player.PlayerPawn.Value.AbsOrigin!.X, player.PlayerPawn.Value.AbsOrigin!.Y, player.PlayerPawn.Value.AbsOrigin!.Z + player.PlayerPawn.Value.ViewmodelOffsetZ);
 
-                // calculate angle
-                float deltaX = ownerEyePos.X - botEyePosition.X;
-                float deltaY = ownerEyePos.Y - botEyePosition.Y;
-                float deltaZ = ownerEyePos.Z - botEyePosition.Z;
-                double yaw = 180 * Math.Atan2(deltaY, deltaX) / Math.PI;
-                double tmp = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
-                double pitch= 180 * Math.Atan2(-1 * deltaZ, tmp) / Math.PI;
-                QAngle angle = new QAngle((float)pitch, (float)yaw, 0);
-
-                Server.NextFrame(() => {
-                    if (pitch < 15 && pitch > -15)
+                foreach(var bot in _playerStatuses[player].Bots)
+                {
+                    if (!bot.IsValid || !bot.PawnIsAlive || bot.PlayerPawn.Value == null)
                     {
-                        bot.PlayerPawn.Value.Teleport(null, angle, null);
+                        continue;
                     }
-                    bot.PlayerPawn.Value.EyeAngles.X = (float)pitch;
-                    bot.PlayerPawn.Value.EyeAngles.Y = (float)yaw;
-                });
+
+                    Vector botEyePosition = new Vector(bot.PlayerPawn.Value.AbsOrigin!.X, bot.PlayerPawn.Value.AbsOrigin!.Y, bot.PlayerPawn.Value.AbsOrigin!.Z + bot.PlayerPawn.Value.ViewmodelOffsetZ);
+
+                    // calculate angle
+                    float deltaX = ownerEyePos.X - botEyePosition.X;
+                    float deltaY = ownerEyePos.Y - botEyePosition.Y;
+                    float deltaZ = ownerEyePos.Z - botEyePosition.Z;
+                    double yaw = 180 * Math.Atan2(deltaY, deltaX) / Math.PI;
+                    double tmp = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+                    double pitch= 180 * Math.Atan2(-1 * deltaZ, tmp) / Math.PI;
+                    QAngle angle = new QAngle((float)pitch, (float)yaw, 0);
+
+                    Server.NextFrame(() => {
+                        if (pitch < 15 && pitch > -15)
+                        {
+                            bot.PlayerPawn.Value.Teleport(null, angle, null);
+                        }
+                        bot.PlayerPawn.Value.EyeAngles.X = (float)pitch;
+                        bot.PlayerPawn.Value.EyeAngles.Y = (float)yaw;
+                    });
+                }
             }
         }
     }

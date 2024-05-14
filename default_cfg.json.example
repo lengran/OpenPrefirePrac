@@ -16,5 +16,9 @@
     //   2: Bots use AK47.
     //   3: Bots use Scout.
     //   4: Bots use AWP.
-    "BotWeapon": 0
+    "BotWeapon": 0,
+    // Aim lock for bots:
+    //   false: Disabled.
+    //   true: Enabled.
+    "BotAimLock": true
 }
