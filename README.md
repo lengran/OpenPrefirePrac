@@ -63,6 +63,11 @@ Explanation of values:
   - 2: Bots use AK47.
   - 3: Bots use Scout.
   - 4: Bots use AWP.
+- Aim lock for bots
+  - true: Bots always aim at players' heads. But this may conflict with CS2's native bot logic, causing bots to not react under certain circumstances.
+  - false: CS2's native bot behavior. It works in a consistant manner but is less powerful.
+
+To customize bot difficulty, please refer to [this issue](https://github.com/lengran/OpenPrefirePrac/issues/17).
 
 ## Development
 
