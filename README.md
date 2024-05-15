@@ -163,14 +163,20 @@ Finished practices:
   - Attack B site from tunnel
   - Attack B site from mid
 - de_nuke
-  - Attack A site from hut
-  - Attack B site from ramp
-  - Entrance of lobby (T side)
+    - Attack A site from hut
+    - Attack B site from ramp
+    - Entrance of lobby (T side)
+    - From radio to ramp
+    - Attack A site from Ramp/J-Hall
+    - From T-side outside to secret
+    - Attack B site from secret
+    - Fast pace rush MINI from Silo
+    - Attack A site from MINI
 
 TODO:
 
 1. Create prefire profiles for all maps.
-2. Improve bot logic.
+2. Improve bot logic(behavior tree).
 3. Improve localization support (The supporting framework is done. Submitting translations is warmly welcomed.).
 4. Reorganize the files and code structure. Try to put code into submodules to improve readability.
 5. Reroute separate logs into one gathered place for better debug experience.
