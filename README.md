@@ -163,15 +163,15 @@ Finished practices:
   - Attack B site from tunnel
   - Attack B site from mid
 - de_nuke
-    - Attack A site from hut
-    - Attack B site from ramp
-    - Entrance of lobby (T side)
-    - From radio to ramp
-    - Attack A site from Ramp/J-Hall
-    - From T-side outside to secret
-    - Attack B site from secret
-    - Fast pace rush MINI from Silo
-    - Attack A site from MINI
+  - Attack A site from hut
+  - Attack B site from ramp
+  - Entrance of lobby (T side)
+  - From radio to ramp
+  - Attack A site from Ramp/J-Hall
+  - From T-side outside to secret
+  - Attack B site from secret
+  - Fast pace rush MINI from Silo
+  - Attack A site from MINI
 
 TODO:
 
