@@ -27,7 +27,7 @@ public class OpenPrefirePrac : BasePlugin
     
     private readonly Dictionary<string, int> _practiceNameToId = new();
     
-    private readonly Dictionary<int, bool> _practiceEnabled = new();
+    private readonly Dictionary<int, int> _pracConflictCount = new();           // Num of on-going practices that might interfere
     
     private string _mapName = "";
     
@@ -69,7 +69,7 @@ public class OpenPrefirePrac : BasePlugin
             // Clear status registers
             _ownerOfBots.Clear();
             _practiceNameToId.Clear();
-            _practiceEnabled.Clear();
+            _pracConflictCount.Clear();
             _practices.Clear();
             _availableMaps.Clear();
             _mapName = "";
@@ -123,7 +123,7 @@ public class OpenPrefirePrac : BasePlugin
             // Clear status registers
             _ownerOfBots.Clear();
             _practiceNameToId.Clear();
-            _practiceEnabled.Clear();
+            _pracConflictCount.Clear();
             _practices.Clear();
             _availableMaps.Clear();
             _mapName = "";
@@ -656,13 +656,13 @@ public class OpenPrefirePrac : BasePlugin
         var practiceFiles = new List<string>(Directory.EnumerateFiles($"{ModuleDirectory}/maps/{_mapName}"));
         _practices.Clear();
         _practiceNameToId.Clear();
-        _practiceEnabled.Clear();
+        _pracConflictCount.Clear();
         for (var i = 0; i < practiceFiles.Count; i++)
         {
             var practiceName = practiceFiles[i].Substring(practiceFiles[i].LastIndexOf(Path.DirectorySeparatorChar) + 1).Split(".")[0];
             _practices.Add(new PrefirePractice(ModuleDirectory, _mapName, practiceName));
             _practiceNameToId.Add(practiceName, i);
-            _practiceEnabled.Add(i, true);
+            _pracConflictCount.Add(i, 0);
             Console.WriteLine($"[OpenPrefirePrac] {_mapName} {practiceName} Loaded.");
         }
     }
@@ -1245,16 +1245,15 @@ public class OpenPrefirePrac : BasePlugin
 
         var previousPracticeIndex = _playerStatuses[player].PracticeIndex;
 
-        // Check if selected practice route is compatible with other on-playing routes.
-        if (previousPracticeIndex != practiceIndex && !_practiceEnabled[practiceIndex])
-        {
-            player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator!.Translate(player, "practice.incompatible")}");
-            return;
-        }
-
-        
         if (previousPracticeIndex != practiceIndex)
         {
+            // Check if selected practice route is compatible with other on-playing routes.
+            if (_pracConflictCount[practiceIndex] > 0)
+            {
+                player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White}{_translator!.Translate(player, "practice.incompatible")}");
+                return;
+            }
+
             // Update practice status
             if (previousPracticeIndex > -1)
             {
@@ -1272,10 +1271,10 @@ public class OpenPrefirePrac : BasePlugin
                 if (_practiceNameToId.ContainsKey(_practices[practiceIndex].IncompatiblePractices[i]))
                 {
                     var disabledPracticeNo = _practiceNameToId[_practices[practiceIndex].IncompatiblePractices[i]];
-                    _practiceEnabled[disabledPracticeNo] = false;
+                    _pracConflictCount[disabledPracticeNo]++;
                 }
             }
-            _practiceEnabled[practiceIndex] = false;
+            _pracConflictCount[practiceIndex]++;
 
             // Setup practice
             AddBot(player, _practices[practiceIndex].NumBots);
@@ -1565,7 +1564,7 @@ public class OpenPrefirePrac : BasePlugin
         // Add menu options for practices
         for (var i = 0; i < _practices.Count; i++)
         {
-            if (_practiceEnabled[i])
+            if (_pracConflictCount[i] == 0)
             {
                 var tmpLocalizedPracticeName = _translator.Translate(player, $"map.{_mapName}.{_practices[i].PracticeName}");
                 _playerStatuses[player].LocalizedPracticeNames.Add(tmpLocalizedPracticeName, i);
@@ -1601,10 +1600,10 @@ public class OpenPrefirePrac : BasePlugin
             {
                 if (_practiceNameToId.TryGetValue(_practices[previousPracticeNo].IncompatiblePractices[i], out var value))
                 {
-                    _practiceEnabled[value] = true;
+                    _pracConflictCount[value]--;
                 }
             }
-            _practiceEnabled[previousPracticeNo] = true;
+            _pracConflictCount[previousPracticeNo]--;
 
             _playerStatuses[player].PracticeIndex = -1;
             _playerCount--;

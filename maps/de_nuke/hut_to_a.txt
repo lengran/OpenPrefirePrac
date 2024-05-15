@@ -1,4 +1,4 @@
-ramp_to_b t_side_entrance_of_lobby t_outside_to_secret
+ramp_to_b t_side_entrance_of_lobby t_outside_to_secret j_hall_to_upper mini_to_a silo_to_mini
 8 0.7
 -32.381592 -923.926941 -401.968750 2.903875 -2.290397 0.000000
 455.967987 -1089.620239 -391.96875 4.861946 167.509247 0.000000 False

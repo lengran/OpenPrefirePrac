@@ -1,4 +1,4 @@
-hut_to_a t_side_entrance_of_lobby
+hut_to_a t_side_entrance_of_lobby j_hall_to_upper t_outside_to_secret silo_to_mini
 8 0.8
 327.931305 345.699341 -407.678955 7.479604 68.731003 0.000000
 862.699890 -96.828857 -639.96875 -14.619969 123.776199 0.000000 False

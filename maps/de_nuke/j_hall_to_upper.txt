@@ -1,4 +1,4 @@
-ramp_to_b hut_to_a radio_to_ramp t_outside_to_secret
+ramp_to_b hut_to_a radio_to_ramp t_outside_to_secret mini_to_a silo_to_mini
 8 0.8
 632.624756 69.560097 -401.968750 -0.501703 -0.342242 0.000000
 1210.969971 -78.537659 -415.96875 -0.000014 156.793747 0.000000 False 1
