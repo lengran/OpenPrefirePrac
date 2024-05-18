@@ -1650,14 +1650,19 @@ public class OpenPrefirePrac : BasePlugin
 
     private void KickBot(CCSPlayerController bot)
     {
-        if (bot == null || !bot.IsBot)
-        {
-            return;
-        }
-
         if (_ownerOfBots.ContainsKey(bot))
         {
+            CCSPlayerController owner = _ownerOfBots[bot];
+            if (_playerStatuses[owner].Bots.Contains(bot))
+            {
+                _playerStatuses[owner].Bots.Remove(bot);
+            }
             _ownerOfBots.Remove(bot);
+        }
+
+        if (bot == null || !bot.IsValid || !bot.IsBot)
+        {
+            return;
         }
 
         Server.ExecuteCommand($"bot_kick {bot.PlayerName}");
