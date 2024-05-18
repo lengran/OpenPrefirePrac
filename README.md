@@ -162,6 +162,8 @@ Finished practices:
   - Attack A site from A short
   - Attack B site from tunnel
   - Attack B site from mid
+  - CT aggressively push from lower tunnel
+  - CT aggressively push top mid
 - de_nuke
   - Attack A site from hut
   - Attack B site from ramp
