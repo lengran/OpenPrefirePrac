@@ -34,7 +34,7 @@ There are also some shortcut commands you can use.
 
   - !prefire prac [number]: Start practicing on a selected route.
   - !prefire map [map name]: Switch to another map.
-  - !prefire df [1-5]: Set the difficulty.
+  - !prefire df [1-6]: Set the difficulty.
   - !prefire mode [rand/full]: Set training mode.
   - !prefire bw [rand/ump/ak/sct/awp]: Set weapons for bots.
   - !prefire lang [en/pt/zh]: Set language. en for English, pt para português, 中文选择 zh。
