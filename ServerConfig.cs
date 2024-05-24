@@ -14,13 +14,6 @@ public class DefaultConfig
 
     private string _moduleDirectory = "";
 
-    // public DefaultConfig(int difficulty, int trainingMode, int botWeapon)
-    // {
-    //     Difficulty = difficulty;
-    //     TrainingMode = trainingMode;
-    //     BotWeapon = botWeapon;
-    // }
-
     public DefaultConfig()
     {
         // DeserializeConstructor
@@ -34,12 +27,6 @@ public class DefaultConfig
     public void LoadDefaultSettings()
     {
         string path = $"{_moduleDirectory}/default_cfg.json";
-
-        // Read default settings from PlayerStatus.cs
-        // PlayerStatus tmpStatus = new PlayerStatus();
-        // int tmpDifficulty = tmpStatus.HealingMethod;
-        // int tmpTrainingMode = tmpStatus.TrainingMode;
-        // int tmpBotWeapon = tmpStatus.BotWeapon;
 
         if (!File.Exists(path))
         {
@@ -62,7 +49,7 @@ public class DefaultConfig
             {
                 DefaultConfig jsonConfig = JsonSerializer.Deserialize<DefaultConfig>(jsonString, options)!;
 
-                if (jsonConfig.Difficulty > -1 && jsonConfig.Difficulty < 5)
+                if (jsonConfig.Difficulty > -1 && jsonConfig.Difficulty < 6)
                 {
                     Difficulty = jsonConfig.Difficulty;
                 }
@@ -86,7 +73,5 @@ public class DefaultConfig
                 Console.WriteLine("[OpenPrefirePrac] Failed to load custom settings. Will use default settings.");
             }
         }
-
-        // _defaultPlayerSettings = new DefaultConfig(tmpDifficulty, tmpTrainingMode, tmpBotWeapon);
     }
 }

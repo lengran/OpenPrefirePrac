@@ -52,8 +52,9 @@ Explanation of values:
   - 0: No healing.
   - 1: Init hp 500 with no healing.
   - 2: +25hp for each kill.
-  - 3: +100hp for each kill.
-  - 4: +500hp for each kill.
+  - 3: Reheal to 100hp after a kill.
+  - 4: +100hp for each kill.
+  - 5: +500hp for each kill.
 - Training Mode
   - 0: Random mode, randomly spawn some targets.
   - 1: Full mode, all targets.

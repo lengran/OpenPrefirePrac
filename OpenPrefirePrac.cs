@@ -419,11 +419,17 @@ public class OpenPrefirePrac : BasePlugin
                                 case 2:
                                     currentHp = currentHp + 25;
                                     break;
+                                case 3:
+                                    currentHp = 100;
+                                    break;
                                 case 4:
+                                    currentHp = currentHp + 100;
+                                    break;
+                                case 5:
                                     currentHp = currentHp + 500;
                                     break;
                                 default:
-                                    currentHp = currentHp + 100;
+                                    currentHp = 100;
                                     break;
                             }
                             SetPlayerHealth(owner, currentHp);
@@ -744,7 +750,7 @@ public class OpenPrefirePrac : BasePlugin
         // DrawGuidingLine(player);
         
         // Setup player's HP
-        if (_playerStatuses[player.Slot].HealingMethod == 1 || _playerStatuses[player.Slot].HealingMethod == 4)
+        if (_playerStatuses[player.Slot].HealingMethod == 1 || _playerStatuses[player.Slot].HealingMethod == 5)
             AddTimer(0.5f, () => SetPlayerHealth(player, 500));
         AddTimer(1f, () => EquipPlayer(player));
         AddTimer(1.5f, () => MovePlayer(player, false, _practices[practiceNo].Player.Position, _practices[practiceNo].Player.Rotation));
@@ -1426,9 +1432,9 @@ public class OpenPrefirePrac : BasePlugin
                         return;
                     case "df":
                         int difficulty = 0;
-                        if (int.TryParse(commandInfo.ArgByIndex(2), out difficulty) && difficulty > 0 && difficulty <= 5)
+                        if (int.TryParse(commandInfo.ArgByIndex(2), out difficulty) && difficulty > 0 && difficulty <= 6)
                         {
-                            ChangeDifficulty(player, 5 - difficulty);
+                            ChangeDifficulty(player, 6 - difficulty);
                             return;
                         }
                         player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator!.Translate(player, "difficulty.help")}");

@@ -15,8 +15,9 @@ public class PlayerStatus
      * 0: No healing
      * 1: Init hp 500 with no healing
      * 2: +25hp for each kill
-     * 3: +100hp for each kill (default)
-     * 4: +500hp for each kill
+     * 3: Reheal to 100hp after a kill (default)
+     * 4: +100hp for each kill
+     * 5: +500hp for each kill
      */
     public int HealingMethod = 3;
     
