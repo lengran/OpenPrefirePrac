@@ -758,21 +758,27 @@ public class OpenPrefirePrac : BasePlugin
 
     private void RemoveBots(int slot)
     {
+        List<int> botsToKick = new List<int>();
+
         foreach (int botSlot in _playerStatuses[slot].Bots)
         {
             var bot = Utilities.GetPlayerFromSlot(botSlot);
 
             if (bot == null || bot.IsValid)
             {
-                KickBot(botSlot);
+                botsToKick.Add(botSlot);
             }
             else
             {
                 Console.WriteLine($"[OpenPrefirePrac] Trying to kick an invalid bot.");
             }
-            _ownerOfBots.Remove(botSlot);
         }
-        _playerStatuses[slot].Bots.Clear();
+
+        foreach (int botSlot in botsToKick)
+        {
+            KickBot(botSlot);
+        }
+
         _playerStatuses[slot].Progress = 0;
     }
 
