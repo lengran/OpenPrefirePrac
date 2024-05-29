@@ -84,38 +84,80 @@ The folder "*maps*" is organized as follows: Each sub-folder in "*maps*" contain
 
 A practice profile consists of five parts:
 
-The first line contains the name of incompatible practices, separated by spaces.
+The first line contains **the file names of practice profiles** that might interfere with this practice, separated by spaces.
 
-The second line indicates how many bots are needed in this practice.
+The second line contains **2 numbers**, indicating how many bots are needed in this practice and a spawn ratio between 0 and 1 (how many of them should be spawned in random practice mode) respectively.
 
-The third line instructs the place and facing direction of the player. The first 3 floating numbers are the position and the other 3 are the rotation.
+The third line instructs the place and facing direction of the player. The first 3 floating numbers are the position and the other 3 are the rotation. This line should only contain **6 numbers**.
 
 ```text
 pos_x pos_y pos_z ang_x ang_y ang_z
 ```
 
-The fourth part with an arbitrary number of lines describes how to place bots. The first 3 numbers is position, following 3 numbers of the rotation. The 7th value is either True of False indicating whether the bot is crouching.
+The fourth part with an arbitrary number of lines describes spawn positions of bots. Bot will be spawn in the same order as that of the lines. 
+
+There should be **at least 6 numbers and a True or False value** in each line. The first 3 numbers describe position, following 3 numbers indicating the rotation angle. The 7th value is either a *True* or a *False* indicating whether the bot is crouching. You can have comments at the end of the line if needed (optional). 
+
+The positions and rotations can be retrieved from in-game get\_pos command. But please notice that, the height values used in profiles should be the values returned by get\_pos minus 64. I made a python script that does this calculation for you. The usage is explained in [next section](https://github.com/lengran/OpenPrefirePrac?tab=readme-ov-file#how-to-use-the-python-helper-script-to-convert-heights).
 
 ```text
 pos_x pos_y pos_z ang_x ang_y ang_z is_crouching
 ```
 
-The positions and facing rotations can be retrieved from in-game get\_pos command. But please notice that, the height values used in profiles should be the values returned by get\_pos minus 65. I made a python script that does this calculation for you. You can stack the strings returned by get\_pos and put them in a txt file, and pass the file to the python script as described below and the script will automatically print out the formatted bot positions.
+The fifth part with an arbitrary number of lines describes joint points of a guiding line. The guiding line is used to provide a better narration of how the practice is designed to be played. This also requires a bit calculation on height of joints and it can also be handled by the python script.
 
-```bash
-python3 calculate_height.py [PATH TO YOUR FILE]
-```
-
-The fifth part with an arbitrary number of lines describes joint points of a guiding line. The guiding line is used to provide a better narration of how the practice is designed to be played.
+Each line contains **3 numbers**.
 
 ```text
 pos_x pos_y pos_z
 ```
 
-This can also be extracted from get\_pos using the python script. It will read in lines composed of 4 parts (e.g. "setpos 1348.844727 -989.403198 -103.968750") and calculate the height values for you.
+### How to use the python helper script to convert heights
+
+The script *calculate_height.py* receives output of the *getpos* in-game function and automatically convert them to the proper format of bot spawn positions and joint positions of a guiding line. The steps of how it is used is described as follows.
+
+Step 1: Open the game console and use the *getpos* command while you are standing not crouching.
+
+Step 2: Copy the output to a txt file. 
+
+    For bot spawn points, copy the entire line of output. If you want the bot to crouch, append a *True* at the end of the line. You can also put a *False* if you want the bot to stand. But it's not required since the python script can do that for you. If you want to give a comment to make the practice profile more reader-friendly, feel free to attach your words after the *True* or *False*. 
+  
+    For joints of a guiding line, only the position part (starting from *"getpos"* to the semicolon in the middle of the line) is needed. Comments are not supported for joints.
+
+Step 3: After finish stacking the lines, you can simply pass the txt file to the python script and the script will automatically print out the formatted lines. Just copy the output and paste them at the end of your customized practice profile.
 
 ```bash
 python3 calculate_height.py [PATH TO YOUR FILE]
+```
+
+Here's an example of the file you put in the text file and the output of the script.
+
+Your text file should look like this:
+
+```text
+setpos 1.11111 1.222222 64.333333;setang 1.444444 1.555555 0.000000
+setpos 2.11111 2.222222 64.333333;setang 2.444444 2.555555 0.000000 False
+setpos 3.11111 3.222222 64.333333;setang 3.444444 3.555555 0.000000 True
+setpos 4.11111 4.222222 64.333333;setang 4.444444 4.555555 0.000000 Here's some info about this position.
+setpos 5.11111 5.222222 64.333333;setang 5.444444 5.555555 0.000000 False Here's some info about this position.
+setpos 6.11111 6.222222 64.333333;setang 6.444444 6.555555 0.000000 True Here's some info about this position.
+setpos 1.11111 1.222222 64.333333
+setpos 2.11111 2.222222 64.333333
+setpos 3.11111 3.222222 64.333333
+```
+
+The corresponding output would be:
+
+```text
+1.11111 1.222222 0.3333329999999961 1.444444 1.555555 0.000000 False
+2.11111 2.222222 0.3333329999999961 2.444444 2.555555 0.000000 False
+3.11111 3.222222 0.3333329999999961 3.444444 3.555555 0.000000 True
+4.11111 4.222222 0.3333329999999961 4.444444 4.555555 0.000000 False # Here's some info about this position.
+5.11111 5.222222 0.3333329999999961 5.444444 5.555555 0.000000 False # Here's some info about this position.
+6.11111 6.222222 0.3333329999999961 6.444444 6.555555 0.000000 True # Here's some info about this position.
+1.11111 1.222222 9.333332999999996
+2.11111 2.222222 9.333332999999996
+3.11111 3.222222 9.333332999999996
 ```
 
 ### Current development progress

@@ -15,10 +15,25 @@ if __name__ == "__main__":
                 height = float(words[3][:-7])
                 height -=64
                 crunching = False
-                if len(words) == 8:
-                    print(words[1] + " " + words[2] + " " + str(height) + " " + words[4] + " " + words[5] + " " + words[6] + " True")
-                else:
+                if len(words) == 7:
                     print(words[1] + " " + words[2] + " " + str(height) + " " + words[4] + " " + words[5] + " " + words[6] + " False")
+                else:
+                    # a spawn point either indicates bot crounching or contains comments
+                    line_to_print = words[1] + " " + words[2] + " " + str(height) + " " + words[4] + " " + words[5] + " " + words[6]
+                    if words[7].lower() == "false":
+                        line_to_print = line_to_print + " False"
+                        if len(words) > 8:
+                            line_to_print = line_to_print + " #"
+                    elif words[7].lower() == "true":
+                        line_to_print = line_to_print + " True"
+                        if len(words) > 8:
+                            line_to_print = line_to_print + " #"
+                    else:
+                        line_to_print = line_to_print + " False # " + words[7]
+                    for i in range(8, len(words)):
+                        line_to_print = line_to_print + " " + words[i]
+
+                    print(line_to_print)
             
             # Joints of guiding line
             if len(words) == 4:
