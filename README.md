@@ -219,15 +219,15 @@ Finished practices:
   - Attack A site from MINI
 - de_vertigo
   - Attack B site from stairs
+  - From mid to CT spawn
 
 TODO:
 
 1. Create prefire profiles for all maps.
-2. Support comments in the python script and improvement document of that program.
-3. Apply behavior tree to improve bot AI logic.
-4. Improve localization support (The supporting framework is done. Submitting translations is warmly welcomed.).
-5. Reorganize the files and code structure. Try to put code into submodules to improve readability.
-6. Reroute separate logs into one gathered place for better debug experience.
+2. Apply behavior tree to improve bot AI logic.
+3. Improve localization support (The supporting framework is done. Submitting translations is warmly welcomed.).
+4. Reorganize the files and code structure. Try to put code into submodules to improve readability.
+5. Reroute separate logs into one gathered place for better debug experience.
 
 ## Reference
 
