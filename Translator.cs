@@ -138,7 +138,7 @@ public class Translator
 
     public string? GetPlayerIsoCode(string ipAddress)
     {
-        var geoDbPath = Path.Combine(_pluginPath, "GeoLite2-Country.mmdb");
+        var geoDbPath = Path.Combine(_pluginPath, "resources", "/GeoLite2-Country.mmdb");
         
         // check if the database file exists
         if (!File.Exists(geoDbPath))

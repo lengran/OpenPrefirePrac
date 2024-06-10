@@ -65,10 +65,11 @@ Explanation of values:
   - 3: Bots use Scout.
   - 4: Bots use AWP.
 - Aim lock for bots
-  - true: Bots always aim at players' heads. But this may conflict with CS2's native bot logic, causing bots to not react under certain circumstances.
-  - false: CS2's native bot behavior. It works in a consistant manner but is less powerful.
+  - 0: CS2's native bot behavior. It works in a consistant manner but is less powerful.
+  - 1: CSS based aim lock: Bots always aim at players' heads. But this may conflict with CS2's native bot logic, causing bots to not react under certain circumstances.
+  - 2: Behavior tree based aim lock: Hard mode.
 
-To customize bot difficulty, please refer to [this issue](https://github.com/lengran/OpenPrefirePrac/issues/17).
+For detailed discussion on bot difficulty, please refer to [this issue](https://github.com/lengran/OpenPrefirePrac/issues/17).
 
 ## Development
 
@@ -237,6 +238,7 @@ I have referred these open-source projects during the development.
 - [B3none/cs2-retakes: CS2 implementation of retakes. Based on the version for CS:GO by Splewis.](https://github.com/B3none/cs2-retakes)
 - [aprox2/GeoLocationLanguageManagerPlugin: Language manager plugin for CSSharp that uses users ip for geo location.](https://github.com/aprox2/GeoLocationLanguageManagerPlugin)
 - [daffyyyy/CS2-SimpleAdmin: Manage your Counter-Strike 2 server by simple commands :)](https://github.com/daffyyyy/CS2-SimpleAdmin)
+- [5e-prac-mirage-prefire](https://steamcommunity.com/sharedfiles/filedetails/?id=3232466864)
 
 This project is inspired by a close-source prefire plugin developed by https://space.bilibili.com/283758782.
 

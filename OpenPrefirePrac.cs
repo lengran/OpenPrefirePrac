@@ -17,7 +17,7 @@ namespace OpenPrefirePrac;
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.1.36";
+    public override string ModuleVersion => "0.1.37";
     public override string ModuleAuthor => "Lengran";
     public override string ModuleDescription => "A plugin for practicing prefire in CS2. https://github.com/lengran/OpenPrefirePrac";
 
@@ -324,9 +324,7 @@ public class OpenPrefirePrac : BasePlugin
                     }
 
                     // Try to increase bot difficulty
-                    // playerOrBot.PlayerPawn.Value!.Bot!.CombatRange = 2000;
-                    // playerOrBot.ExecuteClientCommand("slot2");
-                    // playerOrBot.ExecuteClientCommand("slot1");
+                    // playerOrBot.beha
                 }
                 else
                 {
@@ -1016,6 +1014,7 @@ public class OpenPrefirePrac : BasePlugin
             "bot_quota_mode",
             "mp_ct_default_melee",
             "mp_t_default_melee",
+            "mp_bot_ai_bt",
         ];
 
         try
@@ -1189,6 +1188,13 @@ public class OpenPrefirePrac : BasePlugin
         
         Server.ExecuteCommand("mp_warmup_start");
         // Server.ExecuteCommand("bot_kick all");
+
+        // Set behavior tree for bots (many thanks to 5EPlay)
+        if (_defaultPlayerSettings!.BotAimLock == 2)
+        {
+            Server.ExecuteCommand("mp_bot_ai_bt \"addons\\counterstrikesharp\\plugins\\OpenPrefirePrac\\resources\\bt\\hard_mode.kv3\"");
+            Server.ExecuteCommand("mp_bot_ai_bt_clear_cache");
+        }
 
         // Kick unmanaged bots
         AddTimer(2f, () => {
@@ -1809,7 +1815,7 @@ public class OpenPrefirePrac : BasePlugin
 
     private void OnTickHandler()
     {
-        if (_defaultPlayerSettings!.BotAimLock)
+        if (_defaultPlayerSettings!.BotAimLock == 1)
         {
             foreach (int playerSlot in _playerStatuses.Keys)
             {

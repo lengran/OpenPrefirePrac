@@ -10,7 +10,12 @@ public class DefaultConfig
 
     public int BotWeapon {get; set; } = 0;
 
-    public bool BotAimLock {get; set; } = true;
+    /*
+     * 0 = disabled.
+     * 1 = css based aim lock.
+     * 2 = behavior tree based aim lock (hard).
+    */
+    public int BotAimLock {get; set; } = 1;
 
     private string _moduleDirectory = "";
 
