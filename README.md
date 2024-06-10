@@ -221,11 +221,13 @@ Finished practices:
 - de_vertigo
   - Attack B site from stairs
   - From mid to CT spawn
+  - Attack A site from A ramp
+  - Attack A site from scaffold
 
 TODO:
 
 1. Create prefire profiles for all maps.
-2. Apply behavior tree to improve bot AI logic.
+2. Improve behavior tree to allow each bot only aimlocks its owner.
 3. Improve localization support (The supporting framework is done. Submitting translations is warmly welcomed.).
 4. Reorganize the files and code structure. Try to put code into submodules to improve readability.
 5. Reroute separate logs into one gathered place for better debug experience.
