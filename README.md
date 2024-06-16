@@ -186,6 +186,7 @@ Finished practices:
   - Attack B site from mid
   - Attack A site from underpass
   - Retake B site from CT spawn
+  - CT aggressively push A Palace
 - de_overpass
   - Attack B site from B long
   - Attack B site from B short
@@ -223,6 +224,7 @@ Finished practices:
   - From mid to CT spawn
   - Attack A site from A ramp
   - Attack A site from scaffold
+  - Retake B site from elevator
 
 TODO:
 

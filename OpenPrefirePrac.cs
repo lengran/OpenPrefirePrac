@@ -17,7 +17,7 @@ namespace OpenPrefirePrac;
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.1.37";
+    public override string ModuleVersion => "0.1.38";
     public override string ModuleAuthor => "Lengran";
     public override string ModuleDescription => "A plugin for practicing prefire in CS2. https://github.com/lengran/OpenPrefirePrac";
 
@@ -733,25 +733,20 @@ public class OpenPrefirePrac : BasePlugin
     private void SetupPrefireMode(CCSPlayerController player)
     {
         var practiceNo = _playerStatuses[player.Slot].PracticeIndex;
-
-        // // Add bots
-        // player.PrintToChat($"DEBUG: total: {_practices[practiceNo].NumBots}, own: {_playerStatuses[player].Bots.Count}");
-        // if (_playerStatuses[player].Bots.Count < _practices[practiceNo].NumBots)
-        // {
-        //     AddBot(player, _practices[practiceNo].NumBots - _playerStatuses[player].Bots.Count);
-        // }
         
         GenerateRandomPractice(player.Slot);
-        AddTimer(0.5f, () => ResetBots(player.Slot));
-
-        // DeleteGuidingLine(player);
-        // DrawGuidingLine(player);
+        ResetBots(player.Slot);
         
-        // Setup player's HP
+        AddTimer(0.3f, () => MovePlayer(player, false, _practices[practiceNo].Player.Position, _practices[practiceNo].Player.Rotation));
+        AddTimer(0.4f, () => EquipPlayer(player));
         if (_playerStatuses[player.Slot].HealingMethod == 1 || _playerStatuses[player.Slot].HealingMethod == 5)
+        {
             AddTimer(0.5f, () => SetPlayerHealth(player, 500));
-        AddTimer(1f, () => EquipPlayer(player));
-        AddTimer(1.5f, () => MovePlayer(player, false, _practices[practiceNo].Player.Position, _practices[practiceNo].Player.Rotation));
+        }
+        else
+        {
+            AddTimer(0.5f, () => SetPlayerHealth(player, 100));         // in case player got injured by bots before teleport
+        }
     }
 
     private void RemoveBots(int slot)
