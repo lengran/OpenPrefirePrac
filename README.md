@@ -68,6 +68,9 @@ Explanation of values:
   - 0: CS2's native bot behavior. It works in a consistant manner but is less powerful.
   - 1: CSS based aim lock: Bots always aim at players' heads. But this may conflict with CS2's native bot logic, causing bots to not react under certain circumstances.
   - 2: Behavior tree based aim lock: Hard mode.
+- EquipPlayer:
+  - 0: Disabled. To avoid interfering with other weapon related plugins
+  - 1: Enabled (default). Players will be equipped with AK47, deagle and nades every time they respawn.
 
 For detailed discussion on bot difficulty, please refer to [this issue](https://github.com/lengran/OpenPrefirePrac/issues/17).
 

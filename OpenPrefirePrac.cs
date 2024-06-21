@@ -17,7 +17,7 @@ namespace OpenPrefirePrac;
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.1.38";
+    public override string ModuleVersion => "0.1.39";
     public override string ModuleAuthor => "Lengran";
     public override string ModuleDescription => "A plugin for practicing prefire in CS2. https://github.com/lengran/OpenPrefirePrac";
 
@@ -738,7 +738,11 @@ public class OpenPrefirePrac : BasePlugin
         ResetBots(player.Slot);
         
         AddTimer(0.3f, () => MovePlayer(player, false, _practices[practiceNo].Player.Position, _practices[practiceNo].Player.Rotation));
-        AddTimer(0.4f, () => EquipPlayer(player));
+        if (_defaultPlayerSettings!.EquipPlayer == 1)
+        {
+            AddTimer(0.4f, () => EquipPlayer(player));
+        }
+        AddTimer(0.45f, () => SetMoney(player, 60000));
         if (_playerStatuses[player.Slot].HealingMethod == 1 || _playerStatuses[player.Slot].HealingMethod == 5)
         {
             AddTimer(0.5f, () => SetPlayerHealth(player, 500));

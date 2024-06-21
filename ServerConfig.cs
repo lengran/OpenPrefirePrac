@@ -17,6 +17,8 @@ public class DefaultConfig
     */
     public int BotAimLock {get; set; } = 1;
 
+    public int EquipPlayer { get; set; } = 1;
+
     private string _moduleDirectory = "";
 
     public DefaultConfig()
