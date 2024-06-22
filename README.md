@@ -197,6 +197,7 @@ Finished practices:
   - Clear underpass and go towards B short
   - Attack A site from A long
   - Attack A site from A short (mid)
+  - Retake B site from CT spawn
 - de_anubis
   - Attack B site from B main
   - Attack B site from mid (B palace)

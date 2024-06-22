@@ -71,9 +71,17 @@ public class DefaultConfig
                     BotWeapon = jsonConfig.BotWeapon;
                 }
 
-                BotAimLock = jsonConfig.BotAimLock;
+                if (jsonConfig.BotAimLock > -1 && jsonConfig.BotAimLock < 3)
+                {
+                    BotAimLock = jsonConfig.BotAimLock;
+                }
 
-                Console.WriteLine($"[OpenPrefirePrac] Using default settings: Difficulty = {Difficulty}, TrainingMode = {TrainingMode}, BotWeapon = {BotWeapon}, BotAimLock = {BotAimLock}");
+                if (jsonConfig.EquipPlayer > -1 && jsonConfig.EquipPlayer < 2)
+                {
+                    EquipPlayer = jsonConfig.EquipPlayer;
+                }
+
+                Console.WriteLine($"[OpenPrefirePrac] Using default settings: Difficulty = {Difficulty}, TrainingMode = {TrainingMode}, BotWeapon = {BotWeapon}, BotAimLock = {BotAimLock}, EquipPlayer = {EquipPlayer}");
             }
             catch (System.Exception)
             {

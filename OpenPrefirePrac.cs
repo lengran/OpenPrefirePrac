@@ -737,19 +737,16 @@ public class OpenPrefirePrac : BasePlugin
         GenerateRandomPractice(player.Slot);
         ResetBots(player.Slot);
         
-        AddTimer(0.3f, () => MovePlayer(player, false, _practices[practiceNo].Player.Position, _practices[practiceNo].Player.Rotation));
-        if (_defaultPlayerSettings!.EquipPlayer == 1)
-        {
-            AddTimer(0.4f, () => EquipPlayer(player));
-        }
-        AddTimer(0.45f, () => SetMoney(player, 60000));
+        AddTimer(0.2f, () => MovePlayer(player, false, _practices[practiceNo].Player.Position, _practices[practiceNo].Player.Rotation));
+        AddTimer(0.3f, () => EquipPlayer(player));
+        AddTimer(0.35f, () => SetMoney(player, 60000));
         if (_playerStatuses[player.Slot].HealingMethod == 1 || _playerStatuses[player.Slot].HealingMethod == 5)
         {
-            AddTimer(0.5f, () => SetPlayerHealth(player, 500));
+            AddTimer(0.4f, () => SetPlayerHealth(player, 500));
         }
         else
         {
-            AddTimer(0.5f, () => SetPlayerHealth(player, 100));         // in case player got injured by bots before teleport
+            AddTimer(0.4f, () => SetPlayerHealth(player, 100));         // in case player got injured by bots before teleport
         }
     }
 
@@ -855,24 +852,32 @@ public class OpenPrefirePrac : BasePlugin
         }
     }
 
-    private static void EquipPlayer(CCSPlayerController player)
+    private void EquipPlayer(CCSPlayerController player)
     {
         if (player == null || !player.PawnIsAlive || player.PlayerPawn.Value == null)
             return;
         
-        player.RemoveWeapons();
+        if (_defaultPlayerSettings!.EquipPlayer == 1)
+        {
+            player.RemoveWeapons();
 
-        // Give weapons and items
-        player.GiveNamedItem("weapon_ak47");
-        player.GiveNamedItem("weapon_deagle");
-        player.GiveNamedItem("weapon_knife");
-        player.GiveNamedItem("weapon_flashbang");
-        player.GiveNamedItem("weapon_flashbang");
-        player.GiveNamedItem("weapon_smokegrenade");
-        player.GiveNamedItem("item_assaultsuit");
+            // Give weapons and items
+            player.GiveNamedItem("weapon_ak47");
+            player.GiveNamedItem("weapon_deagle");
+            player.GiveNamedItem("weapon_knife");
+            player.GiveNamedItem("weapon_flashbang");
+            player.GiveNamedItem("weapon_flashbang");
+            player.GiveNamedItem("weapon_smokegrenade");
+            player.GiveNamedItem("item_assaultsuit");
 
-        // Switch to main weapon
-        player.ExecuteClientCommand("slot1");
+            // Switch to main weapon
+            player.ExecuteClientCommand("slot1");
+        }
+        else
+        {
+            player.GiveNamedItem("weapon_knife");
+            player.GiveNamedItem("item_assaultsuit");
+        }
     }
 
     private static void SetPlayerHealth(CCSPlayerController player, int hp)
