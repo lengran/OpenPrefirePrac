@@ -1,4 +1,4 @@
-# OpenPrefirePrac (WIP)
+# OpenPrefirePrac
 
 An open-source CounterStrikeSharp powered server-side practicing plugin for CS2. It provides multiple prefire practices on competitive map pool maps and support multiplayer practicing concurrently.
 
@@ -229,6 +229,8 @@ Finished practices:
   - Attack A site from A ramp
   - Attack A site from scaffold
   - Retake B site from elevator
+- de_train
+  - Attack A site from A main
 
 TODO:
 
@@ -237,6 +239,10 @@ TODO:
 3. Improve localization support (The supporting framework is done. Submitting translations is warmly welcomed.).
 4. Reorganize the files and code structure. Try to put code into submodules to improve readability.
 5. Reroute separate logs into one gathered place for better debug experience.
+
+### About the future of this project
+
+Since there are already a lot of awesome prefire maps in the workshop, I might not spend as much energy on this project as I used to do. But if you find any bugs or want some cool features, feel free to leave a comment. Thanks for the support and love of this project for such a long time. ♥
 
 ## Reference
 
