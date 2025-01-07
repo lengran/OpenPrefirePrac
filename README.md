@@ -231,6 +231,7 @@ Finished practices:
   - Retake B site from elevator
 - de_train
   - Attack A site from A main
+  - Attack A site from ivy
 
 TODO:
 
