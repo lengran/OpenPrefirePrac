@@ -17,7 +17,7 @@ namespace OpenPrefirePrac;
 public class OpenPrefirePrac : BasePlugin
 {
     public override string ModuleName => "Open Prefire Prac";
-    public override string ModuleVersion => "0.1.43";
+    public override string ModuleVersion => "0.1.44";
     public override string ModuleAuthor => "Lengran";
     public override string ModuleDescription => "A plugin for practicing prefire in CS2. https://github.com/lengran/OpenPrefirePrac";
 
@@ -84,8 +84,8 @@ public class OpenPrefirePrac : BasePlugin
             _serverStatus.FloatConvars.Clear();
             _serverStatus.StringConvars.Clear();
 
-            // Setup map
-            OnMapStartHandler(Server.MapName);
+            // // Setup map (20250109: Moved outside of the hotReload block)
+            // OnMapStartHandler(Server.MapName);
             
             // Setup players
             var players = Utilities.GetPlayers();
@@ -99,6 +99,17 @@ public class OpenPrefirePrac : BasePlugin
                 OnClientPutInServerHandler(tempPlayer.Slot);    
             }
         }
+
+        // Setup map and practice routes
+        // Note 20250109: 
+        //   This line is moved from inside the hotReload block to support 
+        //   mannually-unload-then-load way of loading the plugin. It seems
+        //   work okay except throwing a "Failed to load practices on map" 
+        //   during server's cold start phase so I guess I'll just leave it
+        //   here. If the cold start is found broken in any future issues, 
+        //   find another way to do this. Otherwise delete these comments 
+        //   later.
+        OnMapStartHandler(Server.MapName);
 
         RegisterCommand();
 
@@ -1357,7 +1368,7 @@ public class OpenPrefirePrac : BasePlugin
         }
 
         // Practice begin
-        SetupPrefireMode(player);
+        AddTimer(0.5f, () => SetupPrefireMode(player));
         var localizedPracticeName = _translator!.Translate(player, "map." + _mapName + "." + _practices[practiceIndex].PracticeName);
         player.PrintToChat($" {ChatColors.Green}[OpenPrefirePrac] {ChatColors.White} {_translator.Translate(player, "practice.choose", localizedPracticeName)}");
         player.PrintToCenter(_translator.Translate(player, "practice.begin"));

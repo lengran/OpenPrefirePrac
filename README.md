@@ -232,6 +232,7 @@ Finished practices:
 - de_train
   - Attack A site from A main
   - Attack A site from ivy
+  - Attack A site from ladder room
 
 TODO:
 
@@ -243,7 +244,7 @@ TODO:
 
 ### About the future of this project
 
-Since there are already a lot of awesome prefire maps in the workshop, I might not spend as much energy on this project as I used to do. But if you find any bugs or want some cool features, feel free to leave a comment. Thanks for the support and love of this project for such a long time. ♥
+Since there are already a lot of awesome prefire maps in the workshop, I might not spend as much energy on this project as I used to do. But if you find any bugs or want some cool features, feel free to leave a comment. Thanks for the support and love of this project for such a long time. <3
 
 ## Reference
 
