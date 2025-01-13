@@ -233,6 +233,7 @@ Finished practices:
   - Attack A site from A main
   - Attack A site from ivy
   - Attack A site from ladder room
+  - Retake B site from CT spawn
 
 TODO:
 
