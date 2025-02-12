@@ -230,7 +230,7 @@ Finished practices:
   - Attack A site from scaffold
   - Retake B site from elevator
 - de_train
-  - Attack A site from A main
+  - Attack A site from A main / T mid
   - Attack A site from ivy
   - Attack A site from ladder room
   - Retake B site from CT spawn
